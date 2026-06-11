@@ -1,0 +1,88 @@
+/* ============================================================
+   YEKA ERP — Design Tokens
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* ─── Brand Colors ──────────────────────────────── */
+  --color-primary:        #C17D5A;
+  --color-primary-dark:   #9E6244;
+  --color-primary-light:  #D9A88A;
+  --color-primary-soft:   #F3EAE3;
+
+  /* ─── Neutral ───────────────────────────────────── */
+  --color-bg:             #F8F5F1;
+  --color-surface:        #FFFFFF;
+  --color-surface-alt:    #FDFAF7;
+  --color-border:         #E0D9D0;
+  --color-border-strong:  #C8BDB3;
+
+  /* ─── Text ──────────────────────────────────────── */
+  --color-text:           #2D2D2D;
+  --color-text-light:     #6B6B6B;
+  --color-text-muted:     #9A9A9A;
+  --color-text-inverse:   #FFFFFF;
+
+  /* ─── Semantic ──────────────────────────────────── */
+  --color-success:        #6B8C5B;
+  --color-success-bg:     #EEF4EA;
+  --color-warning:        #C4974A;
+  --color-warning-bg:     #FDF4E3;
+  --color-danger:         #B84E4E;
+  --color-danger-bg:      #FAEAEA;
+  --color-info:           #4A7FA5;
+  --color-info-bg:        #E8F2FA;
+
+  /* ─── Typography ────────────────────────────────── */
+  --font-heading:         'Playfair Display', Georgia, serif;
+  --font-body:            'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --text-xs:    0.75rem;    /* 12px */
+  --text-sm:    0.875rem;   /* 14px */
+  --text-base:  1rem;       /* 16px */
+  --text-lg:    1.125rem;   /* 18px */
+  --text-xl:    1.25rem;    /* 20px */
+  --text-2xl:   1.5rem;     /* 24px */
+  --text-3xl:   1.875rem;   /* 30px */
+
+  --font-light:   300;
+  --font-regular: 400;
+  --font-medium:  500;
+  --font-semibold:600;
+  --font-bold:    700;
+
+  /* ─── Spacing ───────────────────────────────────── */
+  --space-1:   0.25rem;
+  --space-2:   0.5rem;
+  --space-3:   0.75rem;
+  --space-4:   1rem;
+  --space-5:   1.25rem;
+  --space-6:   1.5rem;
+  --space-8:   2rem;
+  --space-10:  2.5rem;
+  --space-12:  3rem;
+  --space-16:  4rem;
+
+  /* ─── Radius ────────────────────────────────────── */
+  --radius-sm:  0.25rem;
+  --radius-md:  0.5rem;
+  --radius-lg:  0.75rem;
+  --radius-xl:  1rem;
+  --radius-full:9999px;
+
+  /* ─── Shadows ───────────────────────────────────── */
+  --shadow-xs:  0 1px 2px rgba(0,0,0,0.05);
+  --shadow-sm:  0 2px 6px rgba(0,0,0,0.07);
+  --shadow-md:  0 4px 16px rgba(0,0,0,0.09);
+  --shadow-lg:  0 8px 32px rgba(0,0,0,0.12);
+
+  /* ─── Sidebar ───────────────────────────────────── */
+  --sidebar-width:       240px;
+  --sidebar-collapsed:   64px;
+
+  /* ─── Transitions ───────────────────────────────── */
+  --transition-fast:  150ms ease;
+  --transition-base:  250ms ease;
+  --transition-slow:  400ms ease;
+}
