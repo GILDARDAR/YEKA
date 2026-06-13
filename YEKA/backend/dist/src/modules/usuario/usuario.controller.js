@@ -44,6 +44,15 @@ let UsuarioController = class UsuarioController {
     async registrarJornada(id, dto) {
         return this.usuarioService.registrarJornada(id, dto.tipo);
     }
+    async getAuditLogs() {
+        return this.usuarioService.getAuditLogs();
+    }
+    async markAllAuditLogsAsRead() {
+        return this.usuarioService.markAllAuditLogsAsRead();
+    }
+    async markAuditLogAsRead(id) {
+        return this.usuarioService.markAuditLogAsRead(id);
+    }
 };
 exports.UsuarioController = UsuarioController;
 __decorate([
@@ -93,6 +102,28 @@ __decorate([
     __metadata("design:paramtypes", [Number, usuario_dto_1.RegistrarJornadaDto]),
     __metadata("design:returntype", Promise)
 ], UsuarioController.prototype, "registrarJornada", null);
+__decorate([
+    (0, common_1.Get)('audit/logs'),
+    (0, roles_decorator_1.Roles)(client_1.Rol.ADMIN),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UsuarioController.prototype, "getAuditLogs", null);
+__decorate([
+    (0, common_1.Patch)('audit/logs/read-all'),
+    (0, roles_decorator_1.Roles)(client_1.Rol.ADMIN),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UsuarioController.prototype, "markAllAuditLogsAsRead", null);
+__decorate([
+    (0, common_1.Patch)('audit/logs/:id/read'),
+    (0, roles_decorator_1.Roles)(client_1.Rol.ADMIN),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], UsuarioController.prototype, "markAuditLogAsRead", null);
 exports.UsuarioController = UsuarioController = __decorate([
     (0, common_1.Controller)('usuarios'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),

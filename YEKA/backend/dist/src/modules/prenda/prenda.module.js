@@ -10,6 +10,7 @@ exports.PrendaModule = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_module_1 = require("../../prisma/prisma.module");
 const factura_module_1 = require("../factura/factura.module");
+const configuracion_module_1 = require("../configuracion/configuracion.module");
 const prenda_controller_1 = require("./prenda.controller");
 const prenda_service_1 = require("./prenda.service");
 const prenda_facade_1 = require("./prenda.facade");
@@ -19,7 +20,7 @@ let PrendaModule = class PrendaModule {
 exports.PrendaModule = PrendaModule;
 exports.PrendaModule = PrendaModule = __decorate([
     (0, common_1.Module)({
-        imports: [prisma_module_1.PrismaModule, factura_module_1.FacturaModule],
+        imports: [prisma_module_1.PrismaModule, factura_module_1.FacturaModule, configuracion_module_1.ConfiguracionModule],
         controllers: [prenda_controller_1.PrendaController],
         providers: [prenda_dao_1.PrendaDAO, prenda_facade_1.PrendaFacade, prenda_service_1.PrendaService],
         exports: [prenda_service_1.PrendaService, prenda_facade_1.PrendaFacade, prenda_dao_1.PrendaDAO],

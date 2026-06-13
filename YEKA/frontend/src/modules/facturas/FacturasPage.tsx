@@ -4,6 +4,7 @@ import { facturasService } from './facturas.service';
 import type { Factura, EstadoPago } from '../../shared/types';
 import { Search, Plus, Filter, FileText } from 'lucide-react';
 import { NuevaFacturaModal } from './NuevaFacturaModal';
+import { useAuth } from '../../shared/auth.context';
 
 const ESTADO_BADGE: Record<EstadoPago, string> = {
   PENDIENTE: 'badge-neutral',

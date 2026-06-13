@@ -124,6 +124,8 @@ export class PrendaResponseDto {
   notas: string | null;
   createdAt: Date;
   updatedAt: Date;
+  tipoExpress: TipoExpress;
+  factura?: any;
 }
 
 // ─── PRENDA SERVICIO RESPONSE ─────────────────────────────────

@@ -24,6 +24,7 @@ export declare const ModelName: {
     readonly PrendaServicio: "PrendaServicio";
     readonly Inventario: "Inventario";
     readonly AuditLog: "AuditLog";
+    readonly Configuracion: "Configuracion";
 };
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
 export declare const TransactionIsolationLevel: {
@@ -118,10 +119,6 @@ export declare const PrendaScalarFieldEnum: {
     readonly id: "id";
     readonly facturaId: "facturaId";
     readonly codigoQR: "codigoQR";
-    readonly tipoPrendaId: "tipoPrendaId";
-    readonly talla: "talla";
-    readonly color: "color";
-    readonly marca: "marca";
     readonly estadoActual: "estadoActual";
     readonly fechaCompromiso: "fechaCompromiso";
     readonly esLujo: "esLujo";
@@ -131,6 +128,11 @@ export declare const PrendaScalarFieldEnum: {
     readonly notas: "notas";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
+    readonly tipoPrendaId: "tipoPrendaId";
+    readonly color: "color";
+    readonly marca: "marca";
+    readonly talla: "talla";
+    readonly tipoExpress: "tipoExpress";
 };
 export type PrendaScalarFieldEnum = (typeof PrendaScalarFieldEnum)[keyof typeof PrendaScalarFieldEnum];
 export declare const CatalogoServicioScalarFieldEnum: {
@@ -158,10 +160,10 @@ export declare const PrendaServicioScalarFieldEnum: {
     readonly id: "id";
     readonly prendaId: "prendaId";
     readonly servicioId: "servicioId";
-    readonly medidaEntregada: "medidaEntregada";
     readonly tipoExpress: "tipoExpress";
     readonly precioFinal: "precioFinal";
     readonly createdAt: "createdAt";
+    readonly medidaEntregada: "medidaEntregada";
 };
 export type PrendaServicioScalarFieldEnum = (typeof PrendaServicioScalarFieldEnum)[keyof typeof PrendaServicioScalarFieldEnum];
 export declare const InventarioScalarFieldEnum: {
@@ -182,9 +184,17 @@ export declare const AuditLogScalarFieldEnum: {
     readonly entidadId: "entidadId";
     readonly valorAnterior: "valorAnterior";
     readonly valorNuevo: "valorNuevo";
+    readonly leido: "leido";
     readonly timestamp: "timestamp";
 };
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum];
+export declare const ConfiguracionScalarFieldEnum: {
+    readonly id: "id";
+    readonly clave: "clave";
+    readonly valor: "valor";
+    readonly updatedAt: "updatedAt";
+};
+export type ConfiguracionScalarFieldEnum = (typeof ConfiguracionScalarFieldEnum)[keyof typeof ConfiguracionScalarFieldEnum];
 export declare const SortOrder: {
     readonly asc: "asc";
     readonly desc: "desc";

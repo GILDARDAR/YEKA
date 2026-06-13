@@ -42,12 +42,28 @@ export class PrendaService {
     return this.prendaFacade.asignarServicio(prendaId, dto, usuarioId);
   }
 
+  async eliminarServicio(
+    prendaId: number,
+    prendaServicioId: number,
+    usuarioId: number,
+  ): Promise<void> {
+    return this.prendaFacade.eliminarServicio(prendaId, prendaServicioId, usuarioId);
+  }
+
   async cambiarEstado(
     id: number,
     dto: CambiarEstadoDto,
     usuarioId: number,
   ): Promise<PrendaResponseDto> {
     return this.prendaFacade.cambiarEstado(id, dto, usuarioId);
+  }
+
+  async cambiarTipoExpress(
+    id: number,
+    tipoExpress: any,
+    usuarioId: number,
+  ): Promise<PrendaResponseDto> {
+    return this.prendaFacade.cambiarTipoExpress(id, tipoExpress, usuarioId);
   }
 
   async subirFoto(

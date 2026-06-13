@@ -1,18 +1,205 @@
-// ============================================================
-// ERP YEKA — Prisma Schema (Fase 2)
-// ============================================================
-
-datasource db {
-  provider = "postgresql"
-}
-
 generator client {
   provider     = "prisma-client"
   output       = "../generated/prisma"
   moduleFormat = "cjs"
 }
 
-// ─── ENUMS ───────────────────────────────────────────────────
+datasource db {
+  provider = "postgresql"
+}
+
+model Sede {
+  id                 Int          @id @default(autoincrement())
+  codigoSede         String       @unique
+  nombre             String
+  direccion          String?
+  capacidadDiariaMax Int          @default(100)
+  activa             Boolean      @default(true)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  clientes           Cliente[]
+  facturas           Factura[]
+  inventarios        Inventario[]
+  usuarios           Usuario[]
+}
+
+model Usuario {
+  id            Int               @id @default(autoincrement())
+  sedeId        Int
+  nombre        String
+  dni           String?           @unique
+  telefono      String?
+  email         String            @unique
+  password      String
+  pinAcceso     String?
+  rol           Rol
+  activo        Boolean           @default(true)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  auditLogs     AuditLog[]
+  prendasTaller Prenda[]          @relation("OperariaPrenda")
+  jornadas      RegistroJornada[]
+  sede          Sede              @relation(fields: [sedeId], references: [id])
+}
+
+model RegistroJornada {
+  id        Int         @id @default(autoincrement())
+  usuarioId Int
+  tipo      TipoJornada
+  timestamp DateTime    @default(now())
+  usuario   Usuario     @relation(fields: [usuarioId], references: [id])
+}
+
+model Cliente {
+  id                    Int       @id @default(autoincrement())
+  sedeOrigenId          Int
+  nombre                String
+  dni                   String?
+  celular               String?
+  email                 String?
+  nivelPremium          Int       @default(1)
+  tallasMedidas         Json?
+  preferenciasHistorial Json?
+  activo                Boolean   @default(true)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  sedeOrigen            Sede      @relation(fields: [sedeOrigenId], references: [id])
+  facturas              Factura[]
+}
+
+model Factura {
+  id               Int        @id @default(autoincrement())
+  numero           String     @unique
+  clienteId        Int?
+  usuarioCreadorId Int
+  sedeId           Int
+  subtotal         Decimal    @default(0) @db.Decimal(10, 2)
+  impuestosJson    Json?
+  total            Decimal    @default(0) @db.Decimal(10, 2)
+  estadoPago       EstadoPago @default(PENDIENTE)
+  notas            String?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  abonos           Abono[]
+  cliente          Cliente?   @relation(fields: [clienteId], references: [id])
+  sede             Sede       @relation(fields: [sedeId], references: [id])
+  prendas          Prenda[]
+}
+
+model Abono {
+  id         Int        @id @default(autoincrement())
+  facturaId  Int
+  monto      Decimal    @db.Decimal(10, 2)
+  metodoPago MetodoPago
+  notas      String?
+  fecha      DateTime   @default(now())
+  factura    Factura    @relation(fields: [facturaId], references: [id], onDelete: Cascade)
+}
+
+model TipoPrenda {
+  id               Int              @id @default(autoincrement())
+  nombre           String           @unique
+  descripcion      String?
+  activo           Boolean          @default(true)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  preciosServicios PrecioServicio[]
+  prendas          Prenda[]
+}
+
+model Prenda {
+  id                      Int              @id @default(autoincrement())
+  facturaId               Int
+  codigoQR                String           @unique
+  estadoActual            EstadoPrenda     @default(RECIBIDA)
+  fechaCompromiso         DateTime?
+  esLujo                  Boolean          @default(false)
+  fotoUrl                 String?
+  usuarioTallerId         Int?
+  fechaUltimaNotificacion DateTime?
+  notas                   String?
+  createdAt               DateTime         @default(now())
+  updatedAt               DateTime         @updatedAt
+  tipoPrendaId            Int
+  color                   String
+  marca                   String?
+  talla                   String
+  factura                 Factura          @relation(fields: [facturaId], references: [id], onDelete: Cascade)
+  tipoPrenda              TipoPrenda       @relation(fields: [tipoPrendaId], references: [id])
+  usuarioTaller           Usuario?         @relation("OperariaPrenda", fields: [usuarioTallerId], references: [id])
+  servicios               PrendaServicio[]
+  tipoExpress             TipoExpress      @default(NORMAL)
+}
+
+model CatalogoServicio {
+  id               Int              @id @default(autoincrement())
+  categoria        String
+  tipoEspecifico   String
+  pesoPuntos       Int              @default(1)
+  activo           Boolean          @default(true)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  preciosServicios PrecioServicio[]
+  asignaciones     PrendaServicio[]
+}
+
+model PrecioServicio {
+  id                 Int              @id @default(autoincrement())
+  catalogoServicioId Int
+  tipoPrendaId       Int
+  medidaBase         Decimal          @db.Decimal(10, 2)
+  precioBase         Decimal          @db.Decimal(10, 2)
+  medidaExtra        Decimal          @db.Decimal(10, 2)
+  precioExtra        Decimal          @db.Decimal(10, 2)
+  activo             Boolean          @default(true)
+  catalogoServicio   CatalogoServicio @relation(fields: [catalogoServicioId], references: [id], onDelete: Cascade)
+  tipoPrenda         TipoPrenda       @relation(fields: [tipoPrendaId], references: [id], onDelete: Cascade)
+
+  @@unique([catalogoServicioId, tipoPrendaId])
+}
+
+model PrendaServicio {
+  id              Int              @id @default(autoincrement())
+  prendaId        Int
+  servicioId      Int
+  tipoExpress     TipoExpress      @default(NORMAL)
+  precioFinal     Decimal          @db.Decimal(10, 2)
+  createdAt       DateTime         @default(now())
+  medidaEntregada Decimal?         @db.Decimal(10, 2)
+  prenda          Prenda           @relation(fields: [prendaId], references: [id], onDelete: Cascade)
+  servicio        CatalogoServicio @relation(fields: [servicioId], references: [id])
+}
+
+model Inventario {
+  id             Int      @id @default(autoincrement())
+  sedeId         Int
+  nombreInsumo   String
+  unidad         String   @default("unidades")
+  cantidadActual Decimal  @default(0) @db.Decimal(10, 2)
+  puntoReorden   Decimal  @default(0) @db.Decimal(10, 2)
+  updatedAt      DateTime @updatedAt
+  sede           Sede     @relation(fields: [sedeId], references: [id])
+}
+
+model AuditLog {
+  id              Int             @id @default(autoincrement())
+  usuarioId       Int?
+  accion          AccionAuditoria
+  entidadAfectada String
+  entidadId       Int?
+  valorAnterior   Json?
+  valorNuevo      Json?
+  leido           Boolean         @default(false)
+  timestamp       DateTime        @default(now())
+  usuario         Usuario?        @relation(fields: [usuarioId], references: [id])
+}
+
+model Configuracion {
+  id        Int      @id @default(autoincrement())
+  clave     String   @unique
+  valor     String
+  updatedAt DateTime @updatedAt
+}
 
 enum Rol {
   ADMIN
@@ -61,229 +248,4 @@ enum TipoExpress {
   NORMAL
   EXPRESS_48H
   EXPRESS_24H
-}
-
-// ─── SEDE ────────────────────────────────────────────────────
-
-model Sede {
-  id                  Int      @id @default(autoincrement())
-  codigoSede          String   @unique // ej: MAL, EPA, SOHO
-  nombre              String
-  direccion           String?
-  capacidadDiariaMax  Int      @default(100) // puntos máximos por día
-  activa              Boolean  @default(true)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-
-  usuarios    Usuario[]
-  clientes    Cliente[]
-  facturas    Factura[]
-  inventarios Inventario[]
-}
-
-// ─── USUARIO ─────────────────────────────────────────────────
-
-model Usuario {
-  id         Int      @id @default(autoincrement())
-  sedeId     Int
-  sede       Sede     @relation(fields: [sedeId], references: [id])
-  nombre     String
-  dni        String?  @unique
-  telefono   String?
-  email      String   @unique
-  password   String
-  pinAcceso  String?  // PIN numérico de 4 dígitos (hashed)
-  rol        Rol
-  activo     Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  jornadas       RegistroJornada[]
-  prendasTaller  Prenda[]          @relation("OperariaPrenda")
-  auditLogs      AuditLog[]
-}
-
-// ─── REGISTRO JORNADA ────────────────────────────────────────
-
-model RegistroJornada {
-  id         Int         @id @default(autoincrement())
-  usuarioId  Int
-  usuario    Usuario     @relation(fields: [usuarioId], references: [id])
-  tipo       TipoJornada
-  timestamp  DateTime    @default(now())
-}
-
-// ─── CLIENTE ─────────────────────────────────────────────────
-
-model Cliente {
-  id                    Int      @id @default(autoincrement())
-  sedeOrigenId          Int
-  sedeOrigen            Sede     @relation(fields: [sedeOrigenId], references: [id])
-  nombre                String
-  dni                   String?
-  celular               String?
-  email                 String?
-  nivelPremium          Int      @default(1) // 1-5 estrellas
-  tallasMedidas         Json?    // medidas de costura dinámicas
-  preferenciasHistorial Json?
-  activo                Boolean  @default(true)
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
-
-  facturas Factura[]
-}
-
-// ─── FACTURA ─────────────────────────────────────────────────
-
-model Factura {
-  id               Int        @id @default(autoincrement())
-  numero           String     @unique // ej: MAL-2026-00001
-  clienteId        Int?
-  cliente          Cliente?   @relation(fields: [clienteId], references: [id])
-  usuarioCreadorId Int
-  sedeId           Int
-  sede             Sede       @relation(fields: [sedeId], references: [id])
-  subtotal         Decimal    @default(0) @db.Decimal(10, 2)
-  impuestosJson    Json?      // { iva: 21, monto: 4.20 }
-  total            Decimal    @default(0) @db.Decimal(10, 2)
-  estadoPago       EstadoPago @default(PENDIENTE)
-  notas            String?
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
-
-  prendas  Prenda[]
-  abonos   Abono[]
-}
-
-// ─── ABONO ───────────────────────────────────────────────────
-
-model Abono {
-  id          Int        @id @default(autoincrement())
-  facturaId   Int
-  factura     Factura    @relation(fields: [facturaId], references: [id], onDelete: Cascade)
-  monto       Decimal    @db.Decimal(10, 2)
-  metodoPago  MetodoPago
-  notas       String?
-  fecha       DateTime   @default(now())
-}
-
-// ─── TIPO PRENDA ─────────────────────────────────────────────────
-
-model TipoPrenda {
-  id          Int      @id @default(autoincrement())
-  nombre      String   @unique // Ej: Pantalón, Camisa, Vestido
-  descripcion String?
-  activo      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  prendas          Prenda[]
-  preciosServicios PrecioServicio[]
-}
-
-// ─── PRENDA ──────────────────────────────────────────────────
-
-model Prenda {
-  id                    Int          @id @default(autoincrement())
-  facturaId             Int
-  factura               Factura      @relation(fields: [facturaId], references: [id], onDelete: Cascade)
-  codigoQR              String       @unique // SEDE-AÑO-ID, ej: MAL-2026-01458
-  
-  tipoPrendaId          Int
-  tipoPrenda            TipoPrenda   @relation(fields: [tipoPrendaId], references: [id])
-  
-  talla                 String
-  color                 String
-  marca                 String?
-
-  estadoActual          EstadoPrenda @default(RECIBIDA)
-  fechaCompromiso       DateTime?
-  esLujo                Boolean      @default(false)
-  fotoUrl               String?
-  usuarioTallerId       Int?
-  usuarioTaller         Usuario?     @relation("OperariaPrenda", fields: [usuarioTallerId], references: [id])
-  fechaUltimaNotificacion DateTime?
-  notas                 String?
-  createdAt             DateTime     @default(now())
-  updatedAt             DateTime     @updatedAt
-
-  servicios PrendaServicio[]
-}
-
-// ─── CATÁLOGO SERVICIO ───────────────────────────────────────
-
-model CatalogoServicio {
-  id              Int      @id @default(autoincrement())
-  categoria       String   // ej: Bajos, Volantes, Cremalleras
-  tipoEspecifico  String   // ej: Pespunte, Invisible, Falso
-  pesoPuntos      Int      @default(1) // peso en la capacidad diaria
-  activo          Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  asignaciones     PrendaServicio[]
-  preciosServicios PrecioServicio[]
-}
-
-// ─── PRECIO SERVICIO (Reglas por Tipo Prenda) ────────────────
-
-model PrecioServicio {
-  id                 Int              @id @default(autoincrement())
-  catalogoServicioId Int
-  tipoPrendaId       Int
-  
-  medidaBase         Decimal          @db.Decimal(10, 2)
-  precioBase         Decimal          @db.Decimal(10, 2)
-  medidaExtra        Decimal          @db.Decimal(10, 2)
-  precioExtra        Decimal          @db.Decimal(10, 2)
-  
-  activo             Boolean          @default(true)
-
-  catalogoServicio   CatalogoServicio @relation(fields: [catalogoServicioId], references: [id], onDelete: Cascade)
-  tipoPrenda         TipoPrenda       @relation(fields: [tipoPrendaId], references: [id], onDelete: Cascade)
-
-  @@unique([catalogoServicioId, tipoPrendaId])
-}
-
-// ─── PRENDA SERVICIO (tabla pivote de la factura) ────────────
-
-model PrendaServicio {
-  id               Int              @id @default(autoincrement())
-  prendaId         Int
-  prenda           Prenda           @relation(fields: [prendaId], references: [id], onDelete: Cascade)
-  servicioId       Int
-  servicio         CatalogoServicio @relation(fields: [servicioId], references: [id])
-  
-  medidaEntregada  Decimal?         @db.Decimal(10, 2) // La longitud/medida que indicó el usuario
-  
-  tipoExpress      TipoExpress      @default(NORMAL)
-  precioFinal      Decimal          @db.Decimal(10, 2)
-  createdAt        DateTime         @default(now())
-}
-
-// ─── INVENTARIO ──────────────────────────────────────────────
-
-model Inventario {
-  id               Int      @id @default(autoincrement())
-  sedeId           Int
-  sede             Sede     @relation(fields: [sedeId], references: [id])
-  nombreInsumo     String
-  unidad           String   @default("unidades")
-  cantidadActual   Decimal  @default(0) @db.Decimal(10, 2)
-  puntoReorden     Decimal  @default(0) @db.Decimal(10, 2)
-  updatedAt        DateTime @updatedAt
-}
-
-// ─── AUDIT LOG (inmutable) ───────────────────────────────────
-
-model AuditLog {
-  id               Int             @id @default(autoincrement())
-  usuarioId        Int?
-  usuario          Usuario?        @relation(fields: [usuarioId], references: [id])
-  accion           AccionAuditoria
-  entidadAfectada  String          // "Factura", "Prenda", etc.
-  entidadId        Int?
-  valorAnterior    Json?
-  valorNuevo       Json?
-  timestamp        DateTime        @default(now())
 }

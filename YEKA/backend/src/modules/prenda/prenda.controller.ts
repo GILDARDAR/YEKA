@@ -69,6 +69,15 @@ export class PrendaController {
     return this.prendaService.asignarServicio(prendaId, dto, usuarioId);
   }
 
+  @Delete(':id/servicios/:servicioId')
+  async eliminarServicio(
+    @Param('id', ParseIntPipe) prendaId: number,
+    @Param('servicioId', ParseIntPipe) servicioId: number,
+    @CurrentUser('id') usuarioId: number,
+  ): Promise<void> {
+    return this.prendaService.eliminarServicio(prendaId, servicioId, usuarioId);
+  }
+
   @Patch(':id/estado')
   async cambiarEstado(
     @Param('id', ParseIntPipe) id: number,
@@ -76,6 +85,15 @@ export class PrendaController {
     @CurrentUser('id') usuarioId: number,
   ): Promise<PrendaResponseDto> {
     return this.prendaService.cambiarEstado(id, dto, usuarioId);
+  }
+
+  @Patch(':id/express')
+  async cambiarTipoExpress(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('tipoExpress') tipoExpress: any,
+    @CurrentUser('id') usuarioId: number,
+  ): Promise<PrendaResponseDto> {
+    return this.prendaService.cambiarTipoExpress(id, tipoExpress, usuarioId);
   }
 
   @Patch(':id/foto')

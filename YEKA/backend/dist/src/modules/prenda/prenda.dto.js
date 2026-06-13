@@ -158,6 +158,8 @@ class PrendaResponseDto {
     notas;
     createdAt;
     updatedAt;
+    tipoExpress;
+    factura;
 }
 exports.PrendaResponseDto = PrendaResponseDto;
 class PrendaServicioResponseDto {

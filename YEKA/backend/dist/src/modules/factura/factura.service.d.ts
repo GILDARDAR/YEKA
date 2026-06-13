@@ -10,4 +10,5 @@ export declare class FacturaService {
     addAbono(facturaId: number, dto: AddAbonoDto, usuarioId: number): Promise<FacturaResponseDto>;
     anularFactura(facturaId: number, usuarioId: number): Promise<FacturaResponseDto>;
     recalcularFactura(facturaId: number): Promise<FacturaResponseDto>;
+    generatePdf(id: number): Promise<Buffer>;
 }

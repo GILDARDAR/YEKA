@@ -9,4 +9,5 @@ export declare class FacturaController {
     createFactura(dto: CreateFacturaDto, usuarioId: number): Promise<FacturaResponseDto>;
     anularFactura(id: number, usuarioId: number): Promise<FacturaResponseDto>;
     addAbono(id: number, dto: AddAbonoDto, usuarioId: number): Promise<FacturaResponseDto>;
+    downloadPdf(id: number, res: any): Promise<void>;
 }

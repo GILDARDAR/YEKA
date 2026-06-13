@@ -20,6 +20,7 @@ const factura_module_1 = require("./modules/factura/factura.module");
 const catalogo_servicio_module_1 = require("./modules/catalogo-servicio/catalogo-servicio.module");
 const prenda_module_1 = require("./modules/prenda/prenda.module");
 const tipo_prenda_module_1 = require("./modules/tipo-prenda/tipo-prenda.module");
+const configuracion_module_1 = require("./modules/configuracion/configuracion.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -36,6 +37,7 @@ exports.AppModule = AppModule = __decorate([
             catalogo_servicio_module_1.CatalogoServicioModule,
             prenda_module_1.PrendaModule,
             tipo_prenda_module_1.TipoPrendaModule,
+            configuracion_module_1.ConfiguracionModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

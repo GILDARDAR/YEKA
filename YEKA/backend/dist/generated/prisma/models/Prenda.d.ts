@@ -12,23 +12,19 @@ export type AggregatePrenda = {
 export type PrendaAvgAggregateOutputType = {
     id: number | null;
     facturaId: number | null;
-    tipoPrendaId: number | null;
     usuarioTallerId: number | null;
+    tipoPrendaId: number | null;
 };
 export type PrendaSumAggregateOutputType = {
     id: number | null;
     facturaId: number | null;
-    tipoPrendaId: number | null;
     usuarioTallerId: number | null;
+    tipoPrendaId: number | null;
 };
 export type PrendaMinAggregateOutputType = {
     id: number | null;
     facturaId: number | null;
     codigoQR: string | null;
-    tipoPrendaId: number | null;
-    talla: string | null;
-    color: string | null;
-    marca: string | null;
     estadoActual: $Enums.EstadoPrenda | null;
     fechaCompromiso: Date | null;
     esLujo: boolean | null;
@@ -38,15 +34,16 @@ export type PrendaMinAggregateOutputType = {
     notas: string | null;
     createdAt: Date | null;
     updatedAt: Date | null;
+    tipoPrendaId: number | null;
+    color: string | null;
+    marca: string | null;
+    talla: string | null;
+    tipoExpress: $Enums.TipoExpress | null;
 };
 export type PrendaMaxAggregateOutputType = {
     id: number | null;
     facturaId: number | null;
     codigoQR: string | null;
-    tipoPrendaId: number | null;
-    talla: string | null;
-    color: string | null;
-    marca: string | null;
     estadoActual: $Enums.EstadoPrenda | null;
     fechaCompromiso: Date | null;
     esLujo: boolean | null;
@@ -56,15 +53,16 @@ export type PrendaMaxAggregateOutputType = {
     notas: string | null;
     createdAt: Date | null;
     updatedAt: Date | null;
+    tipoPrendaId: number | null;
+    color: string | null;
+    marca: string | null;
+    talla: string | null;
+    tipoExpress: $Enums.TipoExpress | null;
 };
 export type PrendaCountAggregateOutputType = {
     id: number;
     facturaId: number;
     codigoQR: number;
-    tipoPrendaId: number;
-    talla: number;
-    color: number;
-    marca: number;
     estadoActual: number;
     fechaCompromiso: number;
     esLujo: number;
@@ -74,28 +72,29 @@ export type PrendaCountAggregateOutputType = {
     notas: number;
     createdAt: number;
     updatedAt: number;
+    tipoPrendaId: number;
+    color: number;
+    marca: number;
+    talla: number;
+    tipoExpress: number;
     _all: number;
 };
 export type PrendaAvgAggregateInputType = {
     id?: true;
     facturaId?: true;
-    tipoPrendaId?: true;
     usuarioTallerId?: true;
+    tipoPrendaId?: true;
 };
 export type PrendaSumAggregateInputType = {
     id?: true;
     facturaId?: true;
-    tipoPrendaId?: true;
     usuarioTallerId?: true;
+    tipoPrendaId?: true;
 };
 export type PrendaMinAggregateInputType = {
     id?: true;
     facturaId?: true;
     codigoQR?: true;
-    tipoPrendaId?: true;
-    talla?: true;
-    color?: true;
-    marca?: true;
     estadoActual?: true;
     fechaCompromiso?: true;
     esLujo?: true;
@@ -105,15 +104,16 @@ export type PrendaMinAggregateInputType = {
     notas?: true;
     createdAt?: true;
     updatedAt?: true;
+    tipoPrendaId?: true;
+    color?: true;
+    marca?: true;
+    talla?: true;
+    tipoExpress?: true;
 };
 export type PrendaMaxAggregateInputType = {
     id?: true;
     facturaId?: true;
     codigoQR?: true;
-    tipoPrendaId?: true;
-    talla?: true;
-    color?: true;
-    marca?: true;
     estadoActual?: true;
     fechaCompromiso?: true;
     esLujo?: true;
@@ -123,15 +123,16 @@ export type PrendaMaxAggregateInputType = {
     notas?: true;
     createdAt?: true;
     updatedAt?: true;
+    tipoPrendaId?: true;
+    color?: true;
+    marca?: true;
+    talla?: true;
+    tipoExpress?: true;
 };
 export type PrendaCountAggregateInputType = {
     id?: true;
     facturaId?: true;
     codigoQR?: true;
-    tipoPrendaId?: true;
-    talla?: true;
-    color?: true;
-    marca?: true;
     estadoActual?: true;
     fechaCompromiso?: true;
     esLujo?: true;
@@ -141,6 +142,11 @@ export type PrendaCountAggregateInputType = {
     notas?: true;
     createdAt?: true;
     updatedAt?: true;
+    tipoPrendaId?: true;
+    color?: true;
+    marca?: true;
+    talla?: true;
+    tipoExpress?: true;
     _all?: true;
 };
 export type PrendaAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -175,10 +181,6 @@ export type PrendaGroupByOutputType = {
     id: number;
     facturaId: number;
     codigoQR: string;
-    tipoPrendaId: number;
-    talla: string;
-    color: string;
-    marca: string | null;
     estadoActual: $Enums.EstadoPrenda;
     fechaCompromiso: Date | null;
     esLujo: boolean;
@@ -188,6 +190,11 @@ export type PrendaGroupByOutputType = {
     notas: string | null;
     createdAt: Date;
     updatedAt: Date;
+    tipoPrendaId: number;
+    color: string;
+    marca: string | null;
+    talla: string;
+    tipoExpress: $Enums.TipoExpress;
     _count: PrendaCountAggregateOutputType | null;
     _avg: PrendaAvgAggregateOutputType | null;
     _sum: PrendaSumAggregateOutputType | null;
@@ -204,10 +211,6 @@ export type PrendaWhereInput = {
     id?: Prisma.IntFilter<"Prenda"> | number;
     facturaId?: Prisma.IntFilter<"Prenda"> | number;
     codigoQR?: Prisma.StringFilter<"Prenda"> | string;
-    tipoPrendaId?: Prisma.IntFilter<"Prenda"> | number;
-    talla?: Prisma.StringFilter<"Prenda"> | string;
-    color?: Prisma.StringFilter<"Prenda"> | string;
-    marca?: Prisma.StringNullableFilter<"Prenda"> | string | null;
     estadoActual?: Prisma.EnumEstadoPrendaFilter<"Prenda"> | $Enums.EstadoPrenda;
     fechaCompromiso?: Prisma.DateTimeNullableFilter<"Prenda"> | Date | string | null;
     esLujo?: Prisma.BoolFilter<"Prenda"> | boolean;
@@ -217,6 +220,11 @@ export type PrendaWhereInput = {
     notas?: Prisma.StringNullableFilter<"Prenda"> | string | null;
     createdAt?: Prisma.DateTimeFilter<"Prenda"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Prenda"> | Date | string;
+    tipoPrendaId?: Prisma.IntFilter<"Prenda"> | number;
+    color?: Prisma.StringFilter<"Prenda"> | string;
+    marca?: Prisma.StringNullableFilter<"Prenda"> | string | null;
+    talla?: Prisma.StringFilter<"Prenda"> | string;
+    tipoExpress?: Prisma.EnumTipoExpressFilter<"Prenda"> | $Enums.TipoExpress;
     factura?: Prisma.XOR<Prisma.FacturaScalarRelationFilter, Prisma.FacturaWhereInput>;
     tipoPrenda?: Prisma.XOR<Prisma.TipoPrendaScalarRelationFilter, Prisma.TipoPrendaWhereInput>;
     usuarioTaller?: Prisma.XOR<Prisma.UsuarioNullableScalarRelationFilter, Prisma.UsuarioWhereInput> | null;
@@ -226,10 +234,6 @@ export type PrendaOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
     facturaId?: Prisma.SortOrder;
     codigoQR?: Prisma.SortOrder;
-    tipoPrendaId?: Prisma.SortOrder;
-    talla?: Prisma.SortOrder;
-    color?: Prisma.SortOrder;
-    marca?: Prisma.SortOrderInput | Prisma.SortOrder;
     estadoActual?: Prisma.SortOrder;
     fechaCompromiso?: Prisma.SortOrderInput | Prisma.SortOrder;
     esLujo?: Prisma.SortOrder;
@@ -239,6 +243,11 @@ export type PrendaOrderByWithRelationInput = {
     notas?: Prisma.SortOrderInput | Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
+    tipoPrendaId?: Prisma.SortOrder;
+    color?: Prisma.SortOrder;
+    marca?: Prisma.SortOrderInput | Prisma.SortOrder;
+    talla?: Prisma.SortOrder;
+    tipoExpress?: Prisma.SortOrder;
     factura?: Prisma.FacturaOrderByWithRelationInput;
     tipoPrenda?: Prisma.TipoPrendaOrderByWithRelationInput;
     usuarioTaller?: Prisma.UsuarioOrderByWithRelationInput;
@@ -251,10 +260,6 @@ export type PrendaWhereUniqueInput = Prisma.AtLeast<{
     OR?: Prisma.PrendaWhereInput[];
     NOT?: Prisma.PrendaWhereInput | Prisma.PrendaWhereInput[];
     facturaId?: Prisma.IntFilter<"Prenda"> | number;
-    tipoPrendaId?: Prisma.IntFilter<"Prenda"> | number;
-    talla?: Prisma.StringFilter<"Prenda"> | string;
-    color?: Prisma.StringFilter<"Prenda"> | string;
-    marca?: Prisma.StringNullableFilter<"Prenda"> | string | null;
     estadoActual?: Prisma.EnumEstadoPrendaFilter<"Prenda"> | $Enums.EstadoPrenda;
     fechaCompromiso?: Prisma.DateTimeNullableFilter<"Prenda"> | Date | string | null;
     esLujo?: Prisma.BoolFilter<"Prenda"> | boolean;
@@ -264,6 +269,11 @@ export type PrendaWhereUniqueInput = Prisma.AtLeast<{
     notas?: Prisma.StringNullableFilter<"Prenda"> | string | null;
     createdAt?: Prisma.DateTimeFilter<"Prenda"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Prenda"> | Date | string;
+    tipoPrendaId?: Prisma.IntFilter<"Prenda"> | number;
+    color?: Prisma.StringFilter<"Prenda"> | string;
+    marca?: Prisma.StringNullableFilter<"Prenda"> | string | null;
+    talla?: Prisma.StringFilter<"Prenda"> | string;
+    tipoExpress?: Prisma.EnumTipoExpressFilter<"Prenda"> | $Enums.TipoExpress;
     factura?: Prisma.XOR<Prisma.FacturaScalarRelationFilter, Prisma.FacturaWhereInput>;
     tipoPrenda?: Prisma.XOR<Prisma.TipoPrendaScalarRelationFilter, Prisma.TipoPrendaWhereInput>;
     usuarioTaller?: Prisma.XOR<Prisma.UsuarioNullableScalarRelationFilter, Prisma.UsuarioWhereInput> | null;
@@ -273,10 +283,6 @@ export type PrendaOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
     facturaId?: Prisma.SortOrder;
     codigoQR?: Prisma.SortOrder;
-    tipoPrendaId?: Prisma.SortOrder;
-    talla?: Prisma.SortOrder;
-    color?: Prisma.SortOrder;
-    marca?: Prisma.SortOrderInput | Prisma.SortOrder;
     estadoActual?: Prisma.SortOrder;
     fechaCompromiso?: Prisma.SortOrderInput | Prisma.SortOrder;
     esLujo?: Prisma.SortOrder;
@@ -286,6 +292,11 @@ export type PrendaOrderByWithAggregationInput = {
     notas?: Prisma.SortOrderInput | Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
+    tipoPrendaId?: Prisma.SortOrder;
+    color?: Prisma.SortOrder;
+    marca?: Prisma.SortOrderInput | Prisma.SortOrder;
+    talla?: Prisma.SortOrder;
+    tipoExpress?: Prisma.SortOrder;
     _count?: Prisma.PrendaCountOrderByAggregateInput;
     _avg?: Prisma.PrendaAvgOrderByAggregateInput;
     _max?: Prisma.PrendaMaxOrderByAggregateInput;
@@ -299,10 +310,6 @@ export type PrendaScalarWhereWithAggregatesInput = {
     id?: Prisma.IntWithAggregatesFilter<"Prenda"> | number;
     facturaId?: Prisma.IntWithAggregatesFilter<"Prenda"> | number;
     codigoQR?: Prisma.StringWithAggregatesFilter<"Prenda"> | string;
-    tipoPrendaId?: Prisma.IntWithAggregatesFilter<"Prenda"> | number;
-    talla?: Prisma.StringWithAggregatesFilter<"Prenda"> | string;
-    color?: Prisma.StringWithAggregatesFilter<"Prenda"> | string;
-    marca?: Prisma.StringNullableWithAggregatesFilter<"Prenda"> | string | null;
     estadoActual?: Prisma.EnumEstadoPrendaWithAggregatesFilter<"Prenda"> | $Enums.EstadoPrenda;
     fechaCompromiso?: Prisma.DateTimeNullableWithAggregatesFilter<"Prenda"> | Date | string | null;
     esLujo?: Prisma.BoolWithAggregatesFilter<"Prenda"> | boolean;
@@ -312,12 +319,14 @@ export type PrendaScalarWhereWithAggregatesInput = {
     notas?: Prisma.StringNullableWithAggregatesFilter<"Prenda"> | string | null;
     createdAt?: Prisma.DateTimeWithAggregatesFilter<"Prenda"> | Date | string;
     updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Prenda"> | Date | string;
+    tipoPrendaId?: Prisma.IntWithAggregatesFilter<"Prenda"> | number;
+    color?: Prisma.StringWithAggregatesFilter<"Prenda"> | string;
+    marca?: Prisma.StringNullableWithAggregatesFilter<"Prenda"> | string | null;
+    talla?: Prisma.StringWithAggregatesFilter<"Prenda"> | string;
+    tipoExpress?: Prisma.EnumTipoExpressWithAggregatesFilter<"Prenda"> | $Enums.TipoExpress;
 };
 export type PrendaCreateInput = {
     codigoQR: string;
-    talla: string;
-    color: string;
-    marca?: string | null;
     estadoActual?: $Enums.EstadoPrenda;
     fechaCompromiso?: Date | string | null;
     esLujo?: boolean;
@@ -326,6 +335,10 @@ export type PrendaCreateInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    color: string;
+    marca?: string | null;
+    talla: string;
+    tipoExpress?: $Enums.TipoExpress;
     factura: Prisma.FacturaCreateNestedOneWithoutPrendasInput;
     tipoPrenda: Prisma.TipoPrendaCreateNestedOneWithoutPrendasInput;
     usuarioTaller?: Prisma.UsuarioCreateNestedOneWithoutPrendasTallerInput;
@@ -335,10 +348,6 @@ export type PrendaUncheckedCreateInput = {
     id?: number;
     facturaId: number;
     codigoQR: string;
-    tipoPrendaId: number;
-    talla: string;
-    color: string;
-    marca?: string | null;
     estadoActual?: $Enums.EstadoPrenda;
     fechaCompromiso?: Date | string | null;
     esLujo?: boolean;
@@ -348,13 +357,15 @@ export type PrendaUncheckedCreateInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    tipoPrendaId: number;
+    color: string;
+    marca?: string | null;
+    talla: string;
+    tipoExpress?: $Enums.TipoExpress;
     servicios?: Prisma.PrendaServicioUncheckedCreateNestedManyWithoutPrendaInput;
 };
 export type PrendaUpdateInput = {
     codigoQR?: Prisma.StringFieldUpdateOperationsInput | string;
-    talla?: Prisma.StringFieldUpdateOperationsInput | string;
-    color?: Prisma.StringFieldUpdateOperationsInput | string;
-    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     estadoActual?: Prisma.EnumEstadoPrendaFieldUpdateOperationsInput | $Enums.EstadoPrenda;
     fechaCompromiso?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     esLujo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -363,6 +374,10 @@ export type PrendaUpdateInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    color?: Prisma.StringFieldUpdateOperationsInput | string;
+    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    talla?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoExpress?: Prisma.EnumTipoExpressFieldUpdateOperationsInput | $Enums.TipoExpress;
     factura?: Prisma.FacturaUpdateOneRequiredWithoutPrendasNestedInput;
     tipoPrenda?: Prisma.TipoPrendaUpdateOneRequiredWithoutPrendasNestedInput;
     usuarioTaller?: Prisma.UsuarioUpdateOneWithoutPrendasTallerNestedInput;
@@ -372,10 +387,6 @@ export type PrendaUncheckedUpdateInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     facturaId?: Prisma.IntFieldUpdateOperationsInput | number;
     codigoQR?: Prisma.StringFieldUpdateOperationsInput | string;
-    tipoPrendaId?: Prisma.IntFieldUpdateOperationsInput | number;
-    talla?: Prisma.StringFieldUpdateOperationsInput | string;
-    color?: Prisma.StringFieldUpdateOperationsInput | string;
-    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     estadoActual?: Prisma.EnumEstadoPrendaFieldUpdateOperationsInput | $Enums.EstadoPrenda;
     fechaCompromiso?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     esLujo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -385,16 +396,17 @@ export type PrendaUncheckedUpdateInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    tipoPrendaId?: Prisma.IntFieldUpdateOperationsInput | number;
+    color?: Prisma.StringFieldUpdateOperationsInput | string;
+    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    talla?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoExpress?: Prisma.EnumTipoExpressFieldUpdateOperationsInput | $Enums.TipoExpress;
     servicios?: Prisma.PrendaServicioUncheckedUpdateManyWithoutPrendaNestedInput;
 };
 export type PrendaCreateManyInput = {
     id?: number;
     facturaId: number;
     codigoQR: string;
-    tipoPrendaId: number;
-    talla: string;
-    color: string;
-    marca?: string | null;
     estadoActual?: $Enums.EstadoPrenda;
     fechaCompromiso?: Date | string | null;
     esLujo?: boolean;
@@ -404,12 +416,14 @@ export type PrendaCreateManyInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    tipoPrendaId: number;
+    color: string;
+    marca?: string | null;
+    talla: string;
+    tipoExpress?: $Enums.TipoExpress;
 };
 export type PrendaUpdateManyMutationInput = {
     codigoQR?: Prisma.StringFieldUpdateOperationsInput | string;
-    talla?: Prisma.StringFieldUpdateOperationsInput | string;
-    color?: Prisma.StringFieldUpdateOperationsInput | string;
-    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     estadoActual?: Prisma.EnumEstadoPrendaFieldUpdateOperationsInput | $Enums.EstadoPrenda;
     fechaCompromiso?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     esLujo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -418,15 +432,15 @@ export type PrendaUpdateManyMutationInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    color?: Prisma.StringFieldUpdateOperationsInput | string;
+    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    talla?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoExpress?: Prisma.EnumTipoExpressFieldUpdateOperationsInput | $Enums.TipoExpress;
 };
 export type PrendaUncheckedUpdateManyInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     facturaId?: Prisma.IntFieldUpdateOperationsInput | number;
     codigoQR?: Prisma.StringFieldUpdateOperationsInput | string;
-    tipoPrendaId?: Prisma.IntFieldUpdateOperationsInput | number;
-    talla?: Prisma.StringFieldUpdateOperationsInput | string;
-    color?: Prisma.StringFieldUpdateOperationsInput | string;
-    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     estadoActual?: Prisma.EnumEstadoPrendaFieldUpdateOperationsInput | $Enums.EstadoPrenda;
     fechaCompromiso?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     esLujo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -436,6 +450,11 @@ export type PrendaUncheckedUpdateManyInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    tipoPrendaId?: Prisma.IntFieldUpdateOperationsInput | number;
+    color?: Prisma.StringFieldUpdateOperationsInput | string;
+    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    talla?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoExpress?: Prisma.EnumTipoExpressFieldUpdateOperationsInput | $Enums.TipoExpress;
 };
 export type PrendaListRelationFilter = {
     every?: Prisma.PrendaWhereInput;
@@ -449,10 +468,6 @@ export type PrendaCountOrderByAggregateInput = {
     id?: Prisma.SortOrder;
     facturaId?: Prisma.SortOrder;
     codigoQR?: Prisma.SortOrder;
-    tipoPrendaId?: Prisma.SortOrder;
-    talla?: Prisma.SortOrder;
-    color?: Prisma.SortOrder;
-    marca?: Prisma.SortOrder;
     estadoActual?: Prisma.SortOrder;
     fechaCompromiso?: Prisma.SortOrder;
     esLujo?: Prisma.SortOrder;
@@ -462,21 +477,22 @@ export type PrendaCountOrderByAggregateInput = {
     notas?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
+    tipoPrendaId?: Prisma.SortOrder;
+    color?: Prisma.SortOrder;
+    marca?: Prisma.SortOrder;
+    talla?: Prisma.SortOrder;
+    tipoExpress?: Prisma.SortOrder;
 };
 export type PrendaAvgOrderByAggregateInput = {
     id?: Prisma.SortOrder;
     facturaId?: Prisma.SortOrder;
-    tipoPrendaId?: Prisma.SortOrder;
     usuarioTallerId?: Prisma.SortOrder;
+    tipoPrendaId?: Prisma.SortOrder;
 };
 export type PrendaMaxOrderByAggregateInput = {
     id?: Prisma.SortOrder;
     facturaId?: Prisma.SortOrder;
     codigoQR?: Prisma.SortOrder;
-    tipoPrendaId?: Prisma.SortOrder;
-    talla?: Prisma.SortOrder;
-    color?: Prisma.SortOrder;
-    marca?: Prisma.SortOrder;
     estadoActual?: Prisma.SortOrder;
     fechaCompromiso?: Prisma.SortOrder;
     esLujo?: Prisma.SortOrder;
@@ -486,15 +502,16 @@ export type PrendaMaxOrderByAggregateInput = {
     notas?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
+    tipoPrendaId?: Prisma.SortOrder;
+    color?: Prisma.SortOrder;
+    marca?: Prisma.SortOrder;
+    talla?: Prisma.SortOrder;
+    tipoExpress?: Prisma.SortOrder;
 };
 export type PrendaMinOrderByAggregateInput = {
     id?: Prisma.SortOrder;
     facturaId?: Prisma.SortOrder;
     codigoQR?: Prisma.SortOrder;
-    tipoPrendaId?: Prisma.SortOrder;
-    talla?: Prisma.SortOrder;
-    color?: Prisma.SortOrder;
-    marca?: Prisma.SortOrder;
     estadoActual?: Prisma.SortOrder;
     fechaCompromiso?: Prisma.SortOrder;
     esLujo?: Prisma.SortOrder;
@@ -504,12 +521,17 @@ export type PrendaMinOrderByAggregateInput = {
     notas?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
+    tipoPrendaId?: Prisma.SortOrder;
+    color?: Prisma.SortOrder;
+    marca?: Prisma.SortOrder;
+    talla?: Prisma.SortOrder;
+    tipoExpress?: Prisma.SortOrder;
 };
 export type PrendaSumOrderByAggregateInput = {
     id?: Prisma.SortOrder;
     facturaId?: Prisma.SortOrder;
-    tipoPrendaId?: Prisma.SortOrder;
     usuarioTallerId?: Prisma.SortOrder;
+    tipoPrendaId?: Prisma.SortOrder;
 };
 export type PrendaScalarRelationFilter = {
     is?: Prisma.PrendaWhereInput;
@@ -635,6 +657,9 @@ export type EnumEstadoPrendaFieldUpdateOperationsInput = {
 export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null;
 };
+export type EnumTipoExpressFieldUpdateOperationsInput = {
+    set?: $Enums.TipoExpress;
+};
 export type PrendaCreateNestedOneWithoutServiciosInput = {
     create?: Prisma.XOR<Prisma.PrendaCreateWithoutServiciosInput, Prisma.PrendaUncheckedCreateWithoutServiciosInput>;
     connectOrCreate?: Prisma.PrendaCreateOrConnectWithoutServiciosInput;
@@ -649,9 +674,6 @@ export type PrendaUpdateOneRequiredWithoutServiciosNestedInput = {
 };
 export type PrendaCreateWithoutUsuarioTallerInput = {
     codigoQR: string;
-    talla: string;
-    color: string;
-    marca?: string | null;
     estadoActual?: $Enums.EstadoPrenda;
     fechaCompromiso?: Date | string | null;
     esLujo?: boolean;
@@ -660,6 +682,10 @@ export type PrendaCreateWithoutUsuarioTallerInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    color: string;
+    marca?: string | null;
+    talla: string;
+    tipoExpress?: $Enums.TipoExpress;
     factura: Prisma.FacturaCreateNestedOneWithoutPrendasInput;
     tipoPrenda: Prisma.TipoPrendaCreateNestedOneWithoutPrendasInput;
     servicios?: Prisma.PrendaServicioCreateNestedManyWithoutPrendaInput;
@@ -668,10 +694,6 @@ export type PrendaUncheckedCreateWithoutUsuarioTallerInput = {
     id?: number;
     facturaId: number;
     codigoQR: string;
-    tipoPrendaId: number;
-    talla: string;
-    color: string;
-    marca?: string | null;
     estadoActual?: $Enums.EstadoPrenda;
     fechaCompromiso?: Date | string | null;
     esLujo?: boolean;
@@ -680,6 +702,11 @@ export type PrendaUncheckedCreateWithoutUsuarioTallerInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    tipoPrendaId: number;
+    color: string;
+    marca?: string | null;
+    talla: string;
+    tipoExpress?: $Enums.TipoExpress;
     servicios?: Prisma.PrendaServicioUncheckedCreateNestedManyWithoutPrendaInput;
 };
 export type PrendaCreateOrConnectWithoutUsuarioTallerInput = {
@@ -710,10 +737,6 @@ export type PrendaScalarWhereInput = {
     id?: Prisma.IntFilter<"Prenda"> | number;
     facturaId?: Prisma.IntFilter<"Prenda"> | number;
     codigoQR?: Prisma.StringFilter<"Prenda"> | string;
-    tipoPrendaId?: Prisma.IntFilter<"Prenda"> | number;
-    talla?: Prisma.StringFilter<"Prenda"> | string;
-    color?: Prisma.StringFilter<"Prenda"> | string;
-    marca?: Prisma.StringNullableFilter<"Prenda"> | string | null;
     estadoActual?: Prisma.EnumEstadoPrendaFilter<"Prenda"> | $Enums.EstadoPrenda;
     fechaCompromiso?: Prisma.DateTimeNullableFilter<"Prenda"> | Date | string | null;
     esLujo?: Prisma.BoolFilter<"Prenda"> | boolean;
@@ -723,12 +746,14 @@ export type PrendaScalarWhereInput = {
     notas?: Prisma.StringNullableFilter<"Prenda"> | string | null;
     createdAt?: Prisma.DateTimeFilter<"Prenda"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Prenda"> | Date | string;
+    tipoPrendaId?: Prisma.IntFilter<"Prenda"> | number;
+    color?: Prisma.StringFilter<"Prenda"> | string;
+    marca?: Prisma.StringNullableFilter<"Prenda"> | string | null;
+    talla?: Prisma.StringFilter<"Prenda"> | string;
+    tipoExpress?: Prisma.EnumTipoExpressFilter<"Prenda"> | $Enums.TipoExpress;
 };
 export type PrendaCreateWithoutFacturaInput = {
     codigoQR: string;
-    talla: string;
-    color: string;
-    marca?: string | null;
     estadoActual?: $Enums.EstadoPrenda;
     fechaCompromiso?: Date | string | null;
     esLujo?: boolean;
@@ -737,6 +762,10 @@ export type PrendaCreateWithoutFacturaInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    color: string;
+    marca?: string | null;
+    talla: string;
+    tipoExpress?: $Enums.TipoExpress;
     tipoPrenda: Prisma.TipoPrendaCreateNestedOneWithoutPrendasInput;
     usuarioTaller?: Prisma.UsuarioCreateNestedOneWithoutPrendasTallerInput;
     servicios?: Prisma.PrendaServicioCreateNestedManyWithoutPrendaInput;
@@ -744,10 +773,6 @@ export type PrendaCreateWithoutFacturaInput = {
 export type PrendaUncheckedCreateWithoutFacturaInput = {
     id?: number;
     codigoQR: string;
-    tipoPrendaId: number;
-    talla: string;
-    color: string;
-    marca?: string | null;
     estadoActual?: $Enums.EstadoPrenda;
     fechaCompromiso?: Date | string | null;
     esLujo?: boolean;
@@ -757,6 +782,11 @@ export type PrendaUncheckedCreateWithoutFacturaInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    tipoPrendaId: number;
+    color: string;
+    marca?: string | null;
+    talla: string;
+    tipoExpress?: $Enums.TipoExpress;
     servicios?: Prisma.PrendaServicioUncheckedCreateNestedManyWithoutPrendaInput;
 };
 export type PrendaCreateOrConnectWithoutFacturaInput = {
@@ -782,9 +812,6 @@ export type PrendaUpdateManyWithWhereWithoutFacturaInput = {
 };
 export type PrendaCreateWithoutTipoPrendaInput = {
     codigoQR: string;
-    talla: string;
-    color: string;
-    marca?: string | null;
     estadoActual?: $Enums.EstadoPrenda;
     fechaCompromiso?: Date | string | null;
     esLujo?: boolean;
@@ -793,6 +820,10 @@ export type PrendaCreateWithoutTipoPrendaInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    color: string;
+    marca?: string | null;
+    talla: string;
+    tipoExpress?: $Enums.TipoExpress;
     factura: Prisma.FacturaCreateNestedOneWithoutPrendasInput;
     usuarioTaller?: Prisma.UsuarioCreateNestedOneWithoutPrendasTallerInput;
     servicios?: Prisma.PrendaServicioCreateNestedManyWithoutPrendaInput;
@@ -801,9 +832,6 @@ export type PrendaUncheckedCreateWithoutTipoPrendaInput = {
     id?: number;
     facturaId: number;
     codigoQR: string;
-    talla: string;
-    color: string;
-    marca?: string | null;
     estadoActual?: $Enums.EstadoPrenda;
     fechaCompromiso?: Date | string | null;
     esLujo?: boolean;
@@ -813,6 +841,10 @@ export type PrendaUncheckedCreateWithoutTipoPrendaInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    color: string;
+    marca?: string | null;
+    talla: string;
+    tipoExpress?: $Enums.TipoExpress;
     servicios?: Prisma.PrendaServicioUncheckedCreateNestedManyWithoutPrendaInput;
 };
 export type PrendaCreateOrConnectWithoutTipoPrendaInput = {
@@ -838,9 +870,6 @@ export type PrendaUpdateManyWithWhereWithoutTipoPrendaInput = {
 };
 export type PrendaCreateWithoutServiciosInput = {
     codigoQR: string;
-    talla: string;
-    color: string;
-    marca?: string | null;
     estadoActual?: $Enums.EstadoPrenda;
     fechaCompromiso?: Date | string | null;
     esLujo?: boolean;
@@ -849,6 +878,10 @@ export type PrendaCreateWithoutServiciosInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    color: string;
+    marca?: string | null;
+    talla: string;
+    tipoExpress?: $Enums.TipoExpress;
     factura: Prisma.FacturaCreateNestedOneWithoutPrendasInput;
     tipoPrenda: Prisma.TipoPrendaCreateNestedOneWithoutPrendasInput;
     usuarioTaller?: Prisma.UsuarioCreateNestedOneWithoutPrendasTallerInput;
@@ -857,10 +890,6 @@ export type PrendaUncheckedCreateWithoutServiciosInput = {
     id?: number;
     facturaId: number;
     codigoQR: string;
-    tipoPrendaId: number;
-    talla: string;
-    color: string;
-    marca?: string | null;
     estadoActual?: $Enums.EstadoPrenda;
     fechaCompromiso?: Date | string | null;
     esLujo?: boolean;
@@ -870,6 +899,11 @@ export type PrendaUncheckedCreateWithoutServiciosInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    tipoPrendaId: number;
+    color: string;
+    marca?: string | null;
+    talla: string;
+    tipoExpress?: $Enums.TipoExpress;
 };
 export type PrendaCreateOrConnectWithoutServiciosInput = {
     where: Prisma.PrendaWhereUniqueInput;
@@ -886,9 +920,6 @@ export type PrendaUpdateToOneWithWhereWithoutServiciosInput = {
 };
 export type PrendaUpdateWithoutServiciosInput = {
     codigoQR?: Prisma.StringFieldUpdateOperationsInput | string;
-    talla?: Prisma.StringFieldUpdateOperationsInput | string;
-    color?: Prisma.StringFieldUpdateOperationsInput | string;
-    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     estadoActual?: Prisma.EnumEstadoPrendaFieldUpdateOperationsInput | $Enums.EstadoPrenda;
     fechaCompromiso?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     esLujo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -897,6 +928,10 @@ export type PrendaUpdateWithoutServiciosInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    color?: Prisma.StringFieldUpdateOperationsInput | string;
+    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    talla?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoExpress?: Prisma.EnumTipoExpressFieldUpdateOperationsInput | $Enums.TipoExpress;
     factura?: Prisma.FacturaUpdateOneRequiredWithoutPrendasNestedInput;
     tipoPrenda?: Prisma.TipoPrendaUpdateOneRequiredWithoutPrendasNestedInput;
     usuarioTaller?: Prisma.UsuarioUpdateOneWithoutPrendasTallerNestedInput;
@@ -905,10 +940,6 @@ export type PrendaUncheckedUpdateWithoutServiciosInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     facturaId?: Prisma.IntFieldUpdateOperationsInput | number;
     codigoQR?: Prisma.StringFieldUpdateOperationsInput | string;
-    tipoPrendaId?: Prisma.IntFieldUpdateOperationsInput | number;
-    talla?: Prisma.StringFieldUpdateOperationsInput | string;
-    color?: Prisma.StringFieldUpdateOperationsInput | string;
-    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     estadoActual?: Prisma.EnumEstadoPrendaFieldUpdateOperationsInput | $Enums.EstadoPrenda;
     fechaCompromiso?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     esLujo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -918,15 +949,16 @@ export type PrendaUncheckedUpdateWithoutServiciosInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    tipoPrendaId?: Prisma.IntFieldUpdateOperationsInput | number;
+    color?: Prisma.StringFieldUpdateOperationsInput | string;
+    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    talla?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoExpress?: Prisma.EnumTipoExpressFieldUpdateOperationsInput | $Enums.TipoExpress;
 };
 export type PrendaCreateManyUsuarioTallerInput = {
     id?: number;
     facturaId: number;
     codigoQR: string;
-    tipoPrendaId: number;
-    talla: string;
-    color: string;
-    marca?: string | null;
     estadoActual?: $Enums.EstadoPrenda;
     fechaCompromiso?: Date | string | null;
     esLujo?: boolean;
@@ -935,12 +967,14 @@ export type PrendaCreateManyUsuarioTallerInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    tipoPrendaId: number;
+    color: string;
+    marca?: string | null;
+    talla: string;
+    tipoExpress?: $Enums.TipoExpress;
 };
 export type PrendaUpdateWithoutUsuarioTallerInput = {
     codigoQR?: Prisma.StringFieldUpdateOperationsInput | string;
-    talla?: Prisma.StringFieldUpdateOperationsInput | string;
-    color?: Prisma.StringFieldUpdateOperationsInput | string;
-    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     estadoActual?: Prisma.EnumEstadoPrendaFieldUpdateOperationsInput | $Enums.EstadoPrenda;
     fechaCompromiso?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     esLujo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -949,6 +983,10 @@ export type PrendaUpdateWithoutUsuarioTallerInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    color?: Prisma.StringFieldUpdateOperationsInput | string;
+    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    talla?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoExpress?: Prisma.EnumTipoExpressFieldUpdateOperationsInput | $Enums.TipoExpress;
     factura?: Prisma.FacturaUpdateOneRequiredWithoutPrendasNestedInput;
     tipoPrenda?: Prisma.TipoPrendaUpdateOneRequiredWithoutPrendasNestedInput;
     servicios?: Prisma.PrendaServicioUpdateManyWithoutPrendaNestedInput;
@@ -957,10 +995,6 @@ export type PrendaUncheckedUpdateWithoutUsuarioTallerInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     facturaId?: Prisma.IntFieldUpdateOperationsInput | number;
     codigoQR?: Prisma.StringFieldUpdateOperationsInput | string;
-    tipoPrendaId?: Prisma.IntFieldUpdateOperationsInput | number;
-    talla?: Prisma.StringFieldUpdateOperationsInput | string;
-    color?: Prisma.StringFieldUpdateOperationsInput | string;
-    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     estadoActual?: Prisma.EnumEstadoPrendaFieldUpdateOperationsInput | $Enums.EstadoPrenda;
     fechaCompromiso?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     esLujo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -969,16 +1003,17 @@ export type PrendaUncheckedUpdateWithoutUsuarioTallerInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    tipoPrendaId?: Prisma.IntFieldUpdateOperationsInput | number;
+    color?: Prisma.StringFieldUpdateOperationsInput | string;
+    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    talla?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoExpress?: Prisma.EnumTipoExpressFieldUpdateOperationsInput | $Enums.TipoExpress;
     servicios?: Prisma.PrendaServicioUncheckedUpdateManyWithoutPrendaNestedInput;
 };
 export type PrendaUncheckedUpdateManyWithoutUsuarioTallerInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     facturaId?: Prisma.IntFieldUpdateOperationsInput | number;
     codigoQR?: Prisma.StringFieldUpdateOperationsInput | string;
-    tipoPrendaId?: Prisma.IntFieldUpdateOperationsInput | number;
-    talla?: Prisma.StringFieldUpdateOperationsInput | string;
-    color?: Prisma.StringFieldUpdateOperationsInput | string;
-    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     estadoActual?: Prisma.EnumEstadoPrendaFieldUpdateOperationsInput | $Enums.EstadoPrenda;
     fechaCompromiso?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     esLujo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -987,14 +1022,15 @@ export type PrendaUncheckedUpdateManyWithoutUsuarioTallerInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    tipoPrendaId?: Prisma.IntFieldUpdateOperationsInput | number;
+    color?: Prisma.StringFieldUpdateOperationsInput | string;
+    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    talla?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoExpress?: Prisma.EnumTipoExpressFieldUpdateOperationsInput | $Enums.TipoExpress;
 };
 export type PrendaCreateManyFacturaInput = {
     id?: number;
     codigoQR: string;
-    tipoPrendaId: number;
-    talla: string;
-    color: string;
-    marca?: string | null;
     estadoActual?: $Enums.EstadoPrenda;
     fechaCompromiso?: Date | string | null;
     esLujo?: boolean;
@@ -1004,12 +1040,14 @@ export type PrendaCreateManyFacturaInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    tipoPrendaId: number;
+    color: string;
+    marca?: string | null;
+    talla: string;
+    tipoExpress?: $Enums.TipoExpress;
 };
 export type PrendaUpdateWithoutFacturaInput = {
     codigoQR?: Prisma.StringFieldUpdateOperationsInput | string;
-    talla?: Prisma.StringFieldUpdateOperationsInput | string;
-    color?: Prisma.StringFieldUpdateOperationsInput | string;
-    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     estadoActual?: Prisma.EnumEstadoPrendaFieldUpdateOperationsInput | $Enums.EstadoPrenda;
     fechaCompromiso?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     esLujo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -1018,6 +1056,10 @@ export type PrendaUpdateWithoutFacturaInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    color?: Prisma.StringFieldUpdateOperationsInput | string;
+    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    talla?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoExpress?: Prisma.EnumTipoExpressFieldUpdateOperationsInput | $Enums.TipoExpress;
     tipoPrenda?: Prisma.TipoPrendaUpdateOneRequiredWithoutPrendasNestedInput;
     usuarioTaller?: Prisma.UsuarioUpdateOneWithoutPrendasTallerNestedInput;
     servicios?: Prisma.PrendaServicioUpdateManyWithoutPrendaNestedInput;
@@ -1025,10 +1067,6 @@ export type PrendaUpdateWithoutFacturaInput = {
 export type PrendaUncheckedUpdateWithoutFacturaInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     codigoQR?: Prisma.StringFieldUpdateOperationsInput | string;
-    tipoPrendaId?: Prisma.IntFieldUpdateOperationsInput | number;
-    talla?: Prisma.StringFieldUpdateOperationsInput | string;
-    color?: Prisma.StringFieldUpdateOperationsInput | string;
-    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     estadoActual?: Prisma.EnumEstadoPrendaFieldUpdateOperationsInput | $Enums.EstadoPrenda;
     fechaCompromiso?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     esLujo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -1038,15 +1076,16 @@ export type PrendaUncheckedUpdateWithoutFacturaInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    tipoPrendaId?: Prisma.IntFieldUpdateOperationsInput | number;
+    color?: Prisma.StringFieldUpdateOperationsInput | string;
+    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    talla?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoExpress?: Prisma.EnumTipoExpressFieldUpdateOperationsInput | $Enums.TipoExpress;
     servicios?: Prisma.PrendaServicioUncheckedUpdateManyWithoutPrendaNestedInput;
 };
 export type PrendaUncheckedUpdateManyWithoutFacturaInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     codigoQR?: Prisma.StringFieldUpdateOperationsInput | string;
-    tipoPrendaId?: Prisma.IntFieldUpdateOperationsInput | number;
-    talla?: Prisma.StringFieldUpdateOperationsInput | string;
-    color?: Prisma.StringFieldUpdateOperationsInput | string;
-    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     estadoActual?: Prisma.EnumEstadoPrendaFieldUpdateOperationsInput | $Enums.EstadoPrenda;
     fechaCompromiso?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     esLujo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -1056,14 +1095,16 @@ export type PrendaUncheckedUpdateManyWithoutFacturaInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    tipoPrendaId?: Prisma.IntFieldUpdateOperationsInput | number;
+    color?: Prisma.StringFieldUpdateOperationsInput | string;
+    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    talla?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoExpress?: Prisma.EnumTipoExpressFieldUpdateOperationsInput | $Enums.TipoExpress;
 };
 export type PrendaCreateManyTipoPrendaInput = {
     id?: number;
     facturaId: number;
     codigoQR: string;
-    talla: string;
-    color: string;
-    marca?: string | null;
     estadoActual?: $Enums.EstadoPrenda;
     fechaCompromiso?: Date | string | null;
     esLujo?: boolean;
@@ -1073,12 +1114,13 @@ export type PrendaCreateManyTipoPrendaInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    color: string;
+    marca?: string | null;
+    talla: string;
+    tipoExpress?: $Enums.TipoExpress;
 };
 export type PrendaUpdateWithoutTipoPrendaInput = {
     codigoQR?: Prisma.StringFieldUpdateOperationsInput | string;
-    talla?: Prisma.StringFieldUpdateOperationsInput | string;
-    color?: Prisma.StringFieldUpdateOperationsInput | string;
-    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     estadoActual?: Prisma.EnumEstadoPrendaFieldUpdateOperationsInput | $Enums.EstadoPrenda;
     fechaCompromiso?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     esLujo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -1087,6 +1129,10 @@ export type PrendaUpdateWithoutTipoPrendaInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    color?: Prisma.StringFieldUpdateOperationsInput | string;
+    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    talla?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoExpress?: Prisma.EnumTipoExpressFieldUpdateOperationsInput | $Enums.TipoExpress;
     factura?: Prisma.FacturaUpdateOneRequiredWithoutPrendasNestedInput;
     usuarioTaller?: Prisma.UsuarioUpdateOneWithoutPrendasTallerNestedInput;
     servicios?: Prisma.PrendaServicioUpdateManyWithoutPrendaNestedInput;
@@ -1095,9 +1141,6 @@ export type PrendaUncheckedUpdateWithoutTipoPrendaInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     facturaId?: Prisma.IntFieldUpdateOperationsInput | number;
     codigoQR?: Prisma.StringFieldUpdateOperationsInput | string;
-    talla?: Prisma.StringFieldUpdateOperationsInput | string;
-    color?: Prisma.StringFieldUpdateOperationsInput | string;
-    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     estadoActual?: Prisma.EnumEstadoPrendaFieldUpdateOperationsInput | $Enums.EstadoPrenda;
     fechaCompromiso?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     esLujo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -1107,15 +1150,16 @@ export type PrendaUncheckedUpdateWithoutTipoPrendaInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    color?: Prisma.StringFieldUpdateOperationsInput | string;
+    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    talla?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoExpress?: Prisma.EnumTipoExpressFieldUpdateOperationsInput | $Enums.TipoExpress;
     servicios?: Prisma.PrendaServicioUncheckedUpdateManyWithoutPrendaNestedInput;
 };
 export type PrendaUncheckedUpdateManyWithoutTipoPrendaInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     facturaId?: Prisma.IntFieldUpdateOperationsInput | number;
     codigoQR?: Prisma.StringFieldUpdateOperationsInput | string;
-    talla?: Prisma.StringFieldUpdateOperationsInput | string;
-    color?: Prisma.StringFieldUpdateOperationsInput | string;
-    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     estadoActual?: Prisma.EnumEstadoPrendaFieldUpdateOperationsInput | $Enums.EstadoPrenda;
     fechaCompromiso?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     esLujo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -1125,6 +1169,10 @@ export type PrendaUncheckedUpdateManyWithoutTipoPrendaInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    color?: Prisma.StringFieldUpdateOperationsInput | string;
+    marca?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    talla?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoExpress?: Prisma.EnumTipoExpressFieldUpdateOperationsInput | $Enums.TipoExpress;
 };
 export type PrendaCountOutputType = {
     servicios: number;
@@ -1142,10 +1190,6 @@ export type PrendaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     id?: boolean;
     facturaId?: boolean;
     codigoQR?: boolean;
-    tipoPrendaId?: boolean;
-    talla?: boolean;
-    color?: boolean;
-    marca?: boolean;
     estadoActual?: boolean;
     fechaCompromiso?: boolean;
     esLujo?: boolean;
@@ -1155,6 +1199,11 @@ export type PrendaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     notas?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
+    tipoPrendaId?: boolean;
+    color?: boolean;
+    marca?: boolean;
+    talla?: boolean;
+    tipoExpress?: boolean;
     factura?: boolean | Prisma.FacturaDefaultArgs<ExtArgs>;
     tipoPrenda?: boolean | Prisma.TipoPrendaDefaultArgs<ExtArgs>;
     usuarioTaller?: boolean | Prisma.Prenda$usuarioTallerArgs<ExtArgs>;
@@ -1165,10 +1214,6 @@ export type PrendaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
     id?: boolean;
     facturaId?: boolean;
     codigoQR?: boolean;
-    tipoPrendaId?: boolean;
-    talla?: boolean;
-    color?: boolean;
-    marca?: boolean;
     estadoActual?: boolean;
     fechaCompromiso?: boolean;
     esLujo?: boolean;
@@ -1178,6 +1223,11 @@ export type PrendaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
     notas?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
+    tipoPrendaId?: boolean;
+    color?: boolean;
+    marca?: boolean;
+    talla?: boolean;
+    tipoExpress?: boolean;
     factura?: boolean | Prisma.FacturaDefaultArgs<ExtArgs>;
     tipoPrenda?: boolean | Prisma.TipoPrendaDefaultArgs<ExtArgs>;
     usuarioTaller?: boolean | Prisma.Prenda$usuarioTallerArgs<ExtArgs>;
@@ -1186,10 +1236,6 @@ export type PrendaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
     id?: boolean;
     facturaId?: boolean;
     codigoQR?: boolean;
-    tipoPrendaId?: boolean;
-    talla?: boolean;
-    color?: boolean;
-    marca?: boolean;
     estadoActual?: boolean;
     fechaCompromiso?: boolean;
     esLujo?: boolean;
@@ -1199,6 +1245,11 @@ export type PrendaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
     notas?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
+    tipoPrendaId?: boolean;
+    color?: boolean;
+    marca?: boolean;
+    talla?: boolean;
+    tipoExpress?: boolean;
     factura?: boolean | Prisma.FacturaDefaultArgs<ExtArgs>;
     tipoPrenda?: boolean | Prisma.TipoPrendaDefaultArgs<ExtArgs>;
     usuarioTaller?: boolean | Prisma.Prenda$usuarioTallerArgs<ExtArgs>;
@@ -1207,10 +1258,6 @@ export type PrendaSelectScalar = {
     id?: boolean;
     facturaId?: boolean;
     codigoQR?: boolean;
-    tipoPrendaId?: boolean;
-    talla?: boolean;
-    color?: boolean;
-    marca?: boolean;
     estadoActual?: boolean;
     fechaCompromiso?: boolean;
     esLujo?: boolean;
@@ -1220,8 +1267,13 @@ export type PrendaSelectScalar = {
     notas?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
+    tipoPrendaId?: boolean;
+    color?: boolean;
+    marca?: boolean;
+    talla?: boolean;
+    tipoExpress?: boolean;
 };
-export type PrendaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "facturaId" | "codigoQR" | "tipoPrendaId" | "talla" | "color" | "marca" | "estadoActual" | "fechaCompromiso" | "esLujo" | "fotoUrl" | "usuarioTallerId" | "fechaUltimaNotificacion" | "notas" | "createdAt" | "updatedAt", ExtArgs["result"]["prenda"]>;
+export type PrendaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "facturaId" | "codigoQR" | "estadoActual" | "fechaCompromiso" | "esLujo" | "fotoUrl" | "usuarioTallerId" | "fechaUltimaNotificacion" | "notas" | "createdAt" | "updatedAt" | "tipoPrendaId" | "color" | "marca" | "talla" | "tipoExpress", ExtArgs["result"]["prenda"]>;
 export type PrendaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     factura?: boolean | Prisma.FacturaDefaultArgs<ExtArgs>;
     tipoPrenda?: boolean | Prisma.TipoPrendaDefaultArgs<ExtArgs>;
@@ -1251,10 +1303,6 @@ export type $PrendaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
         id: number;
         facturaId: number;
         codigoQR: string;
-        tipoPrendaId: number;
-        talla: string;
-        color: string;
-        marca: string | null;
         estadoActual: $Enums.EstadoPrenda;
         fechaCompromiso: Date | null;
         esLujo: boolean;
@@ -1264,6 +1312,11 @@ export type $PrendaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
         notas: string | null;
         createdAt: Date;
         updatedAt: Date;
+        tipoPrendaId: number;
+        color: string;
+        marca: string | null;
+        talla: string;
+        tipoExpress: $Enums.TipoExpress;
     }, ExtArgs["result"]["prenda"]>;
     composites: {};
 };
@@ -1328,10 +1381,6 @@ export interface PrendaFieldRefs {
     readonly id: Prisma.FieldRef<"Prenda", 'Int'>;
     readonly facturaId: Prisma.FieldRef<"Prenda", 'Int'>;
     readonly codigoQR: Prisma.FieldRef<"Prenda", 'String'>;
-    readonly tipoPrendaId: Prisma.FieldRef<"Prenda", 'Int'>;
-    readonly talla: Prisma.FieldRef<"Prenda", 'String'>;
-    readonly color: Prisma.FieldRef<"Prenda", 'String'>;
-    readonly marca: Prisma.FieldRef<"Prenda", 'String'>;
     readonly estadoActual: Prisma.FieldRef<"Prenda", 'EstadoPrenda'>;
     readonly fechaCompromiso: Prisma.FieldRef<"Prenda", 'DateTime'>;
     readonly esLujo: Prisma.FieldRef<"Prenda", 'Boolean'>;
@@ -1341,6 +1390,11 @@ export interface PrendaFieldRefs {
     readonly notas: Prisma.FieldRef<"Prenda", 'String'>;
     readonly createdAt: Prisma.FieldRef<"Prenda", 'DateTime'>;
     readonly updatedAt: Prisma.FieldRef<"Prenda", 'DateTime'>;
+    readonly tipoPrendaId: Prisma.FieldRef<"Prenda", 'Int'>;
+    readonly color: Prisma.FieldRef<"Prenda", 'String'>;
+    readonly marca: Prisma.FieldRef<"Prenda", 'String'>;
+    readonly talla: Prisma.FieldRef<"Prenda", 'String'>;
+    readonly tipoExpress: Prisma.FieldRef<"Prenda", 'TipoExpress'>;
 }
 export type PrendaFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.PrendaSelect<ExtArgs> | null;

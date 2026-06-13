@@ -10,4 +10,32 @@ export declare class UsuarioService {
     updateUsuario(id: number, dto: UpdateUsuarioDto): Promise<UsuarioResponseDto>;
     deleteUsuario(id: number): Promise<UsuarioResponseDto>;
     registrarJornada(usuarioId: number, tipo: TipoJornada): Promise<RegistroJornada>;
+    getAuditLogs(): Promise<({
+        usuario: {
+            nombre: string;
+            rol: import("../../../generated/prisma/enums").Rol;
+        } | null;
+    } & {
+        id: number;
+        usuarioId: number | null;
+        timestamp: Date;
+        accion: import("../../../generated/prisma/enums").AccionAuditoria;
+        entidadAfectada: string;
+        entidadId: number | null;
+        valorAnterior: import("@prisma/client/runtime/client").JsonValue | null;
+        valorNuevo: import("@prisma/client/runtime/client").JsonValue | null;
+        leido: boolean;
+    })[]>;
+    markAllAuditLogsAsRead(): Promise<import("../../../generated/prisma/internal/prismaNamespace").BatchPayload>;
+    markAuditLogAsRead(id: number): Promise<{
+        id: number;
+        usuarioId: number | null;
+        timestamp: Date;
+        accion: import("../../../generated/prisma/enums").AccionAuditoria;
+        entidadAfectada: string;
+        entidadId: number | null;
+        valorAnterior: import("@prisma/client/runtime/client").JsonValue | null;
+        valorNuevo: import("@prisma/client/runtime/client").JsonValue | null;
+        leido: boolean;
+    }>;
 }

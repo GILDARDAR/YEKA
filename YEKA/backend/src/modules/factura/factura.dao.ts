@@ -13,7 +13,7 @@ export class FacturaDAO {
         ...(estadoPago ? { estadoPago } : {}),
       },
       orderBy: { createdAt: 'desc' },
-      include: { cliente: true },
+      include: { cliente: true, abonos: true },
     });
   }
 
@@ -25,6 +25,7 @@ export class FacturaDAO {
         abonos: true,
         prendas: {
           include: {
+            tipoPrenda: true,
             servicios: {
               include: {
                 servicio: true,

@@ -163,4 +163,16 @@ export class UsuarioFacade {
     }
     return bcrypt.compare(pin, user.pinAcceso);
   }
+
+  async getAuditLogs() {
+    return this.usuarioDAO.getAuditLogs();
+  }
+
+  async markAllAuditLogsAsRead() {
+    return this.usuarioDAO.markAllAuditLogsAsRead();
+  }
+
+  async markAuditLogAsRead(id: number) {
+    return this.usuarioDAO.markAuditLogAsRead(id);
+  }
 }

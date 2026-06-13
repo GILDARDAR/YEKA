@@ -45,6 +45,8 @@ export declare class PrendaResponseDto {
     notas: string | null;
     createdAt: Date;
     updatedAt: Date;
+    tipoExpress: TipoExpress;
+    factura?: any;
 }
 export declare class PrendaServicioResponseDto {
     id: number;

@@ -136,8 +136,8 @@ export type CatalogoServicioWhereInput = {
     activo?: Prisma.BoolFilter<"CatalogoServicio"> | boolean;
     createdAt?: Prisma.DateTimeFilter<"CatalogoServicio"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"CatalogoServicio"> | Date | string;
-    asignaciones?: Prisma.PrendaServicioListRelationFilter;
     preciosServicios?: Prisma.PrecioServicioListRelationFilter;
+    asignaciones?: Prisma.PrendaServicioListRelationFilter;
 };
 export type CatalogoServicioOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
@@ -147,8 +147,8 @@ export type CatalogoServicioOrderByWithRelationInput = {
     activo?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
-    asignaciones?: Prisma.PrendaServicioOrderByRelationAggregateInput;
     preciosServicios?: Prisma.PrecioServicioOrderByRelationAggregateInput;
+    asignaciones?: Prisma.PrendaServicioOrderByRelationAggregateInput;
 };
 export type CatalogoServicioWhereUniqueInput = Prisma.AtLeast<{
     id?: number;
@@ -161,8 +161,8 @@ export type CatalogoServicioWhereUniqueInput = Prisma.AtLeast<{
     activo?: Prisma.BoolFilter<"CatalogoServicio"> | boolean;
     createdAt?: Prisma.DateTimeFilter<"CatalogoServicio"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"CatalogoServicio"> | Date | string;
-    asignaciones?: Prisma.PrendaServicioListRelationFilter;
     preciosServicios?: Prisma.PrecioServicioListRelationFilter;
+    asignaciones?: Prisma.PrendaServicioListRelationFilter;
 }, "id">;
 export type CatalogoServicioOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
@@ -197,8 +197,8 @@ export type CatalogoServicioCreateInput = {
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    asignaciones?: Prisma.PrendaServicioCreateNestedManyWithoutServicioInput;
     preciosServicios?: Prisma.PrecioServicioCreateNestedManyWithoutCatalogoServicioInput;
+    asignaciones?: Prisma.PrendaServicioCreateNestedManyWithoutServicioInput;
 };
 export type CatalogoServicioUncheckedCreateInput = {
     id?: number;
@@ -208,8 +208,8 @@ export type CatalogoServicioUncheckedCreateInput = {
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    asignaciones?: Prisma.PrendaServicioUncheckedCreateNestedManyWithoutServicioInput;
     preciosServicios?: Prisma.PrecioServicioUncheckedCreateNestedManyWithoutCatalogoServicioInput;
+    asignaciones?: Prisma.PrendaServicioUncheckedCreateNestedManyWithoutServicioInput;
 };
 export type CatalogoServicioUpdateInput = {
     categoria?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -218,8 +218,8 @@ export type CatalogoServicioUpdateInput = {
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    asignaciones?: Prisma.PrendaServicioUpdateManyWithoutServicioNestedInput;
     preciosServicios?: Prisma.PrecioServicioUpdateManyWithoutCatalogoServicioNestedInput;
+    asignaciones?: Prisma.PrendaServicioUpdateManyWithoutServicioNestedInput;
 };
 export type CatalogoServicioUncheckedUpdateInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -229,8 +229,8 @@ export type CatalogoServicioUncheckedUpdateInput = {
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    asignaciones?: Prisma.PrendaServicioUncheckedUpdateManyWithoutServicioNestedInput;
     preciosServicios?: Prisma.PrecioServicioUncheckedUpdateManyWithoutCatalogoServicioNestedInput;
+    asignaciones?: Prisma.PrendaServicioUncheckedUpdateManyWithoutServicioNestedInput;
 };
 export type CatalogoServicioCreateManyInput = {
     id?: number;
@@ -424,21 +424,21 @@ export type CatalogoServicioUncheckedUpdateWithoutAsignacionesInput = {
     preciosServicios?: Prisma.PrecioServicioUncheckedUpdateManyWithoutCatalogoServicioNestedInput;
 };
 export type CatalogoServicioCountOutputType = {
-    asignaciones: number;
     preciosServicios: number;
+    asignaciones: number;
 };
 export type CatalogoServicioCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    asignaciones?: boolean | CatalogoServicioCountOutputTypeCountAsignacionesArgs;
     preciosServicios?: boolean | CatalogoServicioCountOutputTypeCountPreciosServiciosArgs;
+    asignaciones?: boolean | CatalogoServicioCountOutputTypeCountAsignacionesArgs;
 };
 export type CatalogoServicioCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.CatalogoServicioCountOutputTypeSelect<ExtArgs> | null;
 };
-export type CatalogoServicioCountOutputTypeCountAsignacionesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    where?: Prisma.PrendaServicioWhereInput;
-};
 export type CatalogoServicioCountOutputTypeCountPreciosServiciosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.PrecioServicioWhereInput;
+};
+export type CatalogoServicioCountOutputTypeCountAsignacionesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.PrendaServicioWhereInput;
 };
 export type CatalogoServicioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -448,8 +448,8 @@ export type CatalogoServicioSelect<ExtArgs extends runtime.Types.Extensions.Inte
     activo?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    asignaciones?: boolean | Prisma.CatalogoServicio$asignacionesArgs<ExtArgs>;
     preciosServicios?: boolean | Prisma.CatalogoServicio$preciosServiciosArgs<ExtArgs>;
+    asignaciones?: boolean | Prisma.CatalogoServicio$asignacionesArgs<ExtArgs>;
     _count?: boolean | Prisma.CatalogoServicioCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["catalogoServicio"]>;
 export type CatalogoServicioSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -481,8 +481,8 @@ export type CatalogoServicioSelectScalar = {
 };
 export type CatalogoServicioOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "categoria" | "tipoEspecifico" | "pesoPuntos" | "activo" | "createdAt" | "updatedAt", ExtArgs["result"]["catalogoServicio"]>;
 export type CatalogoServicioInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    asignaciones?: boolean | Prisma.CatalogoServicio$asignacionesArgs<ExtArgs>;
     preciosServicios?: boolean | Prisma.CatalogoServicio$preciosServiciosArgs<ExtArgs>;
+    asignaciones?: boolean | Prisma.CatalogoServicio$asignacionesArgs<ExtArgs>;
     _count?: boolean | Prisma.CatalogoServicioCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type CatalogoServicioIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {};
@@ -490,8 +490,8 @@ export type CatalogoServicioIncludeUpdateManyAndReturn<ExtArgs extends runtime.T
 export type $CatalogoServicioPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     name: "CatalogoServicio";
     objects: {
-        asignaciones: Prisma.$PrendaServicioPayload<ExtArgs>[];
         preciosServicios: Prisma.$PrecioServicioPayload<ExtArgs>[];
+        asignaciones: Prisma.$PrendaServicioPayload<ExtArgs>[];
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: number;
@@ -553,8 +553,8 @@ export interface CatalogoServicioDelegate<ExtArgs extends runtime.Types.Extensio
 }
 export interface Prisma__CatalogoServicioClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise";
-    asignaciones<T extends Prisma.CatalogoServicio$asignacionesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CatalogoServicio$asignacionesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrendaServicioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     preciosServicios<T extends Prisma.CatalogoServicio$preciosServiciosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CatalogoServicio$preciosServiciosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrecioServicioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    asignaciones<T extends Prisma.CatalogoServicio$asignacionesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CatalogoServicio$asignacionesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrendaServicioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): runtime.Types.Utils.JsPromise<TResult1 | TResult2>;
     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): runtime.Types.Utils.JsPromise<T | TResult>;
     finally(onfinally?: (() => void) | undefined | null): runtime.Types.Utils.JsPromise<T>;
@@ -666,17 +666,6 @@ export type CatalogoServicioDeleteManyArgs<ExtArgs extends runtime.Types.Extensi
     where?: Prisma.CatalogoServicioWhereInput;
     limit?: number;
 };
-export type CatalogoServicio$asignacionesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    select?: Prisma.PrendaServicioSelect<ExtArgs> | null;
-    omit?: Prisma.PrendaServicioOmit<ExtArgs> | null;
-    include?: Prisma.PrendaServicioInclude<ExtArgs> | null;
-    where?: Prisma.PrendaServicioWhereInput;
-    orderBy?: Prisma.PrendaServicioOrderByWithRelationInput | Prisma.PrendaServicioOrderByWithRelationInput[];
-    cursor?: Prisma.PrendaServicioWhereUniqueInput;
-    take?: number;
-    skip?: number;
-    distinct?: Prisma.PrendaServicioScalarFieldEnum | Prisma.PrendaServicioScalarFieldEnum[];
-};
 export type CatalogoServicio$preciosServiciosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.PrecioServicioSelect<ExtArgs> | null;
     omit?: Prisma.PrecioServicioOmit<ExtArgs> | null;
@@ -687,6 +676,17 @@ export type CatalogoServicio$preciosServiciosArgs<ExtArgs extends runtime.Types.
     take?: number;
     skip?: number;
     distinct?: Prisma.PrecioServicioScalarFieldEnum | Prisma.PrecioServicioScalarFieldEnum[];
+};
+export type CatalogoServicio$asignacionesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.PrendaServicioSelect<ExtArgs> | null;
+    omit?: Prisma.PrendaServicioOmit<ExtArgs> | null;
+    include?: Prisma.PrendaServicioInclude<ExtArgs> | null;
+    where?: Prisma.PrendaServicioWhereInput;
+    orderBy?: Prisma.PrendaServicioOrderByWithRelationInput | Prisma.PrendaServicioOrderByWithRelationInput[];
+    cursor?: Prisma.PrendaServicioWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.PrendaServicioScalarFieldEnum | Prisma.PrendaServicioScalarFieldEnum[];
 };
 export type CatalogoServicioDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.CatalogoServicioSelect<ExtArgs> | null;

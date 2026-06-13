@@ -11,6 +11,7 @@ export declare class AuthController {
             email: string;
             nombre: string;
             rol: import("../../generated/prisma/enums").Rol;
+            sedeId: number;
         };
     }>;
     login(dto: LoginDto): Promise<{
@@ -21,6 +22,7 @@ export declare class AuthController {
             email: string;
             nombre: string;
             rol: import("../../generated/prisma/enums").Rol;
+            sedeId: number;
         };
     }>;
     getProfile(req: any): any;

@@ -289,6 +289,12 @@ export type DateTimeNullableFilter<$PrismaModel = never> = {
     gte?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>;
     not?: Prisma.NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null;
 };
+export type EnumTipoExpressFilter<$PrismaModel = never> = {
+    equals?: $Enums.TipoExpress | Prisma.EnumTipoExpressFieldRefInput<$PrismaModel>;
+    in?: $Enums.TipoExpress[] | Prisma.ListEnumTipoExpressFieldRefInput<$PrismaModel>;
+    notIn?: $Enums.TipoExpress[] | Prisma.ListEnumTipoExpressFieldRefInput<$PrismaModel>;
+    not?: Prisma.NestedEnumTipoExpressFilter<$PrismaModel> | $Enums.TipoExpress;
+};
 export type EnumEstadoPrendaWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.EstadoPrenda | Prisma.EnumEstadoPrendaFieldRefInput<$PrismaModel>;
     in?: $Enums.EstadoPrenda[] | Prisma.ListEnumEstadoPrendaFieldRefInput<$PrismaModel>;
@@ -311,6 +317,15 @@ export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     _min?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>;
     _max?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>;
 };
+export type EnumTipoExpressWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TipoExpress | Prisma.EnumTipoExpressFieldRefInput<$PrismaModel>;
+    in?: $Enums.TipoExpress[] | Prisma.ListEnumTipoExpressFieldRefInput<$PrismaModel>;
+    notIn?: $Enums.TipoExpress[] | Prisma.ListEnumTipoExpressFieldRefInput<$PrismaModel>;
+    not?: Prisma.NestedEnumTipoExpressWithAggregatesFilter<$PrismaModel> | $Enums.TipoExpress;
+    _count?: Prisma.NestedIntFilter<$PrismaModel>;
+    _min?: Prisma.NestedEnumTipoExpressFilter<$PrismaModel>;
+    _max?: Prisma.NestedEnumTipoExpressFilter<$PrismaModel>;
+};
 export type DecimalNullableFilter<$PrismaModel = never> = {
     equals?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel> | null;
     in?: runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[] | Prisma.ListDecimalFieldRefInput<$PrismaModel> | null;
@@ -320,12 +335,6 @@ export type DecimalNullableFilter<$PrismaModel = never> = {
     gt?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>;
     gte?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>;
     not?: Prisma.NestedDecimalNullableFilter<$PrismaModel> | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
-};
-export type EnumTipoExpressFilter<$PrismaModel = never> = {
-    equals?: $Enums.TipoExpress | Prisma.EnumTipoExpressFieldRefInput<$PrismaModel>;
-    in?: $Enums.TipoExpress[] | Prisma.ListEnumTipoExpressFieldRefInput<$PrismaModel>;
-    notIn?: $Enums.TipoExpress[] | Prisma.ListEnumTipoExpressFieldRefInput<$PrismaModel>;
-    not?: Prisma.NestedEnumTipoExpressFilter<$PrismaModel> | $Enums.TipoExpress;
 };
 export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel> | null;
@@ -341,15 +350,6 @@ export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
     _sum?: Prisma.NestedDecimalNullableFilter<$PrismaModel>;
     _min?: Prisma.NestedDecimalNullableFilter<$PrismaModel>;
     _max?: Prisma.NestedDecimalNullableFilter<$PrismaModel>;
-};
-export type EnumTipoExpressWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.TipoExpress | Prisma.EnumTipoExpressFieldRefInput<$PrismaModel>;
-    in?: $Enums.TipoExpress[] | Prisma.ListEnumTipoExpressFieldRefInput<$PrismaModel>;
-    notIn?: $Enums.TipoExpress[] | Prisma.ListEnumTipoExpressFieldRefInput<$PrismaModel>;
-    not?: Prisma.NestedEnumTipoExpressWithAggregatesFilter<$PrismaModel> | $Enums.TipoExpress;
-    _count?: Prisma.NestedIntFilter<$PrismaModel>;
-    _min?: Prisma.NestedEnumTipoExpressFilter<$PrismaModel>;
-    _max?: Prisma.NestedEnumTipoExpressFilter<$PrismaModel>;
 };
 export type EnumAccionAuditoriaFilter<$PrismaModel = never> = {
     equals?: $Enums.AccionAuditoria | Prisma.EnumAccionAuditoriaFieldRefInput<$PrismaModel>;
@@ -646,6 +646,12 @@ export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
     gte?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>;
     not?: Prisma.NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null;
 };
+export type NestedEnumTipoExpressFilter<$PrismaModel = never> = {
+    equals?: $Enums.TipoExpress | Prisma.EnumTipoExpressFieldRefInput<$PrismaModel>;
+    in?: $Enums.TipoExpress[] | Prisma.ListEnumTipoExpressFieldRefInput<$PrismaModel>;
+    notIn?: $Enums.TipoExpress[] | Prisma.ListEnumTipoExpressFieldRefInput<$PrismaModel>;
+    not?: Prisma.NestedEnumTipoExpressFilter<$PrismaModel> | $Enums.TipoExpress;
+};
 export type NestedEnumEstadoPrendaWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.EstadoPrenda | Prisma.EnumEstadoPrendaFieldRefInput<$PrismaModel>;
     in?: $Enums.EstadoPrenda[] | Prisma.ListEnumEstadoPrendaFieldRefInput<$PrismaModel>;
@@ -668,6 +674,15 @@ export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     _min?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>;
     _max?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>;
 };
+export type NestedEnumTipoExpressWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TipoExpress | Prisma.EnumTipoExpressFieldRefInput<$PrismaModel>;
+    in?: $Enums.TipoExpress[] | Prisma.ListEnumTipoExpressFieldRefInput<$PrismaModel>;
+    notIn?: $Enums.TipoExpress[] | Prisma.ListEnumTipoExpressFieldRefInput<$PrismaModel>;
+    not?: Prisma.NestedEnumTipoExpressWithAggregatesFilter<$PrismaModel> | $Enums.TipoExpress;
+    _count?: Prisma.NestedIntFilter<$PrismaModel>;
+    _min?: Prisma.NestedEnumTipoExpressFilter<$PrismaModel>;
+    _max?: Prisma.NestedEnumTipoExpressFilter<$PrismaModel>;
+};
 export type NestedDecimalNullableFilter<$PrismaModel = never> = {
     equals?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel> | null;
     in?: runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[] | Prisma.ListDecimalFieldRefInput<$PrismaModel> | null;
@@ -677,12 +692,6 @@ export type NestedDecimalNullableFilter<$PrismaModel = never> = {
     gt?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>;
     gte?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>;
     not?: Prisma.NestedDecimalNullableFilter<$PrismaModel> | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
-};
-export type NestedEnumTipoExpressFilter<$PrismaModel = never> = {
-    equals?: $Enums.TipoExpress | Prisma.EnumTipoExpressFieldRefInput<$PrismaModel>;
-    in?: $Enums.TipoExpress[] | Prisma.ListEnumTipoExpressFieldRefInput<$PrismaModel>;
-    notIn?: $Enums.TipoExpress[] | Prisma.ListEnumTipoExpressFieldRefInput<$PrismaModel>;
-    not?: Prisma.NestedEnumTipoExpressFilter<$PrismaModel> | $Enums.TipoExpress;
 };
 export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel> | null;
@@ -698,15 +707,6 @@ export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
     _sum?: Prisma.NestedDecimalNullableFilter<$PrismaModel>;
     _min?: Prisma.NestedDecimalNullableFilter<$PrismaModel>;
     _max?: Prisma.NestedDecimalNullableFilter<$PrismaModel>;
-};
-export type NestedEnumTipoExpressWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.TipoExpress | Prisma.EnumTipoExpressFieldRefInput<$PrismaModel>;
-    in?: $Enums.TipoExpress[] | Prisma.ListEnumTipoExpressFieldRefInput<$PrismaModel>;
-    notIn?: $Enums.TipoExpress[] | Prisma.ListEnumTipoExpressFieldRefInput<$PrismaModel>;
-    not?: Prisma.NestedEnumTipoExpressWithAggregatesFilter<$PrismaModel> | $Enums.TipoExpress;
-    _count?: Prisma.NestedIntFilter<$PrismaModel>;
-    _min?: Prisma.NestedEnumTipoExpressFilter<$PrismaModel>;
-    _max?: Prisma.NestedEnumTipoExpressFilter<$PrismaModel>;
 };
 export type NestedEnumAccionAuditoriaFilter<$PrismaModel = never> = {
     equals?: $Enums.AccionAuditoria | Prisma.EnumAccionAuditoriaFieldRefInput<$PrismaModel>;

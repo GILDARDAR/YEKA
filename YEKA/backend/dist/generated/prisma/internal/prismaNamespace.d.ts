@@ -170,6 +170,7 @@ export declare const ModelName: {
     readonly PrendaServicio: "PrendaServicio";
     readonly Inventario: "Inventario";
     readonly AuditLog: "AuditLog";
+    readonly Configuracion: "Configuracion";
 };
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
 export interface TypeMapCb<GlobalOmitOptions = {}> extends runtime.Types.Utils.Fn<{
@@ -182,7 +183,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         omit: GlobalOmitOptions;
     };
     meta: {
-        modelProps: "sede" | "usuario" | "registroJornada" | "cliente" | "factura" | "abono" | "tipoPrenda" | "prenda" | "catalogoServicio" | "precioServicio" | "prendaServicio" | "inventario" | "auditLog";
+        modelProps: "sede" | "usuario" | "registroJornada" | "cliente" | "factura" | "abono" | "tipoPrenda" | "prenda" | "catalogoServicio" | "precioServicio" | "prendaServicio" | "inventario" | "auditLog" | "configuracion";
         txIsolationLevel: TransactionIsolationLevel;
     };
     model: {
@@ -1148,6 +1149,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
                 };
             };
         };
+        Configuracion: {
+            payload: Prisma.$ConfiguracionPayload<ExtArgs>;
+            fields: Prisma.ConfiguracionFieldRefs;
+            operations: {
+                findUnique: {
+                    args: Prisma.ConfiguracionFindUniqueArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracionPayload> | null;
+                };
+                findUniqueOrThrow: {
+                    args: Prisma.ConfiguracionFindUniqueOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracionPayload>;
+                };
+                findFirst: {
+                    args: Prisma.ConfiguracionFindFirstArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracionPayload> | null;
+                };
+                findFirstOrThrow: {
+                    args: Prisma.ConfiguracionFindFirstOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracionPayload>;
+                };
+                findMany: {
+                    args: Prisma.ConfiguracionFindManyArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracionPayload>[];
+                };
+                create: {
+                    args: Prisma.ConfiguracionCreateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracionPayload>;
+                };
+                createMany: {
+                    args: Prisma.ConfiguracionCreateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                createManyAndReturn: {
+                    args: Prisma.ConfiguracionCreateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracionPayload>[];
+                };
+                delete: {
+                    args: Prisma.ConfiguracionDeleteArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracionPayload>;
+                };
+                update: {
+                    args: Prisma.ConfiguracionUpdateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracionPayload>;
+                };
+                deleteMany: {
+                    args: Prisma.ConfiguracionDeleteManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateMany: {
+                    args: Prisma.ConfiguracionUpdateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateManyAndReturn: {
+                    args: Prisma.ConfiguracionUpdateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracionPayload>[];
+                };
+                upsert: {
+                    args: Prisma.ConfiguracionUpsertArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracionPayload>;
+                };
+                aggregate: {
+                    args: Prisma.ConfiguracionAggregateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AggregateConfiguracion>;
+                };
+                groupBy: {
+                    args: Prisma.ConfiguracionGroupByArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.ConfiguracionGroupByOutputType>[];
+                };
+                count: {
+                    args: Prisma.ConfiguracionCountArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.ConfiguracionCountAggregateOutputType> | number;
+                };
+            };
+        };
     };
 } & {
     other: {
@@ -1264,10 +1339,6 @@ export declare const PrendaScalarFieldEnum: {
     readonly id: "id";
     readonly facturaId: "facturaId";
     readonly codigoQR: "codigoQR";
-    readonly tipoPrendaId: "tipoPrendaId";
-    readonly talla: "talla";
-    readonly color: "color";
-    readonly marca: "marca";
     readonly estadoActual: "estadoActual";
     readonly fechaCompromiso: "fechaCompromiso";
     readonly esLujo: "esLujo";
@@ -1277,6 +1348,11 @@ export declare const PrendaScalarFieldEnum: {
     readonly notas: "notas";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
+    readonly tipoPrendaId: "tipoPrendaId";
+    readonly color: "color";
+    readonly marca: "marca";
+    readonly talla: "talla";
+    readonly tipoExpress: "tipoExpress";
 };
 export type PrendaScalarFieldEnum = (typeof PrendaScalarFieldEnum)[keyof typeof PrendaScalarFieldEnum];
 export declare const CatalogoServicioScalarFieldEnum: {
@@ -1304,10 +1380,10 @@ export declare const PrendaServicioScalarFieldEnum: {
     readonly id: "id";
     readonly prendaId: "prendaId";
     readonly servicioId: "servicioId";
-    readonly medidaEntregada: "medidaEntregada";
     readonly tipoExpress: "tipoExpress";
     readonly precioFinal: "precioFinal";
     readonly createdAt: "createdAt";
+    readonly medidaEntregada: "medidaEntregada";
 };
 export type PrendaServicioScalarFieldEnum = (typeof PrendaServicioScalarFieldEnum)[keyof typeof PrendaServicioScalarFieldEnum];
 export declare const InventarioScalarFieldEnum: {
@@ -1328,9 +1404,17 @@ export declare const AuditLogScalarFieldEnum: {
     readonly entidadId: "entidadId";
     readonly valorAnterior: "valorAnterior";
     readonly valorNuevo: "valorNuevo";
+    readonly leido: "leido";
     readonly timestamp: "timestamp";
 };
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum];
+export declare const ConfiguracionScalarFieldEnum: {
+    readonly id: "id";
+    readonly clave: "clave";
+    readonly valor: "valor";
+    readonly updatedAt: "updatedAt";
+};
+export type ConfiguracionScalarFieldEnum = (typeof ConfiguracionScalarFieldEnum)[keyof typeof ConfiguracionScalarFieldEnum];
 export declare const SortOrder: {
     readonly asc: "asc";
     readonly desc: "desc";
@@ -1422,6 +1506,7 @@ export type GlobalOmitConfig = {
     prendaServicio?: Prisma.PrendaServicioOmit;
     inventario?: Prisma.InventarioOmit;
     auditLog?: Prisma.AuditLogOmit;
+    configuracion?: Prisma.ConfiguracionOmit;
 };
 export type LogLevel = 'info' | 'query' | 'warn' | 'error';
 export type LogDefinition = {

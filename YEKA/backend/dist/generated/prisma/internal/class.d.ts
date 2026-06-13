@@ -69,5 +69,8 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
     get auditLog(): Prisma.AuditLogDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
+    get configuracion(): Prisma.ConfiguracionDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
 }
 export declare function getPrismaClientClass(): PrismaClientConstructor;

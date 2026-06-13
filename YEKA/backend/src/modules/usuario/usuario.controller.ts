@@ -61,4 +61,22 @@ export class UsuarioController {
   ): Promise<RegistroJornada> {
     return this.usuarioService.registrarJornada(id, dto.tipo);
   }
+
+  @Get('audit/logs')
+  @Roles(Rol.ADMIN)
+  async getAuditLogs() {
+    return this.usuarioService.getAuditLogs();
+  }
+
+  @Patch('audit/logs/read-all')
+  @Roles(Rol.ADMIN)
+  async markAllAuditLogsAsRead() {
+    return this.usuarioService.markAllAuditLogsAsRead();
+  }
+
+  @Patch('audit/logs/:id/read')
+  @Roles(Rol.ADMIN)
+  async markAuditLogAsRead(@Param('id', ParseIntPipe) id: number) {
+    return this.usuarioService.markAuditLogAsRead(id);
+  }
 }

@@ -17,8 +17,14 @@ export const prendasService = {
   cambiarEstado: (id: number, dto: CambiarEstadoDto) =>
     api.patch<Prenda>(`/prendas/${id}/estado`, dto).then(r => r.data),
 
+  cambiarTipoExpress: (id: number, tipoExpress: string) =>
+    api.patch<Prenda>(`/prendas/${id}/express`, { tipoExpress }).then(r => r.data),
+
   asignarServicio: (id: number, dto: AsignarServicioDto) =>
     api.post<PrendaServicio>(`/prendas/${id}/servicios`, dto).then(r => r.data),
+
+  eliminarServicio: (prendaId: number, prendaServicioId: number) =>
+    api.delete(`/prendas/${prendaId}/servicios/${prendaServicioId}`).then(r => r.data),
 
   subirFoto: (id: number, fotoUrl: string) =>
     api.patch<Prenda>(`/prendas/${id}/foto`, { fotoUrl }).then(r => r.data),

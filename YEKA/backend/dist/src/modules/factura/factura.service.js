@@ -35,6 +35,9 @@ let FacturaService = class FacturaService {
     async recalcularFactura(facturaId) {
         return this.facturaFacade.recalcularFactura(facturaId);
     }
+    async generatePdf(id) {
+        return this.facturaFacade.generatePdf(id);
+    }
 };
 exports.FacturaService = FacturaService;
 exports.FacturaService = FacturaService = __decorate([

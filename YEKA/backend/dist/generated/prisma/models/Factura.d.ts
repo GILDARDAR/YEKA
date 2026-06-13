@@ -189,10 +189,10 @@ export type FacturaWhereInput = {
     notas?: Prisma.StringNullableFilter<"Factura"> | string | null;
     createdAt?: Prisma.DateTimeFilter<"Factura"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Factura"> | Date | string;
+    abonos?: Prisma.AbonoListRelationFilter;
     cliente?: Prisma.XOR<Prisma.ClienteNullableScalarRelationFilter, Prisma.ClienteWhereInput> | null;
     sede?: Prisma.XOR<Prisma.SedeScalarRelationFilter, Prisma.SedeWhereInput>;
     prendas?: Prisma.PrendaListRelationFilter;
-    abonos?: Prisma.AbonoListRelationFilter;
 };
 export type FacturaOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
@@ -207,10 +207,10 @@ export type FacturaOrderByWithRelationInput = {
     notas?: Prisma.SortOrderInput | Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
+    abonos?: Prisma.AbonoOrderByRelationAggregateInput;
     cliente?: Prisma.ClienteOrderByWithRelationInput;
     sede?: Prisma.SedeOrderByWithRelationInput;
     prendas?: Prisma.PrendaOrderByRelationAggregateInput;
-    abonos?: Prisma.AbonoOrderByRelationAggregateInput;
 };
 export type FacturaWhereUniqueInput = Prisma.AtLeast<{
     id?: number;
@@ -228,10 +228,10 @@ export type FacturaWhereUniqueInput = Prisma.AtLeast<{
     notas?: Prisma.StringNullableFilter<"Factura"> | string | null;
     createdAt?: Prisma.DateTimeFilter<"Factura"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Factura"> | Date | string;
+    abonos?: Prisma.AbonoListRelationFilter;
     cliente?: Prisma.XOR<Prisma.ClienteNullableScalarRelationFilter, Prisma.ClienteWhereInput> | null;
     sede?: Prisma.XOR<Prisma.SedeScalarRelationFilter, Prisma.SedeWhereInput>;
     prendas?: Prisma.PrendaListRelationFilter;
-    abonos?: Prisma.AbonoListRelationFilter;
 }, "id" | "numero">;
 export type FacturaOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
@@ -279,10 +279,10 @@ export type FacturaCreateInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    abonos?: Prisma.AbonoCreateNestedManyWithoutFacturaInput;
     cliente?: Prisma.ClienteCreateNestedOneWithoutFacturasInput;
     sede: Prisma.SedeCreateNestedOneWithoutFacturasInput;
     prendas?: Prisma.PrendaCreateNestedManyWithoutFacturaInput;
-    abonos?: Prisma.AbonoCreateNestedManyWithoutFacturaInput;
 };
 export type FacturaUncheckedCreateInput = {
     id?: number;
@@ -297,8 +297,8 @@ export type FacturaUncheckedCreateInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    prendas?: Prisma.PrendaUncheckedCreateNestedManyWithoutFacturaInput;
     abonos?: Prisma.AbonoUncheckedCreateNestedManyWithoutFacturaInput;
+    prendas?: Prisma.PrendaUncheckedCreateNestedManyWithoutFacturaInput;
 };
 export type FacturaUpdateInput = {
     numero?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -310,10 +310,10 @@ export type FacturaUpdateInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    abonos?: Prisma.AbonoUpdateManyWithoutFacturaNestedInput;
     cliente?: Prisma.ClienteUpdateOneWithoutFacturasNestedInput;
     sede?: Prisma.SedeUpdateOneRequiredWithoutFacturasNestedInput;
     prendas?: Prisma.PrendaUpdateManyWithoutFacturaNestedInput;
-    abonos?: Prisma.AbonoUpdateManyWithoutFacturaNestedInput;
 };
 export type FacturaUncheckedUpdateInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -328,8 +328,8 @@ export type FacturaUncheckedUpdateInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    prendas?: Prisma.PrendaUncheckedUpdateManyWithoutFacturaNestedInput;
     abonos?: Prisma.AbonoUncheckedUpdateManyWithoutFacturaNestedInput;
+    prendas?: Prisma.PrendaUncheckedUpdateManyWithoutFacturaNestedInput;
 };
 export type FacturaCreateManyInput = {
     id?: number;
@@ -565,9 +565,9 @@ export type FacturaCreateWithoutSedeInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    abonos?: Prisma.AbonoCreateNestedManyWithoutFacturaInput;
     cliente?: Prisma.ClienteCreateNestedOneWithoutFacturasInput;
     prendas?: Prisma.PrendaCreateNestedManyWithoutFacturaInput;
-    abonos?: Prisma.AbonoCreateNestedManyWithoutFacturaInput;
 };
 export type FacturaUncheckedCreateWithoutSedeInput = {
     id?: number;
@@ -581,8 +581,8 @@ export type FacturaUncheckedCreateWithoutSedeInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    prendas?: Prisma.PrendaUncheckedCreateNestedManyWithoutFacturaInput;
     abonos?: Prisma.AbonoUncheckedCreateNestedManyWithoutFacturaInput;
+    prendas?: Prisma.PrendaUncheckedCreateNestedManyWithoutFacturaInput;
 };
 export type FacturaCreateOrConnectWithoutSedeInput = {
     where: Prisma.FacturaWhereUniqueInput;
@@ -632,9 +632,9 @@ export type FacturaCreateWithoutClienteInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    abonos?: Prisma.AbonoCreateNestedManyWithoutFacturaInput;
     sede: Prisma.SedeCreateNestedOneWithoutFacturasInput;
     prendas?: Prisma.PrendaCreateNestedManyWithoutFacturaInput;
-    abonos?: Prisma.AbonoCreateNestedManyWithoutFacturaInput;
 };
 export type FacturaUncheckedCreateWithoutClienteInput = {
     id?: number;
@@ -648,8 +648,8 @@ export type FacturaUncheckedCreateWithoutClienteInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    prendas?: Prisma.PrendaUncheckedCreateNestedManyWithoutFacturaInput;
     abonos?: Prisma.AbonoUncheckedCreateNestedManyWithoutFacturaInput;
+    prendas?: Prisma.PrendaUncheckedCreateNestedManyWithoutFacturaInput;
 };
 export type FacturaCreateOrConnectWithoutClienteInput = {
     where: Prisma.FacturaWhereUniqueInput;
@@ -753,9 +753,9 @@ export type FacturaCreateWithoutPrendasInput = {
     notas?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    abonos?: Prisma.AbonoCreateNestedManyWithoutFacturaInput;
     cliente?: Prisma.ClienteCreateNestedOneWithoutFacturasInput;
     sede: Prisma.SedeCreateNestedOneWithoutFacturasInput;
-    abonos?: Prisma.AbonoCreateNestedManyWithoutFacturaInput;
 };
 export type FacturaUncheckedCreateWithoutPrendasInput = {
     id?: number;
@@ -795,9 +795,9 @@ export type FacturaUpdateWithoutPrendasInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    abonos?: Prisma.AbonoUpdateManyWithoutFacturaNestedInput;
     cliente?: Prisma.ClienteUpdateOneWithoutFacturasNestedInput;
     sede?: Prisma.SedeUpdateOneRequiredWithoutFacturasNestedInput;
-    abonos?: Prisma.AbonoUpdateManyWithoutFacturaNestedInput;
 };
 export type FacturaUncheckedUpdateWithoutPrendasInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -837,9 +837,9 @@ export type FacturaUpdateWithoutSedeInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    abonos?: Prisma.AbonoUpdateManyWithoutFacturaNestedInput;
     cliente?: Prisma.ClienteUpdateOneWithoutFacturasNestedInput;
     prendas?: Prisma.PrendaUpdateManyWithoutFacturaNestedInput;
-    abonos?: Prisma.AbonoUpdateManyWithoutFacturaNestedInput;
 };
 export type FacturaUncheckedUpdateWithoutSedeInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -853,8 +853,8 @@ export type FacturaUncheckedUpdateWithoutSedeInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    prendas?: Prisma.PrendaUncheckedUpdateManyWithoutFacturaNestedInput;
     abonos?: Prisma.AbonoUncheckedUpdateManyWithoutFacturaNestedInput;
+    prendas?: Prisma.PrendaUncheckedUpdateManyWithoutFacturaNestedInput;
 };
 export type FacturaUncheckedUpdateManyWithoutSedeInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -892,9 +892,9 @@ export type FacturaUpdateWithoutClienteInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    abonos?: Prisma.AbonoUpdateManyWithoutFacturaNestedInput;
     sede?: Prisma.SedeUpdateOneRequiredWithoutFacturasNestedInput;
     prendas?: Prisma.PrendaUpdateManyWithoutFacturaNestedInput;
-    abonos?: Prisma.AbonoUpdateManyWithoutFacturaNestedInput;
 };
 export type FacturaUncheckedUpdateWithoutClienteInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -908,8 +908,8 @@ export type FacturaUncheckedUpdateWithoutClienteInput = {
     notas?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    prendas?: Prisma.PrendaUncheckedUpdateManyWithoutFacturaNestedInput;
     abonos?: Prisma.AbonoUncheckedUpdateManyWithoutFacturaNestedInput;
+    prendas?: Prisma.PrendaUncheckedUpdateManyWithoutFacturaNestedInput;
 };
 export type FacturaUncheckedUpdateManyWithoutClienteInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -925,21 +925,21 @@ export type FacturaUncheckedUpdateManyWithoutClienteInput = {
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 export type FacturaCountOutputType = {
-    prendas: number;
     abonos: number;
+    prendas: number;
 };
 export type FacturaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    prendas?: boolean | FacturaCountOutputTypeCountPrendasArgs;
     abonos?: boolean | FacturaCountOutputTypeCountAbonosArgs;
+    prendas?: boolean | FacturaCountOutputTypeCountPrendasArgs;
 };
 export type FacturaCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.FacturaCountOutputTypeSelect<ExtArgs> | null;
 };
-export type FacturaCountOutputTypeCountPrendasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    where?: Prisma.PrendaWhereInput;
-};
 export type FacturaCountOutputTypeCountAbonosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.AbonoWhereInput;
+};
+export type FacturaCountOutputTypeCountPrendasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.PrendaWhereInput;
 };
 export type FacturaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -954,10 +954,10 @@ export type FacturaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     notas?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
+    abonos?: boolean | Prisma.Factura$abonosArgs<ExtArgs>;
     cliente?: boolean | Prisma.Factura$clienteArgs<ExtArgs>;
     sede?: boolean | Prisma.SedeDefaultArgs<ExtArgs>;
     prendas?: boolean | Prisma.Factura$prendasArgs<ExtArgs>;
-    abonos?: boolean | Prisma.Factura$abonosArgs<ExtArgs>;
     _count?: boolean | Prisma.FacturaCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["factura"]>;
 export type FacturaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1008,10 +1008,10 @@ export type FacturaSelectScalar = {
 };
 export type FacturaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "numero" | "clienteId" | "usuarioCreadorId" | "sedeId" | "subtotal" | "impuestosJson" | "total" | "estadoPago" | "notas" | "createdAt" | "updatedAt", ExtArgs["result"]["factura"]>;
 export type FacturaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    abonos?: boolean | Prisma.Factura$abonosArgs<ExtArgs>;
     cliente?: boolean | Prisma.Factura$clienteArgs<ExtArgs>;
     sede?: boolean | Prisma.SedeDefaultArgs<ExtArgs>;
     prendas?: boolean | Prisma.Factura$prendasArgs<ExtArgs>;
-    abonos?: boolean | Prisma.Factura$abonosArgs<ExtArgs>;
     _count?: boolean | Prisma.FacturaCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type FacturaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1025,10 +1025,10 @@ export type FacturaIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type $FacturaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     name: "Factura";
     objects: {
+        abonos: Prisma.$AbonoPayload<ExtArgs>[];
         cliente: Prisma.$ClientePayload<ExtArgs> | null;
         sede: Prisma.$SedePayload<ExtArgs>;
         prendas: Prisma.$PrendaPayload<ExtArgs>[];
-        abonos: Prisma.$AbonoPayload<ExtArgs>[];
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: number;
@@ -1095,10 +1095,10 @@ export interface FacturaDelegate<ExtArgs extends runtime.Types.Extensions.Intern
 }
 export interface Prisma__FacturaClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise";
+    abonos<T extends Prisma.Factura$abonosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Factura$abonosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AbonoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     cliente<T extends Prisma.Factura$clienteArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Factura$clienteArgs<ExtArgs>>): Prisma.Prisma__ClienteClient<runtime.Types.Result.GetResult<Prisma.$ClientePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     sede<T extends Prisma.SedeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SedeDefaultArgs<ExtArgs>>): Prisma.Prisma__SedeClient<runtime.Types.Result.GetResult<Prisma.$SedePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>;
     prendas<T extends Prisma.Factura$prendasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Factura$prendasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrendaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
-    abonos<T extends Prisma.Factura$abonosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Factura$abonosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AbonoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): runtime.Types.Utils.JsPromise<TResult1 | TResult2>;
     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): runtime.Types.Utils.JsPromise<T | TResult>;
     finally(onfinally?: (() => void) | undefined | null): runtime.Types.Utils.JsPromise<T>;
@@ -1217,6 +1217,17 @@ export type FacturaDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
     where?: Prisma.FacturaWhereInput;
     limit?: number;
 };
+export type Factura$abonosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.AbonoSelect<ExtArgs> | null;
+    omit?: Prisma.AbonoOmit<ExtArgs> | null;
+    include?: Prisma.AbonoInclude<ExtArgs> | null;
+    where?: Prisma.AbonoWhereInput;
+    orderBy?: Prisma.AbonoOrderByWithRelationInput | Prisma.AbonoOrderByWithRelationInput[];
+    cursor?: Prisma.AbonoWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.AbonoScalarFieldEnum | Prisma.AbonoScalarFieldEnum[];
+};
 export type Factura$clienteArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.ClienteSelect<ExtArgs> | null;
     omit?: Prisma.ClienteOmit<ExtArgs> | null;
@@ -1233,17 +1244,6 @@ export type Factura$prendasArgs<ExtArgs extends runtime.Types.Extensions.Interna
     take?: number;
     skip?: number;
     distinct?: Prisma.PrendaScalarFieldEnum | Prisma.PrendaScalarFieldEnum[];
-};
-export type Factura$abonosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    select?: Prisma.AbonoSelect<ExtArgs> | null;
-    omit?: Prisma.AbonoOmit<ExtArgs> | null;
-    include?: Prisma.AbonoInclude<ExtArgs> | null;
-    where?: Prisma.AbonoWhereInput;
-    orderBy?: Prisma.AbonoOrderByWithRelationInput | Prisma.AbonoOrderByWithRelationInput[];
-    cursor?: Prisma.AbonoWhereUniqueInput;
-    take?: number;
-    skip?: number;
-    distinct?: Prisma.AbonoScalarFieldEnum | Prisma.AbonoScalarFieldEnum[];
 };
 export type FacturaDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.FacturaSelect<ExtArgs> | null;

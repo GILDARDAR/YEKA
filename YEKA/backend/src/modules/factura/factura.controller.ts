@@ -8,7 +8,9 @@ import {
   Query,
   UseGuards,
   ParseIntPipe,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { FacturaService } from './factura.service';
 import { CreateFacturaDto, AddAbonoDto, FacturaResponseDto } from './factura.dto';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
@@ -58,5 +60,20 @@ export class FacturaController {
     @CurrentUser('sub') usuarioId: number,
   ): Promise<FacturaResponseDto> {
     return this.facturaService.addAbono(id, dto, usuarioId);
+  }
+
+  @Get(':id/pdf')
+  async downloadPdf(
+    @Param('id', ParseIntPipe) id: number,
+    @Res() res: any,
+  ) {
+    const pdfBuffer = await this.facturaService.generatePdf(id);
+    const factura = await this.facturaService.getFacturaById(id);
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="${factura.numero}.pdf"`,
+      'Content-Length': pdfBuffer.length,
+    });
+    res.end(pdfBuffer);
   }
 }

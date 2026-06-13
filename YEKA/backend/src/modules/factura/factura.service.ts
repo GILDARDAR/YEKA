@@ -30,4 +30,8 @@ export class FacturaService {
   async recalcularFactura(facturaId: number): Promise<FacturaResponseDto> {
     return this.facturaFacade.recalcularFactura(facturaId);
   }
+
+  async generatePdf(id: number): Promise<Buffer> {
+    return this.facturaFacade.generatePdf(id);
+  }
 }

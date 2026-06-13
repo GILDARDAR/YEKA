@@ -25,6 +25,9 @@ let PrendaDAO = class PrendaDAO {
                 ...(filters?.usuarioTallerId ? { usuarioTallerId: filters.usuarioTallerId } : {}),
                 ...(filters?.facturaId ? { facturaId: filters.facturaId } : {}),
             },
+            include: {
+                factura: true,
+            },
             orderBy: { createdAt: 'desc' },
         });
     }
@@ -85,6 +88,11 @@ let PrendaDAO = class PrendaDAO {
         return this.prisma.prendaServicio.findMany({
             where: { prendaId },
             orderBy: { createdAt: 'asc' },
+        });
+    }
+    async deletePrendaServicio(id) {
+        return this.prisma.prendaServicio.delete({
+            where: { id },
         });
     }
 };

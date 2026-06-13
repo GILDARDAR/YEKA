@@ -30,4 +30,16 @@ export class UsuarioService {
   async registrarJornada(usuarioId: number, tipo: TipoJornada): Promise<RegistroJornada> {
     return this.usuarioFacade.registrarJornada(usuarioId, tipo);
   }
+
+  async getAuditLogs() {
+    return this.usuarioFacade.getAuditLogs();
+  }
+
+  async markAllAuditLogsAsRead() {
+    return this.usuarioFacade.markAllAuditLogsAsRead();
+  }
+
+  async markAuditLogAsRead(id: number) {
+    return this.usuarioFacade.markAuditLogAsRead(id);
+  }
 }

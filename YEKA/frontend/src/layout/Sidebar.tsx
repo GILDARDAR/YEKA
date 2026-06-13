@@ -2,19 +2,20 @@ import { useState, useEffect } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../shared/auth.context';
 import {
-  LayoutDashboard, Users, FileText, Shirt, Tag, UserCog, Building2, LogOut, Scissors, Layers, Menu, X
+  LayoutDashboard, Users, FileText, Shirt, Tag, UserCog, Building2, LogOut, Scissors, Layers, Menu, X, Settings
 } from 'lucide-react';
 import './Sidebar.css';
 
 const navItems = [
-  { to: '/',            icon: LayoutDashboard, label: 'Dashboard',         roles: ['ADMIN','RECEPCION','TALLER'] },
-  { to: '/clientes',   icon: Users,            label: 'Clientes',          roles: ['ADMIN','RECEPCION'] },
-  { to: '/facturas',   icon: FileText,         label: 'Facturas',          roles: ['ADMIN','RECEPCION'] },
-  { to: '/prendas',    icon: Shirt,            label: 'Prendas',           roles: ['ADMIN','TALLER'] },
-  { to: '/catalogo',   icon: Tag,              label: 'Catálogo',          roles: ['ADMIN','RECEPCION','TALLER'] },
-  { to: '/tipos-prenda', icon: Layers,         label: 'Tipos Prenda',      roles: ['ADMIN'] },
-  { to: '/usuarios',   icon: UserCog,          label: 'Usuarios',          roles: ['ADMIN'] },
-  { to: '/sedes',      icon: Building2,        label: 'Sedes',             roles: ['ADMIN'] },
+  { to: '/', icon: LayoutDashboard, label: 'Dashboard', roles: ['ADMIN', 'RECEPCION', 'TALLER'] },
+  { to: '/clientes', icon: Users, label: 'Clientes', roles: ['ADMIN', 'RECEPCION', 'TALLER'] },
+  { to: '/facturas', icon: FileText, label: 'Facturas', roles: ['ADMIN', 'RECEPCION', 'TALLER'] },
+  { to: '/prendas', icon: Shirt, label: 'Prendas', roles: ['ADMIN', 'RECEPCION', 'TALLER'] },
+  { to: '/catalogo', icon: Tag, label: 'Catálogo', roles: ['ADMIN', 'RECEPCION', 'TALLER'] },
+  { to: '/tipos-prenda', icon: Layers, label: 'Tipos Prenda', roles: ['ADMIN'] },
+  { to: '/usuarios', icon: UserCog, label: 'Usuarios', roles: ['ADMIN'] },
+  { to: '/sedes', icon: Building2, label: 'Sedes', roles: ['ADMIN'] },
+  { to: '/configuracion', icon: Settings, label: 'Configuración', roles: ['ADMIN'] },
 ];
 
 export function Sidebar() {
@@ -60,18 +61,18 @@ export function Sidebar() {
 
         {/* Nav */}
         <nav className="sidebar-nav">
-        {visibleItems.map(({ to, icon: Icon, label }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={to === '/'}
-            className={({ isActive }) => `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`}
-          >
-            <Icon size={18} className="sidebar-link-icon" />
-            <span className="sidebar-link-label">{label}</span>
-          </NavLink>
-        ))}
-      </nav>
+          {visibleItems.map(({ to, icon: Icon, label }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={to === '/'}
+              className={({ isActive }) => `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`}
+            >
+              <Icon size={18} className="sidebar-link-icon" />
+              <span className="sidebar-link-label">{label}</span>
+            </NavLink>
+          ))}
+        </nav>
 
         {/* User info + logout */}
         <div className="sidebar-footer">

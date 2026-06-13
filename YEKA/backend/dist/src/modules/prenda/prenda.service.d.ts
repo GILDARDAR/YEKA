@@ -9,7 +9,9 @@ export declare class PrendaService {
     getPrendaById(id: number): Promise<PrendaResponseDto>;
     updatePrenda(id: number, dto: any, usuarioId: number): Promise<PrendaResponseDto>;
     asignarServicio(prendaId: number, dto: AsignarServicioDto, usuarioId: number): Promise<PrendaServicioResponseDto>;
+    eliminarServicio(prendaId: number, prendaServicioId: number, usuarioId: number): Promise<void>;
     cambiarEstado(id: number, dto: CambiarEstadoDto, usuarioId: number): Promise<PrendaResponseDto>;
+    cambiarTipoExpress(id: number, tipoExpress: any, usuarioId: number): Promise<PrendaResponseDto>;
     subirFoto(id: number, dto: SubirFotoDto, usuarioId: number): Promise<PrendaResponseDto>;
     deletePrenda(id: number, usuarioId: number): Promise<PrendaResponseDto>;
 }

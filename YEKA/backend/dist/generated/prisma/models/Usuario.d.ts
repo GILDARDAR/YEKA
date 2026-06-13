@@ -177,10 +177,10 @@ export type UsuarioWhereInput = {
     activo?: Prisma.BoolFilter<"Usuario"> | boolean;
     createdAt?: Prisma.DateTimeFilter<"Usuario"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Usuario"> | Date | string;
-    sede?: Prisma.XOR<Prisma.SedeScalarRelationFilter, Prisma.SedeWhereInput>;
-    jornadas?: Prisma.RegistroJornadaListRelationFilter;
-    prendasTaller?: Prisma.PrendaListRelationFilter;
     auditLogs?: Prisma.AuditLogListRelationFilter;
+    prendasTaller?: Prisma.PrendaListRelationFilter;
+    jornadas?: Prisma.RegistroJornadaListRelationFilter;
+    sede?: Prisma.XOR<Prisma.SedeScalarRelationFilter, Prisma.SedeWhereInput>;
 };
 export type UsuarioOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
@@ -195,10 +195,10 @@ export type UsuarioOrderByWithRelationInput = {
     activo?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
-    sede?: Prisma.SedeOrderByWithRelationInput;
-    jornadas?: Prisma.RegistroJornadaOrderByRelationAggregateInput;
-    prendasTaller?: Prisma.PrendaOrderByRelationAggregateInput;
     auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput;
+    prendasTaller?: Prisma.PrendaOrderByRelationAggregateInput;
+    jornadas?: Prisma.RegistroJornadaOrderByRelationAggregateInput;
+    sede?: Prisma.SedeOrderByWithRelationInput;
 };
 export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
     id?: number;
@@ -216,10 +216,10 @@ export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
     activo?: Prisma.BoolFilter<"Usuario"> | boolean;
     createdAt?: Prisma.DateTimeFilter<"Usuario"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Usuario"> | Date | string;
-    sede?: Prisma.XOR<Prisma.SedeScalarRelationFilter, Prisma.SedeWhereInput>;
-    jornadas?: Prisma.RegistroJornadaListRelationFilter;
-    prendasTaller?: Prisma.PrendaListRelationFilter;
     auditLogs?: Prisma.AuditLogListRelationFilter;
+    prendasTaller?: Prisma.PrendaListRelationFilter;
+    jornadas?: Prisma.RegistroJornadaListRelationFilter;
+    sede?: Prisma.XOR<Prisma.SedeScalarRelationFilter, Prisma.SedeWhereInput>;
 }, "id" | "dni" | "email">;
 export type UsuarioOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
@@ -268,10 +268,10 @@ export type UsuarioCreateInput = {
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    sede: Prisma.SedeCreateNestedOneWithoutUsuariosInput;
-    jornadas?: Prisma.RegistroJornadaCreateNestedManyWithoutUsuarioInput;
-    prendasTaller?: Prisma.PrendaCreateNestedManyWithoutUsuarioTallerInput;
     auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUsuarioInput;
+    prendasTaller?: Prisma.PrendaCreateNestedManyWithoutUsuarioTallerInput;
+    jornadas?: Prisma.RegistroJornadaCreateNestedManyWithoutUsuarioInput;
+    sede: Prisma.SedeCreateNestedOneWithoutUsuariosInput;
 };
 export type UsuarioUncheckedCreateInput = {
     id?: number;
@@ -286,9 +286,9 @@ export type UsuarioUncheckedCreateInput = {
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    jornadas?: Prisma.RegistroJornadaUncheckedCreateNestedManyWithoutUsuarioInput;
-    prendasTaller?: Prisma.PrendaUncheckedCreateNestedManyWithoutUsuarioTallerInput;
     auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUsuarioInput;
+    prendasTaller?: Prisma.PrendaUncheckedCreateNestedManyWithoutUsuarioTallerInput;
+    jornadas?: Prisma.RegistroJornadaUncheckedCreateNestedManyWithoutUsuarioInput;
 };
 export type UsuarioUpdateInput = {
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -301,10 +301,10 @@ export type UsuarioUpdateInput = {
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    sede?: Prisma.SedeUpdateOneRequiredWithoutUsuariosNestedInput;
-    jornadas?: Prisma.RegistroJornadaUpdateManyWithoutUsuarioNestedInput;
-    prendasTaller?: Prisma.PrendaUpdateManyWithoutUsuarioTallerNestedInput;
     auditLogs?: Prisma.AuditLogUpdateManyWithoutUsuarioNestedInput;
+    prendasTaller?: Prisma.PrendaUpdateManyWithoutUsuarioTallerNestedInput;
+    jornadas?: Prisma.RegistroJornadaUpdateManyWithoutUsuarioNestedInput;
+    sede?: Prisma.SedeUpdateOneRequiredWithoutUsuariosNestedInput;
 };
 export type UsuarioUncheckedUpdateInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -319,9 +319,9 @@ export type UsuarioUncheckedUpdateInput = {
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    jornadas?: Prisma.RegistroJornadaUncheckedUpdateManyWithoutUsuarioNestedInput;
-    prendasTaller?: Prisma.PrendaUncheckedUpdateManyWithoutUsuarioTallerNestedInput;
     auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUsuarioNestedInput;
+    prendasTaller?: Prisma.PrendaUncheckedUpdateManyWithoutUsuarioTallerNestedInput;
+    jornadas?: Prisma.RegistroJornadaUncheckedUpdateManyWithoutUsuarioNestedInput;
 };
 export type UsuarioCreateManyInput = {
     id?: number;
@@ -521,9 +521,9 @@ export type UsuarioCreateWithoutSedeInput = {
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    jornadas?: Prisma.RegistroJornadaCreateNestedManyWithoutUsuarioInput;
-    prendasTaller?: Prisma.PrendaCreateNestedManyWithoutUsuarioTallerInput;
     auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUsuarioInput;
+    prendasTaller?: Prisma.PrendaCreateNestedManyWithoutUsuarioTallerInput;
+    jornadas?: Prisma.RegistroJornadaCreateNestedManyWithoutUsuarioInput;
 };
 export type UsuarioUncheckedCreateWithoutSedeInput = {
     id?: number;
@@ -537,9 +537,9 @@ export type UsuarioUncheckedCreateWithoutSedeInput = {
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    jornadas?: Prisma.RegistroJornadaUncheckedCreateNestedManyWithoutUsuarioInput;
-    prendasTaller?: Prisma.PrendaUncheckedCreateNestedManyWithoutUsuarioTallerInput;
     auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUsuarioInput;
+    prendasTaller?: Prisma.PrendaUncheckedCreateNestedManyWithoutUsuarioTallerInput;
+    jornadas?: Prisma.RegistroJornadaUncheckedCreateNestedManyWithoutUsuarioInput;
 };
 export type UsuarioCreateOrConnectWithoutSedeInput = {
     where: Prisma.UsuarioWhereUniqueInput;
@@ -590,9 +590,9 @@ export type UsuarioCreateWithoutJornadasInput = {
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    sede: Prisma.SedeCreateNestedOneWithoutUsuariosInput;
-    prendasTaller?: Prisma.PrendaCreateNestedManyWithoutUsuarioTallerInput;
     auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUsuarioInput;
+    prendasTaller?: Prisma.PrendaCreateNestedManyWithoutUsuarioTallerInput;
+    sede: Prisma.SedeCreateNestedOneWithoutUsuariosInput;
 };
 export type UsuarioUncheckedCreateWithoutJornadasInput = {
     id?: number;
@@ -607,8 +607,8 @@ export type UsuarioUncheckedCreateWithoutJornadasInput = {
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    prendasTaller?: Prisma.PrendaUncheckedCreateNestedManyWithoutUsuarioTallerInput;
     auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUsuarioInput;
+    prendasTaller?: Prisma.PrendaUncheckedCreateNestedManyWithoutUsuarioTallerInput;
 };
 export type UsuarioCreateOrConnectWithoutJornadasInput = {
     where: Prisma.UsuarioWhereUniqueInput;
@@ -634,9 +634,9 @@ export type UsuarioUpdateWithoutJornadasInput = {
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    sede?: Prisma.SedeUpdateOneRequiredWithoutUsuariosNestedInput;
-    prendasTaller?: Prisma.PrendaUpdateManyWithoutUsuarioTallerNestedInput;
     auditLogs?: Prisma.AuditLogUpdateManyWithoutUsuarioNestedInput;
+    prendasTaller?: Prisma.PrendaUpdateManyWithoutUsuarioTallerNestedInput;
+    sede?: Prisma.SedeUpdateOneRequiredWithoutUsuariosNestedInput;
 };
 export type UsuarioUncheckedUpdateWithoutJornadasInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -651,8 +651,8 @@ export type UsuarioUncheckedUpdateWithoutJornadasInput = {
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    prendasTaller?: Prisma.PrendaUncheckedUpdateManyWithoutUsuarioTallerNestedInput;
     auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUsuarioNestedInput;
+    prendasTaller?: Prisma.PrendaUncheckedUpdateManyWithoutUsuarioTallerNestedInput;
 };
 export type UsuarioCreateWithoutPrendasTallerInput = {
     nombre: string;
@@ -665,9 +665,9 @@ export type UsuarioCreateWithoutPrendasTallerInput = {
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    sede: Prisma.SedeCreateNestedOneWithoutUsuariosInput;
-    jornadas?: Prisma.RegistroJornadaCreateNestedManyWithoutUsuarioInput;
     auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUsuarioInput;
+    jornadas?: Prisma.RegistroJornadaCreateNestedManyWithoutUsuarioInput;
+    sede: Prisma.SedeCreateNestedOneWithoutUsuariosInput;
 };
 export type UsuarioUncheckedCreateWithoutPrendasTallerInput = {
     id?: number;
@@ -682,8 +682,8 @@ export type UsuarioUncheckedCreateWithoutPrendasTallerInput = {
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    jornadas?: Prisma.RegistroJornadaUncheckedCreateNestedManyWithoutUsuarioInput;
     auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUsuarioInput;
+    jornadas?: Prisma.RegistroJornadaUncheckedCreateNestedManyWithoutUsuarioInput;
 };
 export type UsuarioCreateOrConnectWithoutPrendasTallerInput = {
     where: Prisma.UsuarioWhereUniqueInput;
@@ -709,9 +709,9 @@ export type UsuarioUpdateWithoutPrendasTallerInput = {
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    sede?: Prisma.SedeUpdateOneRequiredWithoutUsuariosNestedInput;
-    jornadas?: Prisma.RegistroJornadaUpdateManyWithoutUsuarioNestedInput;
     auditLogs?: Prisma.AuditLogUpdateManyWithoutUsuarioNestedInput;
+    jornadas?: Prisma.RegistroJornadaUpdateManyWithoutUsuarioNestedInput;
+    sede?: Prisma.SedeUpdateOneRequiredWithoutUsuariosNestedInput;
 };
 export type UsuarioUncheckedUpdateWithoutPrendasTallerInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -726,8 +726,8 @@ export type UsuarioUncheckedUpdateWithoutPrendasTallerInput = {
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    jornadas?: Prisma.RegistroJornadaUncheckedUpdateManyWithoutUsuarioNestedInput;
     auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUsuarioNestedInput;
+    jornadas?: Prisma.RegistroJornadaUncheckedUpdateManyWithoutUsuarioNestedInput;
 };
 export type UsuarioCreateWithoutAuditLogsInput = {
     nombre: string;
@@ -740,9 +740,9 @@ export type UsuarioCreateWithoutAuditLogsInput = {
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    sede: Prisma.SedeCreateNestedOneWithoutUsuariosInput;
-    jornadas?: Prisma.RegistroJornadaCreateNestedManyWithoutUsuarioInput;
     prendasTaller?: Prisma.PrendaCreateNestedManyWithoutUsuarioTallerInput;
+    jornadas?: Prisma.RegistroJornadaCreateNestedManyWithoutUsuarioInput;
+    sede: Prisma.SedeCreateNestedOneWithoutUsuariosInput;
 };
 export type UsuarioUncheckedCreateWithoutAuditLogsInput = {
     id?: number;
@@ -757,8 +757,8 @@ export type UsuarioUncheckedCreateWithoutAuditLogsInput = {
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    jornadas?: Prisma.RegistroJornadaUncheckedCreateNestedManyWithoutUsuarioInput;
     prendasTaller?: Prisma.PrendaUncheckedCreateNestedManyWithoutUsuarioTallerInput;
+    jornadas?: Prisma.RegistroJornadaUncheckedCreateNestedManyWithoutUsuarioInput;
 };
 export type UsuarioCreateOrConnectWithoutAuditLogsInput = {
     where: Prisma.UsuarioWhereUniqueInput;
@@ -784,9 +784,9 @@ export type UsuarioUpdateWithoutAuditLogsInput = {
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    sede?: Prisma.SedeUpdateOneRequiredWithoutUsuariosNestedInput;
-    jornadas?: Prisma.RegistroJornadaUpdateManyWithoutUsuarioNestedInput;
     prendasTaller?: Prisma.PrendaUpdateManyWithoutUsuarioTallerNestedInput;
+    jornadas?: Prisma.RegistroJornadaUpdateManyWithoutUsuarioNestedInput;
+    sede?: Prisma.SedeUpdateOneRequiredWithoutUsuariosNestedInput;
 };
 export type UsuarioUncheckedUpdateWithoutAuditLogsInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -801,8 +801,8 @@ export type UsuarioUncheckedUpdateWithoutAuditLogsInput = {
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    jornadas?: Prisma.RegistroJornadaUncheckedUpdateManyWithoutUsuarioNestedInput;
     prendasTaller?: Prisma.PrendaUncheckedUpdateManyWithoutUsuarioTallerNestedInput;
+    jornadas?: Prisma.RegistroJornadaUncheckedUpdateManyWithoutUsuarioNestedInput;
 };
 export type UsuarioCreateManySedeInput = {
     id?: number;
@@ -828,9 +828,9 @@ export type UsuarioUpdateWithoutSedeInput = {
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    jornadas?: Prisma.RegistroJornadaUpdateManyWithoutUsuarioNestedInput;
-    prendasTaller?: Prisma.PrendaUpdateManyWithoutUsuarioTallerNestedInput;
     auditLogs?: Prisma.AuditLogUpdateManyWithoutUsuarioNestedInput;
+    prendasTaller?: Prisma.PrendaUpdateManyWithoutUsuarioTallerNestedInput;
+    jornadas?: Prisma.RegistroJornadaUpdateManyWithoutUsuarioNestedInput;
 };
 export type UsuarioUncheckedUpdateWithoutSedeInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -844,9 +844,9 @@ export type UsuarioUncheckedUpdateWithoutSedeInput = {
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    jornadas?: Prisma.RegistroJornadaUncheckedUpdateManyWithoutUsuarioNestedInput;
-    prendasTaller?: Prisma.PrendaUncheckedUpdateManyWithoutUsuarioTallerNestedInput;
     auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUsuarioNestedInput;
+    prendasTaller?: Prisma.PrendaUncheckedUpdateManyWithoutUsuarioTallerNestedInput;
+    jornadas?: Prisma.RegistroJornadaUncheckedUpdateManyWithoutUsuarioNestedInput;
 };
 export type UsuarioUncheckedUpdateManyWithoutSedeInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -862,26 +862,26 @@ export type UsuarioUncheckedUpdateManyWithoutSedeInput = {
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 export type UsuarioCountOutputType = {
-    jornadas: number;
-    prendasTaller: number;
     auditLogs: number;
+    prendasTaller: number;
+    jornadas: number;
 };
 export type UsuarioCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    jornadas?: boolean | UsuarioCountOutputTypeCountJornadasArgs;
-    prendasTaller?: boolean | UsuarioCountOutputTypeCountPrendasTallerArgs;
     auditLogs?: boolean | UsuarioCountOutputTypeCountAuditLogsArgs;
+    prendasTaller?: boolean | UsuarioCountOutputTypeCountPrendasTallerArgs;
+    jornadas?: boolean | UsuarioCountOutputTypeCountJornadasArgs;
 };
 export type UsuarioCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.UsuarioCountOutputTypeSelect<ExtArgs> | null;
 };
-export type UsuarioCountOutputTypeCountJornadasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    where?: Prisma.RegistroJornadaWhereInput;
+export type UsuarioCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.AuditLogWhereInput;
 };
 export type UsuarioCountOutputTypeCountPrendasTallerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.PrendaWhereInput;
 };
-export type UsuarioCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    where?: Prisma.AuditLogWhereInput;
+export type UsuarioCountOutputTypeCountJornadasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.RegistroJornadaWhereInput;
 };
 export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -896,10 +896,10 @@ export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     activo?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    sede?: boolean | Prisma.SedeDefaultArgs<ExtArgs>;
-    jornadas?: boolean | Prisma.Usuario$jornadasArgs<ExtArgs>;
-    prendasTaller?: boolean | Prisma.Usuario$prendasTallerArgs<ExtArgs>;
     auditLogs?: boolean | Prisma.Usuario$auditLogsArgs<ExtArgs>;
+    prendasTaller?: boolean | Prisma.Usuario$prendasTallerArgs<ExtArgs>;
+    jornadas?: boolean | Prisma.Usuario$jornadasArgs<ExtArgs>;
+    sede?: boolean | Prisma.SedeDefaultArgs<ExtArgs>;
     _count?: boolean | Prisma.UsuarioCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["usuario"]>;
 export type UsuarioSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -948,10 +948,10 @@ export type UsuarioSelectScalar = {
 };
 export type UsuarioOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sedeId" | "nombre" | "dni" | "telefono" | "email" | "password" | "pinAcceso" | "rol" | "activo" | "createdAt" | "updatedAt", ExtArgs["result"]["usuario"]>;
 export type UsuarioInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    sede?: boolean | Prisma.SedeDefaultArgs<ExtArgs>;
-    jornadas?: boolean | Prisma.Usuario$jornadasArgs<ExtArgs>;
-    prendasTaller?: boolean | Prisma.Usuario$prendasTallerArgs<ExtArgs>;
     auditLogs?: boolean | Prisma.Usuario$auditLogsArgs<ExtArgs>;
+    prendasTaller?: boolean | Prisma.Usuario$prendasTallerArgs<ExtArgs>;
+    jornadas?: boolean | Prisma.Usuario$jornadasArgs<ExtArgs>;
+    sede?: boolean | Prisma.SedeDefaultArgs<ExtArgs>;
     _count?: boolean | Prisma.UsuarioCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type UsuarioIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -963,10 +963,10 @@ export type UsuarioIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type $UsuarioPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     name: "Usuario";
     objects: {
-        sede: Prisma.$SedePayload<ExtArgs>;
-        jornadas: Prisma.$RegistroJornadaPayload<ExtArgs>[];
-        prendasTaller: Prisma.$PrendaPayload<ExtArgs>[];
         auditLogs: Prisma.$AuditLogPayload<ExtArgs>[];
+        prendasTaller: Prisma.$PrendaPayload<ExtArgs>[];
+        jornadas: Prisma.$RegistroJornadaPayload<ExtArgs>[];
+        sede: Prisma.$SedePayload<ExtArgs>;
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: number;
@@ -1033,10 +1033,10 @@ export interface UsuarioDelegate<ExtArgs extends runtime.Types.Extensions.Intern
 }
 export interface Prisma__UsuarioClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise";
-    sede<T extends Prisma.SedeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SedeDefaultArgs<ExtArgs>>): Prisma.Prisma__SedeClient<runtime.Types.Result.GetResult<Prisma.$SedePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>;
-    jornadas<T extends Prisma.Usuario$jornadasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$jornadasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RegistroJornadaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
-    prendasTaller<T extends Prisma.Usuario$prendasTallerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$prendasTallerArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrendaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     auditLogs<T extends Prisma.Usuario$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    prendasTaller<T extends Prisma.Usuario$prendasTallerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$prendasTallerArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrendaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    jornadas<T extends Prisma.Usuario$jornadasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$jornadasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RegistroJornadaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    sede<T extends Prisma.SedeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SedeDefaultArgs<ExtArgs>>): Prisma.Prisma__SedeClient<runtime.Types.Result.GetResult<Prisma.$SedePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>;
     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): runtime.Types.Utils.JsPromise<TResult1 | TResult2>;
     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): runtime.Types.Utils.JsPromise<T | TResult>;
     finally(onfinally?: (() => void) | undefined | null): runtime.Types.Utils.JsPromise<T>;
@@ -1155,16 +1155,16 @@ export type UsuarioDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
     where?: Prisma.UsuarioWhereInput;
     limit?: number;
 };
-export type Usuario$jornadasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    select?: Prisma.RegistroJornadaSelect<ExtArgs> | null;
-    omit?: Prisma.RegistroJornadaOmit<ExtArgs> | null;
-    include?: Prisma.RegistroJornadaInclude<ExtArgs> | null;
-    where?: Prisma.RegistroJornadaWhereInput;
-    orderBy?: Prisma.RegistroJornadaOrderByWithRelationInput | Prisma.RegistroJornadaOrderByWithRelationInput[];
-    cursor?: Prisma.RegistroJornadaWhereUniqueInput;
+export type Usuario$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.AuditLogSelect<ExtArgs> | null;
+    omit?: Prisma.AuditLogOmit<ExtArgs> | null;
+    include?: Prisma.AuditLogInclude<ExtArgs> | null;
+    where?: Prisma.AuditLogWhereInput;
+    orderBy?: Prisma.AuditLogOrderByWithRelationInput | Prisma.AuditLogOrderByWithRelationInput[];
+    cursor?: Prisma.AuditLogWhereUniqueInput;
     take?: number;
     skip?: number;
-    distinct?: Prisma.RegistroJornadaScalarFieldEnum | Prisma.RegistroJornadaScalarFieldEnum[];
+    distinct?: Prisma.AuditLogScalarFieldEnum | Prisma.AuditLogScalarFieldEnum[];
 };
 export type Usuario$prendasTallerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.PrendaSelect<ExtArgs> | null;
@@ -1177,16 +1177,16 @@ export type Usuario$prendasTallerArgs<ExtArgs extends runtime.Types.Extensions.I
     skip?: number;
     distinct?: Prisma.PrendaScalarFieldEnum | Prisma.PrendaScalarFieldEnum[];
 };
-export type Usuario$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    select?: Prisma.AuditLogSelect<ExtArgs> | null;
-    omit?: Prisma.AuditLogOmit<ExtArgs> | null;
-    include?: Prisma.AuditLogInclude<ExtArgs> | null;
-    where?: Prisma.AuditLogWhereInput;
-    orderBy?: Prisma.AuditLogOrderByWithRelationInput | Prisma.AuditLogOrderByWithRelationInput[];
-    cursor?: Prisma.AuditLogWhereUniqueInput;
+export type Usuario$jornadasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.RegistroJornadaSelect<ExtArgs> | null;
+    omit?: Prisma.RegistroJornadaOmit<ExtArgs> | null;
+    include?: Prisma.RegistroJornadaInclude<ExtArgs> | null;
+    where?: Prisma.RegistroJornadaWhereInput;
+    orderBy?: Prisma.RegistroJornadaOrderByWithRelationInput | Prisma.RegistroJornadaOrderByWithRelationInput[];
+    cursor?: Prisma.RegistroJornadaWhereUniqueInput;
     take?: number;
     skip?: number;
-    distinct?: Prisma.AuditLogScalarFieldEnum | Prisma.AuditLogScalarFieldEnum[];
+    distinct?: Prisma.RegistroJornadaScalarFieldEnum | Prisma.RegistroJornadaScalarFieldEnum[];
 };
 export type UsuarioDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.UsuarioSelect<ExtArgs> | null;

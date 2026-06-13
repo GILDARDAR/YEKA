@@ -11,6 +11,7 @@ import { FacturaModule } from './modules/factura/factura.module';
 import { CatalogoServicioModule } from './modules/catalogo-servicio/catalogo-servicio.module';
 import { PrendaModule } from './modules/prenda/prenda.module';
 import { TipoPrendaModule } from './modules/tipo-prenda/tipo-prenda.module';
+import { ConfiguracionModule } from './modules/configuracion/configuracion.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { TipoPrendaModule } from './modules/tipo-prenda/tipo-prenda.module';
     CatalogoServicioModule,
     PrendaModule,
     TipoPrendaModule,
+    ConfiguracionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

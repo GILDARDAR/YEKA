@@ -58,33 +58,44 @@ export class AuthService {
         email: user.email,
         nombre: user.nombre,
         rol: user.rol,
+        sedeId: user.sedeId,
       },
     };
   }
 
   async login(dto: LoginDto) {
+    console.log(`[LOGIN DEBUG] Iniciando sesión para: ${dto.email}`);
     const user = await this.prisma.usuario.findUnique({
       where: { email: dto.email },
     });
     if (!user) {
-      throw new UnauthorizedException('Credenciales incorrectas');
+      console.log(`[LOGIN DEBUG] Fallo: El usuario con email ${dto.email} no existe en la base de datos.`);
+      throw new UnauthorizedException('El usuario no existe');
     }
+
+    // Print raw password and compare with DB hashed password
+    console.log(`[LOGIN DEBUG] Comparando contraseñas para ${dto.email}:`);
+    console.log(` -> Contraseña ingresada (texto claro): "${dto.password}"`);
+    console.log(` -> Hash de contraseña en Base de Datos:  "${user.password}"`);
 
     const isPasswordValid = await bcrypt.compare(dto.password, user.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Credenciales incorrectas');
+      console.log(`[LOGIN DEBUG] Fallo: La contraseña ingresada no coincide con el hash guardado.`);
+      throw new UnauthorizedException('La contraseña es incorrecta');
     }
 
+    console.log(`[LOGIN DEBUG] Éxito: Contraseña válida. Iniciando sesión para ${user.nombre} (${user.rol}).`);
     const token = this.generateToken(user.id, user.email, user.rol);
 
     return {
-      message: 'Sesión iniciada exitosamente',
+      message: 'Logueado satisfactoriamente',
       token,
       user: {
         id: user.id,
         email: user.email,
         nombre: user.nombre,
         rol: user.rol,
+        sedeId: user.sedeId,
       },
     };
   }

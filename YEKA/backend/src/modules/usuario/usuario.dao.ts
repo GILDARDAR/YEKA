@@ -9,7 +9,6 @@ export class UsuarioDAO {
   async findAll(sedeId?: number): Promise<Usuario[]> {
     return this.prisma.usuario.findMany({
       where: {
-        activo: true,
         ...(sedeId ? { sedeId } : {}),
       },
       orderBy: { nombre: 'asc' },
@@ -80,6 +79,45 @@ export class UsuarioDAO {
         },
       },
       orderBy: { timestamp: 'asc' },
+    });
+  }
+
+  async getAuditLogs() {
+    return this.prisma.auditLog.findMany({
+      where: {
+        accion: {
+          in: ['MODIFICACION', 'CAMBIO_ESTADO', 'ANULACION'],
+        },
+      },
+      orderBy: { timestamp: 'desc' },
+      include: {
+        usuario: {
+          select: {
+            nombre: true,
+            rol: true,
+          },
+        },
+      },
+      take: 20, // limit to last 20 audit events
+    });
+  }
+
+  async markAllAuditLogsAsRead() {
+    return this.prisma.auditLog.updateMany({
+      where: {
+        leido: false,
+        accion: {
+          in: ['MODIFICACION', 'CAMBIO_ESTADO', 'ANULACION'],
+        },
+      },
+      data: { leido: true },
+    });
+  }
+
+  async markAuditLogAsRead(id: number) {
+    return this.prisma.auditLog.update({
+      where: { id },
+      data: { leido: true },
     });
   }
 }

@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { usuariosService } from './usuarios.service';
 import { sedesService } from '../sedes/sedes.service';
 import type { Usuario, Sede } from '../../shared/types';
-import { UserCog, Plus, UserCheck, UserX } from 'lucide-react';
+import { Plus, UserCheck, UserX, Edit2 } from 'lucide-react';
+import { UsuarioModal } from './UsuarioModal';
 
 const ROL_BADGE: Record<string, string> = {
   ADMIN:     'badge-danger',
@@ -14,6 +15,10 @@ export function UsuariosPage() {
   const [usuarios, setUsuarios]   = useState<Usuario[]>([]);
   const [sedes, setSedes]         = useState<Sede[]>([]);
   const [loading, setLoading]     = useState(true);
+
+  // Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUsuario, setSelectedUsuario] = useState<Usuario | null>(null);
 
   useEffect(() => {
     Promise.all([usuariosService.getAll(), sedesService.getAll()])
@@ -30,6 +35,27 @@ export function UsuariosPage() {
     } catch { /* silently ignore */ }
   };
 
+  const handleOpenNewModal = () => {
+    setSelectedUsuario(null);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEditModal = (u: Usuario) => {
+    setSelectedUsuario(u);
+    setIsModalOpen(true);
+  };
+
+  const handleSave = (saved: Usuario) => {
+    setUsuarios(prev => {
+      const exists = prev.some(x => x.id === saved.id);
+      if (exists) {
+        return prev.map(x => x.id === saved.id ? saved : x);
+      }
+      return [...prev, saved].sort((a, b) => a.nombre.localeCompare(b.nombre));
+    });
+    setIsModalOpen(false);
+  };
+
   return (
     <div>
       <div className="page-header">
@@ -37,7 +63,7 @@ export function UsuariosPage() {
           <h1 className="page-title">Gestión de Usuarios</h1>
           <p className="page-subtitle">{usuarios.filter(u => u.activo).length} usuarios activos</p>
         </div>
-        <button className="btn btn-primary">
+        <button className="btn btn-primary" onClick={handleOpenNewModal}>
           <Plus size={16} /> Nuevo usuario
         </button>
       </div>
@@ -85,19 +111,37 @@ export function UsuariosPage() {
                     </span>
                   </td>
                   <td>
-                    <button
-                      className="btn btn-ghost btn-sm btn-icon"
-                      title={u.activo ? 'Desactivar' : 'Activar'}
-                      onClick={() => toggleActivo(u)}
-                    >
-                      {u.activo ? <UserX size={15} /> : <UserCheck size={15} />}
-                    </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-1)' }}>
+                      <button
+                        className="btn btn-ghost btn-sm btn-icon"
+                        title="Editar"
+                        onClick={() => handleOpenEditModal(u)}
+                      >
+                        <Edit2 size={15} />
+                      </button>
+                      <button
+                        className="btn btn-ghost btn-sm btn-icon"
+                        title={u.activo ? 'Desactivar' : 'Activar'}
+                        onClick={() => toggleActivo(u)}
+                      >
+                        {u.activo ? <UserX size={15} /> : <UserCheck size={15} />}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+      )}
+
+      {isModalOpen && (
+        <UsuarioModal
+          usuarioToEdit={selectedUsuario}
+          sedes={sedes}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleSave}
+        />
       )}
     </div>
   );

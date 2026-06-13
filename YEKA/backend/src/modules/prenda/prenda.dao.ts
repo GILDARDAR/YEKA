@@ -17,6 +17,9 @@ export class PrendaDAO {
         ...(filters?.usuarioTallerId ? { usuarioTallerId: filters.usuarioTallerId } : {}),
         ...(filters?.facturaId ? { facturaId: filters.facturaId } : {}),
       },
+      include: {
+        factura: true,
+      },
       orderBy: { createdAt: 'desc' },
     });
   }
@@ -99,6 +102,12 @@ export class PrendaDAO {
     return this.prisma.prendaServicio.findMany({
       where: { prendaId },
       orderBy: { createdAt: 'asc' },
+    });
+  }
+
+  async deletePrendaServicio(id: number): Promise<PrendaServicio> {
+    return this.prisma.prendaServicio.delete({
+      where: { id },
     });
   }
 }

@@ -34,4 +34,5 @@ export declare class PrendaDAO {
         precioFinal: Prisma.Decimal | number;
     }): Promise<PrendaServicio>;
     getServiciosByPrenda(prendaId: number): Promise<PrendaServicio[]>;
+    deletePrendaServicio(id: number): Promise<PrendaServicio>;
 }

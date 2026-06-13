@@ -43,8 +43,14 @@ let PrendaController = class PrendaController {
     async asignarServicio(prendaId, dto, usuarioId) {
         return this.prendaService.asignarServicio(prendaId, dto, usuarioId);
     }
+    async eliminarServicio(prendaId, servicioId, usuarioId) {
+        return this.prendaService.eliminarServicio(prendaId, servicioId, usuarioId);
+    }
     async cambiarEstado(id, dto, usuarioId) {
         return this.prendaService.cambiarEstado(id, dto, usuarioId);
+    }
+    async cambiarTipoExpress(id, tipoExpress, usuarioId) {
+        return this.prendaService.cambiarTipoExpress(id, tipoExpress, usuarioId);
     }
     async subirFoto(id, dto, usuarioId) {
         return this.prendaService.subirFoto(id, dto, usuarioId);
@@ -96,6 +102,15 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PrendaController.prototype, "asignarServicio", null);
 __decorate([
+    (0, common_1.Delete)(':id/servicios/:servicioId'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Param)('servicioId', common_1.ParseIntPipe)),
+    __param(2, (0, current_user_decorator_1.CurrentUser)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number, Number]),
+    __metadata("design:returntype", Promise)
+], PrendaController.prototype, "eliminarServicio", null);
+__decorate([
     (0, common_1.Patch)(':id/estado'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
@@ -104,6 +119,15 @@ __decorate([
     __metadata("design:paramtypes", [Number, prenda_dto_1.CambiarEstadoDto, Number]),
     __metadata("design:returntype", Promise)
 ], PrendaController.prototype, "cambiarEstado", null);
+__decorate([
+    (0, common_1.Patch)(':id/express'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Body)('tipoExpress')),
+    __param(2, (0, current_user_decorator_1.CurrentUser)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object, Number]),
+    __metadata("design:returntype", Promise)
+], PrendaController.prototype, "cambiarTipoExpress", null);
 __decorate([
     (0, common_1.Patch)(':id/foto'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),

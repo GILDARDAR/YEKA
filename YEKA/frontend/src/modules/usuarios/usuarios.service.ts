@@ -16,4 +16,13 @@ export const usuariosService = {
 
   delete: (id: number) =>
     api.delete<Usuario>(`/usuarios/${id}`).then(r => r.data),
+
+  getAuditLogs: () =>
+    api.get<any[]>('/usuarios/audit/logs').then(r => r.data),
+
+  markAllAuditLogsAsRead: () =>
+    api.patch<any>('/usuarios/audit/logs/read-all').then(r => r.data),
+
+  markAuditLogAsRead: (id: number) =>
+    api.patch<any>(`/usuarios/audit/logs/${id}/read`).then(r => r.data),
 };

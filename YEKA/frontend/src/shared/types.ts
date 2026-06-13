@@ -232,6 +232,7 @@ export interface Prenda {
   notas: string | null;
   createdAt: string;
   updatedAt: string;
+  tipoExpress: TipoExpress;
 
   servicios?: PrendaServicio[];
   factura?: Factura;

@@ -35,6 +35,15 @@ let UsuarioService = class UsuarioService {
     async registrarJornada(usuarioId, tipo) {
         return this.usuarioFacade.registrarJornada(usuarioId, tipo);
     }
+    async getAuditLogs() {
+        return this.usuarioFacade.getAuditLogs();
+    }
+    async markAllAuditLogsAsRead() {
+        return this.usuarioFacade.markAllAuditLogsAsRead();
+    }
+    async markAuditLogAsRead(id) {
+        return this.usuarioFacade.markAuditLogAsRead(id);
+    }
 };
 exports.UsuarioService = UsuarioService;
 exports.UsuarioService = UsuarioService = __decorate([

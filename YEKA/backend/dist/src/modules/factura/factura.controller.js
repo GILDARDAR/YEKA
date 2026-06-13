@@ -41,6 +41,16 @@ let FacturaController = class FacturaController {
     async addAbono(id, dto, usuarioId) {
         return this.facturaService.addAbono(id, dto, usuarioId);
     }
+    async downloadPdf(id, res) {
+        const pdfBuffer = await this.facturaService.generatePdf(id);
+        const factura = await this.facturaService.getFacturaById(id);
+        res.set({
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `attachment; filename="${factura.numero}.pdf"`,
+            'Content-Length': pdfBuffer.length,
+        });
+        res.end(pdfBuffer);
+    }
 };
 exports.FacturaController = FacturaController;
 __decorate([
@@ -83,6 +93,14 @@ __decorate([
     __metadata("design:paramtypes", [Number, factura_dto_1.AddAbonoDto, Number]),
     __metadata("design:returntype", Promise)
 ], FacturaController.prototype, "addAbono", null);
+__decorate([
+    (0, common_1.Get)(':id/pdf'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", Promise)
+], FacturaController.prototype, "downloadPdf", null);
 exports.FacturaController = FacturaController = __decorate([
     (0, common_1.Controller)('facturas'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),

@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { PrendaDAO } from './prenda.dao';
 import { FacturaFacade } from '../factura/factura.facade';
 import { PrismaService } from '../../prisma/prisma.service';
+import { ConfiguracionService } from '../configuracion/configuracion.service';
 import {
   CreatePrendaDto,
   AsignarServicioDto,
@@ -41,6 +42,8 @@ function toResponseDto(prenda: Prenda): PrendaResponseDto {
     notas: prenda.notas,
     createdAt: prenda.createdAt,
     updatedAt: prenda.updatedAt,
+    tipoExpress: (prenda as any).tipoExpress || 'NORMAL',
+    factura: (prenda as any).factura,
   };
 }
 
@@ -63,6 +66,7 @@ export class PrendaFacade {
     private readonly prismaService: PrismaService,
     private readonly facturaFacade: FacturaFacade,
     private readonly configService: ConfigService,
+    private readonly configuracionService: ConfiguracionService,
   ) {}
 
   async createPrenda(dto: CreatePrendaDto): Promise<PrendaResponseDto> {
@@ -88,6 +92,13 @@ export class PrendaFacade {
     });
     if (!sede) {
       throw new NotFoundException(`Sede con id ${factura.sedeId} no encontrada`);
+    }
+
+    if (dto.notas) {
+      const wordCount = dto.notas.trim().split(/\s+/).filter(Boolean).length;
+      if (wordCount > 1000) {
+        throw new BadRequestException('La observación/notas no puede superar las 1000 palabras');
+      }
     }
 
     const year = new Date().getFullYear();
@@ -124,18 +135,28 @@ export class PrendaFacade {
     return list.map(toResponseDto);
   }
 
-  async getPrendaById(id: number): Promise<PrendaResponseDto> {
+  async getPrendaById(id: number): Promise<PrendaResponseDto & { servicios: any[] }> {
     const prenda = await this.prendaDAO.findById(id);
     if (!prenda) {
       throw new NotFoundException(`Prenda con id ${id} no encontrada`);
     }
-    return toResponseDto(prenda);
+    return {
+      ...toResponseDto(prenda),
+      servicios: (prenda as any).servicios?.map(toPrendaServicioResponseDto) || [],
+    };
   }
 
   async updatePrenda(id: number, dto: any, usuarioId: number): Promise<PrendaResponseDto> {
     const prenda = await this.prendaDAO.findById(id);
     if (!prenda) {
       throw new NotFoundException(`Prenda con id ${id} no encontrada`);
+    }
+
+    if (dto.notas) {
+      const wordCount = dto.notas.trim().split(/\s+/).filter(Boolean).length;
+      if (wordCount > 1000) {
+        throw new BadRequestException('La observación/notas no puede superar las 1000 palabras');
+      }
     }
 
     const valorAnterior = { ...prenda };
@@ -204,13 +225,13 @@ export class PrendaFacade {
       }
     }
 
-    // 3.5 Apply express multipliers
+    // 3.5 Apply express multipliers using ConfiguracionService
     let multiplier = 1.0;
     if (dto.tipoExpress === TipoExpress.EXPRESS_48H) {
-      const multStr = this.configService.get<string>('EXPRESS_48H_MULTIPLIER') || '1.30';
+      const multStr = await this.configuracionService.get('EXPRESS_48H_MULTIPLIER');
       multiplier = parseFloat(multStr);
     } else if (dto.tipoExpress === TipoExpress.EXPRESS_24H) {
-      const multStr = this.configService.get<string>('EXPRESS_24H_MULTIPLIER') || '1.50';
+      const multStr = await this.configuracionService.get('EXPRESS_24H_MULTIPLIER');
       multiplier = parseFloat(multStr);
     }
 
@@ -246,6 +267,45 @@ export class PrendaFacade {
     });
 
     return toPrendaServicioResponseDto(ps);
+  }
+
+  async eliminarServicio(
+    prendaId: number,
+    prendaServicioId: number,
+    usuarioId: number,
+  ): Promise<void> {
+    // 1. Verify garment exists
+    const prenda = await this.prendaDAO.findById(prendaId);
+    if (!prenda) {
+      throw new NotFoundException(`Prenda con id ${prendaId} no encontrada`);
+    }
+
+    // 2. Verify the PrendaServicio belongs to this prenda
+    const servicio = (prenda as any).servicios?.find((s: any) => s.id === prendaServicioId);
+    if (!servicio) {
+      throw new NotFoundException(`Servicio asignado con id ${prendaServicioId} no encontrado en la prenda ${prendaId}`);
+    }
+
+    // 3. Delete the PrendaServicio
+    const deleted = await this.prendaDAO.deletePrendaServicio(prendaServicioId);
+
+    // 4. Recalculate invoice totals
+    await this.facturaFacade.recalcularFactura(prenda.facturaId);
+
+    // 5. Write AuditLog
+    await this.prismaService.auditLog.create({
+      data: {
+        usuarioId,
+        accion: AccionAuditoria.ANULACION,
+        entidadAfectada: 'PrendaServicio',
+        entidadId: prendaServicioId,
+        valorAnterior: {
+          prendaId,
+          servicioId: deleted.servicioId,
+          precioFinal: deleted.precioFinal.toString(),
+        },
+      },
+    });
   }
 
   async cambiarEstado(
@@ -298,6 +358,82 @@ export class PrendaFacade {
           estadoActual: updated.estadoActual,
           usuarioTallerId: updated.usuarioTallerId,
         } as any,
+      },
+    });
+
+    return toResponseDto(updated);
+  }
+
+  async cambiarTipoExpress(
+    id: number,
+    tipoExpress: TipoExpress,
+    usuarioId: number,
+  ): Promise<PrendaResponseDto> {
+    const prenda = await this.prendaDAO.findById(id);
+    if (!prenda) {
+      throw new NotFoundException(`Prenda con id ${id} no encontrada`);
+    }
+
+    const valorAnterior = { tipoExpress: (prenda as any).tipoExpress || 'NORMAL' };
+    
+    // Update the Prenda's own setting
+    const updated = await this.prendaDAO.update(id, { tipoExpress });
+
+    // Iterate over all assigned services and update them
+    const servicios = (prenda as any).servicios || [];
+    for (const s of servicios) {
+      const reglaPrecio = await this.prismaService.precioServicio.findUnique({
+        where: {
+          catalogoServicioId_tipoPrendaId: {
+            catalogoServicioId: s.servicioId,
+            tipoPrendaId: prenda.tipoPrendaId
+          }
+        }
+      });
+      if (reglaPrecio) {
+        let basePrice = reglaPrecio.precioBase.toNumber();
+        if (s.medidaEntregada !== null && s.medidaEntregada !== undefined) {
+          const mEntregada = s.medidaEntregada.toNumber();
+          const mBase = reglaPrecio.medidaBase.toNumber();
+          const mExtra = reglaPrecio.medidaExtra.toNumber();
+          const pExtra = reglaPrecio.precioExtra.toNumber();
+          if (mEntregada > mBase && mExtra > 0) {
+            const exceso = mEntregada - mBase;
+            const unidadesExtra = Math.ceil(exceso / mExtra);
+            basePrice = basePrice + (unidadesExtra * pExtra);
+          }
+        }
+
+        let multiplier = 1.0;
+        if (tipoExpress === TipoExpress.EXPRESS_48H) {
+          const multStr = await this.configuracionService.get('EXPRESS_48H_MULTIPLIER');
+          multiplier = parseFloat(multStr);
+        } else if (tipoExpress === TipoExpress.EXPRESS_24H) {
+          const multStr = await this.configuracionService.get('EXPRESS_24H_MULTIPLIER');
+          multiplier = parseFloat(multStr);
+        }
+
+        const finalPrice = basePrice * multiplier;
+
+        await this.prismaService.prendaServicio.update({
+          where: { id: s.id },
+          data: { tipoExpress, precioFinal: finalPrice },
+        });
+      }
+    }
+
+    // Recalculate invoice totals
+    await this.facturaFacade.recalcularFactura(prenda.facturaId);
+
+    // Create AuditLog
+    await this.prismaService.auditLog.create({
+      data: {
+        usuarioId,
+        accion: AccionAuditoria.MODIFICACION,
+        entidadAfectada: 'Prenda',
+        entidadId: id,
+        valorAnterior: valorAnterior as any,
+        valorNuevo: { tipoExpress } as any,
       },
     });
 

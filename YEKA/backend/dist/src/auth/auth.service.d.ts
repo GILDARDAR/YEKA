@@ -14,6 +14,7 @@ export declare class AuthService {
             email: string;
             nombre: string;
             rol: Rol;
+            sedeId: number;
         };
     }>;
     login(dto: LoginDto): Promise<{
@@ -24,6 +25,7 @@ export declare class AuthService {
             email: string;
             nombre: string;
             rol: Rol;
+            sedeId: number;
         };
     }>;
     private generateToken;

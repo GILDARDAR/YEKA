@@ -20,7 +20,6 @@ let UsuarioDAO = class UsuarioDAO {
     async findAll(sedeId) {
         return this.prisma.usuario.findMany({
             where: {
-                activo: true,
                 ...(sedeId ? { sedeId } : {}),
             },
             orderBy: { nombre: 'asc' },
@@ -81,6 +80,42 @@ let UsuarioDAO = class UsuarioDAO {
                 },
             },
             orderBy: { timestamp: 'asc' },
+        });
+    }
+    async getAuditLogs() {
+        return this.prisma.auditLog.findMany({
+            where: {
+                accion: {
+                    in: ['MODIFICACION', 'CAMBIO_ESTADO', 'ANULACION'],
+                },
+            },
+            orderBy: { timestamp: 'desc' },
+            include: {
+                usuario: {
+                    select: {
+                        nombre: true,
+                        rol: true,
+                    },
+                },
+            },
+            take: 20,
+        });
+    }
+    async markAllAuditLogsAsRead() {
+        return this.prisma.auditLog.updateMany({
+            where: {
+                leido: false,
+                accion: {
+                    in: ['MODIFICACION', 'CAMBIO_ESTADO', 'ANULACION'],
+                },
+            },
+            data: { leido: true },
+        });
+    }
+    async markAuditLogAsRead(id) {
+        return this.prisma.auditLog.update({
+            where: { id },
+            data: { leido: true },
         });
     }
 };

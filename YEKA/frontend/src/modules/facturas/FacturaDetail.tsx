@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import api from '../../shared/api';
 import { facturasService } from './facturas.service';
 import { prendasService } from '../prendas/prendas.service';
 import tipoPrendaService from '../../services/tipo-prenda.service';
@@ -29,6 +30,7 @@ export function FacturaDetail() {
     color: '',
     esLujo: false,
     marca: '',
+    notas: '',
   });
   
   // The Prenda being created/edited in the modal
@@ -38,12 +40,15 @@ export function FacturaDetail() {
   const [servicioSeleccionado, setServicioSeleccionado] = useState('');
   const [medidaEntregada, setMedidaEntregada] = useState<number | ''>('');
   const [isCalculando, setIsCalculando] = useState(false);
+  const [busquedaServicio, setBusquedaServicio] = useState('');
   
   // Edit mode
   const [isEditingPrenda, setIsEditingPrenda] = useState(false);
 
   // Expand Prenda Card
   const [expandedPrendaId, setExpandedPrendaId] = useState<number | null>(null);
+  
+  const [config, setConfig] = useState<any>({});
 
   // Abono Modal
   const [isAbonoModalOpen, setIsAbonoModalOpen] = useState(false);
@@ -70,16 +75,18 @@ export function FacturaDetail() {
     fetchFactura();
     tipoPrendaService.getTiposPrenda().then(res => setTiposPrenda(res.filter(t => t.activo)));
     catalogoService.getAll().then(res => setCatalogoServicios(res.filter(s => s.activo)));
+    api.get('/configuracion').then(res => setConfig(res.data)).catch(console.error);
   }, [id]);
 
   const handleOpenModal = (prendaToEdit?: Prenda) => {
     if (prendaToEdit) {
       setPrendaForm({
-        tipoPrendaId: prendaToEdit.tipoPrendaId.toString(),
+        tipoPrendaId: prendaToEdit.tipoPrendaId != null ? prendaToEdit.tipoPrendaId.toString() : '',
         talla: prendaToEdit.talla,
         color: prendaToEdit.color,
         esLujo: prendaToEdit.esLujo,
         marca: prendaToEdit.marca || '',
+        notas: prendaToEdit.notas || '',
       });
       setActivePrenda(prendaToEdit);
       setIsEditingPrenda(true);
@@ -90,6 +97,7 @@ export function FacturaDetail() {
         color: '',
         esLujo: false,
         marca: '',
+        notas: '',
       });
       setActivePrenda(null);
       setIsEditingPrenda(false);
@@ -97,6 +105,7 @@ export function FacturaDetail() {
     
     setServicioSeleccionado('');
     setMedidaEntregada('');
+    setBusquedaServicio('');
     setIsModalOpen(true);
   };
 
@@ -116,6 +125,7 @@ export function FacturaDetail() {
         color: prendaForm.color,
         esLujo: prendaForm.esLujo,
         marca: prendaForm.marca || undefined,
+        notas: prendaForm.notas || undefined,
       };
 
       if (isEditingPrenda && activePrenda) {
@@ -154,8 +164,17 @@ export function FacturaDetail() {
       const unidadesExtra = Math.ceil(exceso / medidaExtra);
       basePrice = basePrice + (unidadesExtra * precioExtra);
     }
-    return basePrice;
-  }, [servicioSeleccionado, medidaEntregada, activePrenda, prendaForm.tipoPrendaId, catalogoServicios]);
+
+    let multiplier = 1.0;
+    const expressType = activePrenda?.tipoExpress || 'NORMAL';
+    if (expressType === 'EXPRESS_48H') {
+      multiplier = parseFloat(config.EXPRESS_48H_MULTIPLIER || '1.30');
+    } else if (expressType === 'EXPRESS_24H') {
+      multiplier = parseFloat(config.EXPRESS_24H_MULTIPLIER || '1.50');
+    }
+
+    return basePrice * multiplier;
+  }, [servicioSeleccionado, medidaEntregada, activePrenda, prendaForm.tipoPrendaId, catalogoServicios, config]);
 
   const handleAddServicio = async () => {
     if (!servicioSeleccionado || !activePrenda) return;
@@ -166,7 +185,7 @@ export function FacturaDetail() {
       await prendasService.asignarServicio(activePrenda.id, {
         servicioId: Number(servicioSeleccionado),
         medidaEntregada: medidaEntregada ? Number(medidaEntregada) : undefined,
-        tipoExpress: 'NORMAL',
+        tipoExpress: activePrenda.tipoExpress || 'NORMAL',
       });
       
       // Refresh active prenda to show the new service
@@ -184,6 +203,35 @@ export function FacturaDetail() {
     }
   };
 
+  const handleRemoveServicioAsignado = async (prendaServicioId: number) => {
+    if (!activePrenda || !window.confirm('¿Seguro que deseas eliminar este servicio asignado?')) return;
+    try {
+      await prendasService.eliminarServicio(activePrenda.id, prendaServicioId);
+      const updated = await prendasService.getById(activePrenda.id);
+      setActivePrenda(updated);
+      await fetchFactura();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Error al eliminar el servicio asignado');
+    }
+  };
+
+  const handleEditServicioAsignado = async (s: PrendaServicio) => {
+    if (!activePrenda) return;
+    if (!window.confirm('Para modificar, se quitará el servicio actual y podrás ajustarlo y agregarlo de nuevo en la sección de disponibles. ¿Continuar?')) return;
+    
+    try {
+      await prendasService.eliminarServicio(activePrenda.id, s.id);
+      const updated = await prendasService.getById(activePrenda.id);
+      setActivePrenda(updated);
+      
+      setServicioSeleccionado(s.servicioId.toString());
+      setMedidaEntregada(s.medidaEntregada ? Number(s.medidaEntregada) : '');
+      await fetchFactura();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Error al preparar la modificación');
+    }
+  };
+
   const handleRemovePrenda = async (prendaId: number) => {
     if (!window.confirm('¿Seguro que deseas eliminar esta prenda?')) return;
     try {
@@ -191,6 +239,15 @@ export function FacturaDetail() {
       await fetchFactura();
     } catch (err: any) {
       alert(err.response?.data?.message || 'Error al eliminar');
+    }
+  };
+
+  const handleCambiarExpress = async (prendaId: number, tipoExpress: string) => {
+    try {
+      await prendasService.cambiarTipoExpress(prendaId, tipoExpress);
+      await fetchFactura();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Error al cambiar tipo express');
     }
   };
 
@@ -316,7 +373,7 @@ export function FacturaDetail() {
         <div 
           className="card" 
           style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)', cursor: 'pointer', border: '2px dashed var(--color-border)', backgroundColor: 'transparent', minHeight: '150px' }}
-          onClick={handleOpenModal}
+          onClick={() => handleOpenModal()}
         >
           <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Plus size={24} />
@@ -378,6 +435,25 @@ export function FacturaDetail() {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--color-text-light)' }}>
                   <Calendar size={14} /> {prenda.fechaCompromiso ? new Date(prenda.fechaCompromiso).toLocaleDateString() : 'Sin fecha de compromiso'}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+                  <label style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>Atención:</label>
+                  <select 
+                    value={prenda.tipoExpress || 'NORMAL'}
+                    onChange={(e) => handleCambiarExpress(prenda.id, e.target.value)}
+                    onClick={e => e.stopPropagation()}
+                    style={{ 
+                      fontSize: 'var(--text-xs)', 
+                      padding: '2px 4px', 
+                      borderRadius: '4px', 
+                      border: '1px solid var(--color-border)',
+                      backgroundColor: 'var(--bg-card)'
+                    }}
+                  >
+                    <option value="NORMAL">Normal</option>
+                    <option value="EXPRESS_48H">Express 48h</option>
+                    <option value="EXPRESS_24H">Express 24h</option>
+                  </select>
                 </div>
               </div>
 
@@ -466,6 +542,18 @@ export function FacturaDetail() {
                 </div>
               )}
 
+              <div className="form-group">
+                <label className="form-label">Observaciones (Opcional)</label>
+                <textarea 
+                  className="form-input" 
+                  value={prendaForm.notas} 
+                  onChange={e => setPrendaForm(p => ({ ...p, notas: e.target.value }))} 
+                  placeholder="Añade observaciones para la prenda..." 
+                  disabled={!!activePrenda && !isEditingPrenda} 
+                  rows={2}
+                />
+              </div>
+
               {(!activePrenda || isEditingPrenda) && (
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 'var(--space-2)' }}>
                   <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
@@ -474,7 +562,7 @@ export function FacturaDetail() {
                 </div>
               )}
             </form>
-
+      
             <hr style={{ margin: 'var(--space-6) 0', border: 'none', borderTop: '1px solid var(--color-border)' }} />
 
             <h3 style={{ fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-4)', color: activePrenda ? 'var(--color-text)' : 'var(--color-text-muted)' }}>
@@ -487,77 +575,233 @@ export function FacturaDetail() {
                 <p className="empty-state-desc">Usa el botón "Guardar Prenda" para habilitar esta sección.</p>
               </div>
             ) : (
-              <table className="table" style={{ marginBottom: 'var(--space-4)' }}>
-                <thead>
-                  <tr>
-                    <th>Servicio</th>
-                    <th>Longitud (cm)</th>
-                    <th>Precio</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {activePrenda.servicios?.map(s => {
-                    const srvName = catalogoServicios.find(c => c.id === s.servicioId)?.tipoEspecifico || 'Servicio';
-                    return (
-                      <tr key={s.id}>
-                        <td>{srvName}</td>
-                        <td>{s.medidaEntregada || '-'}</td>
-                        <td style={{ fontWeight: 'bold' }}>€{Number(s.precioFinal).toFixed(2)}</td>
-                        <td style={{ textAlign: 'right' }}>
-                           <span className="badge badge-success">Agregado</span>
-                        </td>
-                      </tr>
-                    );
-                  })}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
 
-                  {/* New Service Row */}
-                  <tr>
-                    <td>
-                      <select className="form-select" style={{ padding: '4px 8px', fontSize: '14px' }} value={servicioSeleccionado} onChange={e => setServicioSeleccionado(e.target.value)}>
-                        <option value="">Seleccione servicio...</option>
-                        {catalogoServicios.map(s => {
-                          const hasRule = s.preciosPorPrenda.some(p => p.tipoPrendaId === activePrenda.tipoPrendaId);
-                          if (!hasRule) return null;
-                          return <option key={s.id} value={s.id}>{s.categoria} - {s.tipoEspecifico}</option>
-                        })}
-                      </select>
-                    </td>
-                    <td>
-                      <input 
-                        type="number" 
-                        min="0" 
-                        className="form-input" 
-                        style={{ padding: '4px 8px', fontSize: '14px', width: '100px' }} 
-                        value={medidaEntregada} 
-                        onChange={e => setMedidaEntregada(e.target.value ? Number(e.target.value) : '')}
-                        placeholder="opcional"
-                        disabled={!servicioSeleccionado}
-                      />
-                    </td>
-                    <td style={{ verticalAlign: 'middle', fontWeight: 'bold', color: 'var(--color-primary)' }}>
-                      €{precioCalculado.toFixed(2)}
-                    </td>
-                    <td style={{ textAlign: 'right' }}>
-                      <button 
-                        className="btn btn-primary btn-sm btn-icon" 
-                        disabled={!servicioSeleccionado || isCalculando}
-                        onClick={handleAddServicio}
-                        title="Agregar servicio"
-                      >
-                        <Check size={16} />
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                {/* Servicios ya asignados */}
+                {activePrenda.servicios && activePrenda.servicios.length > 0 && (
+                  <div>
+                    <p style={{ fontSize: 'var(--text-xs)', textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.06em', marginBottom: 'var(--space-2)' }}>
+                      Servicios asignados
+                    </p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                      {activePrenda.servicios.map(s => {
+                        const srv = catalogoServicios.find(c => c.id === s.servicioId);
+                        return (
+                          <div key={s.id} style={{
+                            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                            padding: 'var(--space-3) var(--space-4)',
+                            background: 'var(--color-success-soft, #f0fdf4)',
+                            border: '1px solid var(--color-success)',
+                            borderRadius: 'var(--radius-md)',
+                          }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                              <Check size={16} style={{ color: 'var(--color-success)' }} />
+                              <div>
+                                <p style={{ fontWeight: 'var(--font-medium)', fontSize: 'var(--text-sm)' }}>
+                                  {srv?.categoria} — {srv?.tipoEspecifico ?? 'Servicio'}
+                                </p>
+                                {s.medidaEntregada && (
+                                  <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>
+                                    Medida: {s.medidaEntregada} cm
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
+                              <span style={{ fontWeight: 'bold', color: 'var(--color-success)', fontFamily: 'var(--font-heading)' }}>
+                                €{Number(s.precioFinal).toFixed(2)}
+                              </span>
+                              <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                                <button 
+                                  type="button" 
+                                  className="btn btn-icon" 
+                                  style={{ padding: '4px', color: 'var(--color-text-light)' }} 
+                                  onClick={() => handleEditServicioAsignado(s)}
+                                  title="Modificar servicio"
+                                >
+                                  <Edit2 size={16} />
+                                </button>
+                                <button 
+                                  type="button" 
+                                  className="btn btn-icon" 
+                                  style={{ padding: '4px', color: 'var(--color-danger)' }} 
+                                  onClick={() => handleRemoveServicioAsignado(s.id)}
+                                  title="Eliminar servicio"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Buscador de Servicios y Botones de acción */}
+                <div style={{ marginBottom: 'var(--space-4)', display: 'flex', gap: 'var(--space-4)', alignItems: 'center' }}>
+                  <input
+                    type="text"
+                    className="form-input"
+                    style={{ flex: 1 }}
+                    placeholder="Buscar servicio disponible (ej. dobladillo, bajo, cremallera)..."
+                    value={busquedaServicio}
+                    onChange={e => setBusquedaServicio(e.target.value)}
+                  />
+                  <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                    <button type="button" className="btn btn-ghost" onClick={handleCloseModal}>
+                      Cancelar
+                    </button>
+                    <button type="button" className="btn btn-primary" onClick={handleCloseModal}>
+                      Guardar
+                    </button>
+                  </div>
+                </div>
+
+                {/* Servicios disponibles agrupados por categoría */}
+                {(() => {
+                  const disponibles = catalogoServicios.filter(s =>
+                    s.preciosPorPrenda.some(p => Number(p.tipoPrendaId) === Number(activePrenda.tipoPrendaId))
+                  );
+                  const yaAsignados = new Set((activePrenda.servicios ?? []).map(s => s.servicioId));
+                  
+                  const normalizeText = (t: string) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                  const term = normalizeText(busquedaServicio);
+
+                  const sinAsignar = disponibles.filter(s => {
+                    if (yaAsignados.has(s.id)) return false;
+                    if (!term) return true;
+                    return normalizeText(s.categoria).includes(term) || normalizeText(s.tipoEspecifico).includes(term);
+                  });
+                  const categorias = [...new Set(sinAsignar.map(s => s.categoria))].sort();
+
+                  if (disponibles.length === 0) {
+                    return (
+                      <div style={{
+                        padding: 'var(--space-4)', textAlign: 'center',
+                        background: '#fff8e1', border: '1px solid #f59e0b',
+                        borderRadius: 'var(--radius-md)', fontSize: 'var(--text-sm)',
+                        color: '#92400e'
+                      }}>
+                        ⚠️ No hay servicios configurados para este tipo de prenda. Ve al <strong>Catálogo</strong> y añade reglas de precio.
+                      </div>
+                    );
+                  }
+
+                  if (sinAsignar.length === 0) {
+                    return (
+                      <div style={{
+                        padding: 'var(--space-3)', textAlign: 'center',
+                        background: 'var(--color-success-soft, #f0fdf4)', border: '1px solid var(--color-success)',
+                        borderRadius: 'var(--radius-md)', fontSize: 'var(--text-sm)',
+                        color: 'var(--color-success)'
+                      }}>
+                        ✅ Todos los servicios disponibles ya están asignados a esta prenda.
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div>
+                      <p style={{ fontSize: 'var(--text-xs)', textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.06em', marginBottom: 'var(--space-3)' }}>
+                        Servicios disponibles para este tipo de prenda
+                      </p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+                        {categorias.map(cat => (
+                          <div key={cat}>
+                            <p style={{ fontSize: 'var(--text-xs)', fontWeight: 'var(--font-semibold)', color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)' }}>
+                              {cat}
+                            </p>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                              {sinAsignar.filter(s => s.categoria === cat).map(srv => {
+                                const regla = srv.preciosPorPrenda.find(p => Number(p.tipoPrendaId) === Number(activePrenda.tipoPrendaId));
+                                const isSelected = servicioSeleccionado === String(srv.id);
+                                return (
+                                  <div key={srv.id} style={{
+                                    border: `2px solid ${isSelected ? 'var(--color-primary)' : 'var(--color-border)'}`,
+                                    borderRadius: 'var(--radius-md)',
+                                    background: isSelected ? 'var(--color-primary-soft)' : 'var(--bg)',
+                                    overflow: 'hidden',
+                                    transition: 'all 0.15s',
+                                  }}>
+                                    {/* Cabecera del servicio — clickeable para seleccionar */}
+                                    <button
+                                      type="button"
+                                      onClick={() => setServicioSeleccionado(isSelected ? '' : String(srv.id))}
+                                      style={{
+                                        width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                        padding: 'var(--space-3) var(--space-4)',
+                                        background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left',
+                                      }}
+                                    >
+                                      <div>
+                                        <p style={{ fontWeight: 'var(--font-medium)', fontSize: 'var(--text-sm)' }}>{srv.tipoEspecifico}</p>
+                                        <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)', marginTop: '2px' }}>
+                                          Hasta {Number(regla?.medidaBase ?? 0)} cm · +€{Number(regla?.precioExtra ?? 0).toFixed(2)} / {Number(regla?.medidaExtra ?? 1)} cm adicional
+                                        </p>
+                                      </div>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                                        <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 'bold', color: 'var(--color-primary)', fontSize: 'var(--text-lg)' }}>
+                                          €{Number(regla?.precioBase ?? 0).toFixed(2)}
+                                        </span>
+                                        <span className={`badge ${isSelected ? 'badge-primary' : 'badge-neutral'}`}>
+                                          {isSelected ? '✓ Seleccionado' : 'Seleccionar'}
+                                        </span>
+                                      </div>
+                                    </button>
+
+                                    {/* Panel de ajuste cuando está seleccionado */}
+                                    {isSelected && (
+                                      <div style={{
+                                        borderTop: '1px solid var(--color-primary)',
+                                        padding: 'var(--space-3) var(--space-4)',
+                                        display: 'flex', alignItems: 'center', gap: 'var(--space-4)',
+                                        background: 'var(--bg)',
+                                      }}>
+                                        <div style={{ flex: 1 }}>
+                                          <label style={{ fontSize: '11px', color: 'var(--color-text-muted)', display: 'block', marginBottom: '4px' }}>
+                                            Longitud entregada (cm) — opcional
+                                          </label>
+                                          <input
+                                            type="number" min="0"
+                                            className="form-input"
+                                            style={{ padding: '6px 10px', fontSize: '13px', maxWidth: '160px' }}
+                                            value={medidaEntregada}
+                                            onChange={e => setMedidaEntregada(e.target.value ? Number(e.target.value) : '')}
+                                            placeholder="Sin medida"
+                                          />
+                                        </div>
+                                        <div style={{ textAlign: 'right' }}>
+                                          <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Precio calculado</p>
+                                          <p style={{ fontFamily: 'var(--font-heading)', fontWeight: 'bold', fontSize: 'var(--text-xl)', color: 'var(--color-primary)' }}>
+                                            €{precioCalculado.toFixed(2)}
+                                          </p>
+                                        </div>
+                                        <button
+                                          type="button"
+                                          className="btn btn-primary"
+                                          disabled={isCalculando}
+                                          onClick={handleAddServicio}
+                                          style={{ alignSelf: 'flex-end' }}
+                                        >
+                                          {isCalculando ? 'Agregando...' : <><Check size={15} /> Agregar</>}
+                                        </button>
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
             )}
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 'var(--space-6)' }}>
-              <button type="button" className="btn btn-primary" onClick={handleCloseModal}>
-                Cerrar Ventana
-              </button>
-            </div>
           </div>
         </div>
       )}

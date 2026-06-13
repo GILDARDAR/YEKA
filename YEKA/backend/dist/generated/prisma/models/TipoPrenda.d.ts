@@ -124,8 +124,8 @@ export type TipoPrendaWhereInput = {
     activo?: Prisma.BoolFilter<"TipoPrenda"> | boolean;
     createdAt?: Prisma.DateTimeFilter<"TipoPrenda"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"TipoPrenda"> | Date | string;
-    prendas?: Prisma.PrendaListRelationFilter;
     preciosServicios?: Prisma.PrecioServicioListRelationFilter;
+    prendas?: Prisma.PrendaListRelationFilter;
 };
 export type TipoPrendaOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
@@ -134,8 +134,8 @@ export type TipoPrendaOrderByWithRelationInput = {
     activo?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
-    prendas?: Prisma.PrendaOrderByRelationAggregateInput;
     preciosServicios?: Prisma.PrecioServicioOrderByRelationAggregateInput;
+    prendas?: Prisma.PrendaOrderByRelationAggregateInput;
 };
 export type TipoPrendaWhereUniqueInput = Prisma.AtLeast<{
     id?: number;
@@ -147,8 +147,8 @@ export type TipoPrendaWhereUniqueInput = Prisma.AtLeast<{
     activo?: Prisma.BoolFilter<"TipoPrenda"> | boolean;
     createdAt?: Prisma.DateTimeFilter<"TipoPrenda"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"TipoPrenda"> | Date | string;
-    prendas?: Prisma.PrendaListRelationFilter;
     preciosServicios?: Prisma.PrecioServicioListRelationFilter;
+    prendas?: Prisma.PrendaListRelationFilter;
 }, "id" | "nombre">;
 export type TipoPrendaOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
@@ -180,8 +180,8 @@ export type TipoPrendaCreateInput = {
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    prendas?: Prisma.PrendaCreateNestedManyWithoutTipoPrendaInput;
     preciosServicios?: Prisma.PrecioServicioCreateNestedManyWithoutTipoPrendaInput;
+    prendas?: Prisma.PrendaCreateNestedManyWithoutTipoPrendaInput;
 };
 export type TipoPrendaUncheckedCreateInput = {
     id?: number;
@@ -190,8 +190,8 @@ export type TipoPrendaUncheckedCreateInput = {
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    prendas?: Prisma.PrendaUncheckedCreateNestedManyWithoutTipoPrendaInput;
     preciosServicios?: Prisma.PrecioServicioUncheckedCreateNestedManyWithoutTipoPrendaInput;
+    prendas?: Prisma.PrendaUncheckedCreateNestedManyWithoutTipoPrendaInput;
 };
 export type TipoPrendaUpdateInput = {
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -199,8 +199,8 @@ export type TipoPrendaUpdateInput = {
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    prendas?: Prisma.PrendaUpdateManyWithoutTipoPrendaNestedInput;
     preciosServicios?: Prisma.PrecioServicioUpdateManyWithoutTipoPrendaNestedInput;
+    prendas?: Prisma.PrendaUpdateManyWithoutTipoPrendaNestedInput;
 };
 export type TipoPrendaUncheckedUpdateInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -209,8 +209,8 @@ export type TipoPrendaUncheckedUpdateInput = {
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    prendas?: Prisma.PrendaUncheckedUpdateManyWithoutTipoPrendaNestedInput;
     preciosServicios?: Prisma.PrecioServicioUncheckedUpdateManyWithoutTipoPrendaNestedInput;
+    prendas?: Prisma.PrendaUncheckedUpdateManyWithoutTipoPrendaNestedInput;
 };
 export type TipoPrendaCreateManyInput = {
     id?: number;
@@ -388,21 +388,21 @@ export type TipoPrendaUncheckedUpdateWithoutPreciosServiciosInput = {
     prendas?: Prisma.PrendaUncheckedUpdateManyWithoutTipoPrendaNestedInput;
 };
 export type TipoPrendaCountOutputType = {
-    prendas: number;
     preciosServicios: number;
+    prendas: number;
 };
 export type TipoPrendaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    prendas?: boolean | TipoPrendaCountOutputTypeCountPrendasArgs;
     preciosServicios?: boolean | TipoPrendaCountOutputTypeCountPreciosServiciosArgs;
+    prendas?: boolean | TipoPrendaCountOutputTypeCountPrendasArgs;
 };
 export type TipoPrendaCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.TipoPrendaCountOutputTypeSelect<ExtArgs> | null;
 };
-export type TipoPrendaCountOutputTypeCountPrendasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    where?: Prisma.PrendaWhereInput;
-};
 export type TipoPrendaCountOutputTypeCountPreciosServiciosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.PrecioServicioWhereInput;
+};
+export type TipoPrendaCountOutputTypeCountPrendasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.PrendaWhereInput;
 };
 export type TipoPrendaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -411,8 +411,8 @@ export type TipoPrendaSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
     activo?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    prendas?: boolean | Prisma.TipoPrenda$prendasArgs<ExtArgs>;
     preciosServicios?: boolean | Prisma.TipoPrenda$preciosServiciosArgs<ExtArgs>;
+    prendas?: boolean | Prisma.TipoPrenda$prendasArgs<ExtArgs>;
     _count?: boolean | Prisma.TipoPrendaCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["tipoPrenda"]>;
 export type TipoPrendaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -441,8 +441,8 @@ export type TipoPrendaSelectScalar = {
 };
 export type TipoPrendaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nombre" | "descripcion" | "activo" | "createdAt" | "updatedAt", ExtArgs["result"]["tipoPrenda"]>;
 export type TipoPrendaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    prendas?: boolean | Prisma.TipoPrenda$prendasArgs<ExtArgs>;
     preciosServicios?: boolean | Prisma.TipoPrenda$preciosServiciosArgs<ExtArgs>;
+    prendas?: boolean | Prisma.TipoPrenda$prendasArgs<ExtArgs>;
     _count?: boolean | Prisma.TipoPrendaCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type TipoPrendaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {};
@@ -450,8 +450,8 @@ export type TipoPrendaIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.E
 export type $TipoPrendaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     name: "TipoPrenda";
     objects: {
-        prendas: Prisma.$PrendaPayload<ExtArgs>[];
         preciosServicios: Prisma.$PrecioServicioPayload<ExtArgs>[];
+        prendas: Prisma.$PrendaPayload<ExtArgs>[];
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: number;
@@ -512,8 +512,8 @@ export interface TipoPrendaDelegate<ExtArgs extends runtime.Types.Extensions.Int
 }
 export interface Prisma__TipoPrendaClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise";
-    prendas<T extends Prisma.TipoPrenda$prendasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TipoPrenda$prendasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrendaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     preciosServicios<T extends Prisma.TipoPrenda$preciosServiciosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TipoPrenda$preciosServiciosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrecioServicioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    prendas<T extends Prisma.TipoPrenda$prendasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TipoPrenda$prendasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrendaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): runtime.Types.Utils.JsPromise<TResult1 | TResult2>;
     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): runtime.Types.Utils.JsPromise<T | TResult>;
     finally(onfinally?: (() => void) | undefined | null): runtime.Types.Utils.JsPromise<T>;
@@ -624,17 +624,6 @@ export type TipoPrendaDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.In
     where?: Prisma.TipoPrendaWhereInput;
     limit?: number;
 };
-export type TipoPrenda$prendasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    select?: Prisma.PrendaSelect<ExtArgs> | null;
-    omit?: Prisma.PrendaOmit<ExtArgs> | null;
-    include?: Prisma.PrendaInclude<ExtArgs> | null;
-    where?: Prisma.PrendaWhereInput;
-    orderBy?: Prisma.PrendaOrderByWithRelationInput | Prisma.PrendaOrderByWithRelationInput[];
-    cursor?: Prisma.PrendaWhereUniqueInput;
-    take?: number;
-    skip?: number;
-    distinct?: Prisma.PrendaScalarFieldEnum | Prisma.PrendaScalarFieldEnum[];
-};
 export type TipoPrenda$preciosServiciosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.PrecioServicioSelect<ExtArgs> | null;
     omit?: Prisma.PrecioServicioOmit<ExtArgs> | null;
@@ -645,6 +634,17 @@ export type TipoPrenda$preciosServiciosArgs<ExtArgs extends runtime.Types.Extens
     take?: number;
     skip?: number;
     distinct?: Prisma.PrecioServicioScalarFieldEnum | Prisma.PrecioServicioScalarFieldEnum[];
+};
+export type TipoPrenda$prendasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.PrendaSelect<ExtArgs> | null;
+    omit?: Prisma.PrendaOmit<ExtArgs> | null;
+    include?: Prisma.PrendaInclude<ExtArgs> | null;
+    where?: Prisma.PrendaWhereInput;
+    orderBy?: Prisma.PrendaOrderByWithRelationInput | Prisma.PrendaOrderByWithRelationInput[];
+    cursor?: Prisma.PrendaWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.PrendaScalarFieldEnum | Prisma.PrendaScalarFieldEnum[];
 };
 export type TipoPrendaDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.TipoPrendaSelect<ExtArgs> | null;

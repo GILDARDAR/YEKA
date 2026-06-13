@@ -32,8 +32,14 @@ let PrendaService = class PrendaService {
     async asignarServicio(prendaId, dto, usuarioId) {
         return this.prendaFacade.asignarServicio(prendaId, dto, usuarioId);
     }
+    async eliminarServicio(prendaId, prendaServicioId, usuarioId) {
+        return this.prendaFacade.eliminarServicio(prendaId, prendaServicioId, usuarioId);
+    }
     async cambiarEstado(id, dto, usuarioId) {
         return this.prendaFacade.cambiarEstado(id, dto, usuarioId);
+    }
+    async cambiarTipoExpress(id, tipoExpress, usuarioId) {
+        return this.prendaFacade.cambiarTipoExpress(id, tipoExpress, usuarioId);
     }
     async subirFoto(id, dto, usuarioId) {
         return this.prendaFacade.subirFoto(id, dto, usuarioId);

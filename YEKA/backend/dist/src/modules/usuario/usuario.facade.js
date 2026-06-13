@@ -176,6 +176,15 @@ let UsuarioFacade = class UsuarioFacade {
         }
         return bcrypt.compare(pin, user.pinAcceso);
     }
+    async getAuditLogs() {
+        return this.usuarioDAO.getAuditLogs();
+    }
+    async markAllAuditLogsAsRead() {
+        return this.usuarioDAO.markAllAuditLogsAsRead();
+    }
+    async markAuditLogAsRead(id) {
+        return this.usuarioDAO.markAuditLogAsRead(id);
+    }
 };
 exports.UsuarioFacade = UsuarioFacade;
 exports.UsuarioFacade = UsuarioFacade = __decorate([

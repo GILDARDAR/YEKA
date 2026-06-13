@@ -35,8 +35,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    const res = await api.post<{ token: string; user: AuthUser }>('/auth/login', { email, password });
-    const { token: t, user: u } = res.data;
+    const res = await api.post<{ token: string; user: AuthUser; message: string }>('/auth/login', { email, password });
+    const { token: t, user: u, message } = res.data;
+    
+    // Show success alert
+    alert(message || 'Logueado satisfactoriamente');
+
     localStorage.setItem('yeka_token', t);
     localStorage.setItem('yeka_user', JSON.stringify(u));
     setToken(t);
