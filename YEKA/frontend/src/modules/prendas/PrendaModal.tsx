@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { prendasService } from './prendas.service';
-import type { Prenda, TipoPrenda, CatalogoServicio, PrendaServicio } from '../../shared/types';
+import type { Prenda, TipoPrenda, CatalogoServicio, PrendaServicio, EstadoPrenda } from '../../shared/types';
 import { Check, Trash2, Edit2, X } from 'lucide-react';
 
 interface PrendaModalProps {
@@ -12,6 +12,21 @@ interface PrendaModalProps {
   onClose: () => void;
   onSaved: () => void; // Called when any change happens so parent can refresh
 }
+
+const ESTADOS_PRENDA: EstadoPrenda[] = [
+  'RECIBIDA', 'PENDIENTE_VALORACION', 'EN_PRODUCCION', 
+  'ESPERANDO_PRUEBA', 'PENDIENTE_RECOGIDA', 'ENTREGADA', 'PROPIEDAD_TALLER'
+];
+
+const ESTADO_LABELS: Record<EstadoPrenda, string> = {
+  RECIBIDA: 'Recibida',
+  PENDIENTE_VALORACION: 'Pend. valoración',
+  EN_PRODUCCION: 'En producción',
+  ESPERANDO_PRUEBA: 'Esp. prueba',
+  PENDIENTE_RECOGIDA: 'Pend. recogida',
+  ENTREGADA: 'Entregada',
+  PROPIEDAD_TALLER: 'Propiedad taller'
+};
 
 export function PrendaModal({
   facturaId,
@@ -35,6 +50,14 @@ export function PrendaModal({
   });
 
   const [activePrenda, setActivePrenda] = useState<Prenda | null>(prendaToEdit);
+
+  React.useEffect(() => {
+    if (prendaToEdit && prendaToEdit.id) {
+      prendasService.getById(prendaToEdit.id).then(fullPrenda => {
+        setActivePrenda(fullPrenda);
+      }).catch(err => console.error("Error fetching full prenda:", err));
+    }
+  }, [prendaToEdit?.id]);
 
   // Service Row State
   const [servicioSeleccionado, setServicioSeleccionado] = useState('');
@@ -170,6 +193,19 @@ export function PrendaModal({
     }
   };
 
+  const handleCambiarEstado = async (nuevoEstado: EstadoPrenda) => {
+    if (!activePrenda) return;
+    try {
+      await prendasService.cambiarEstado(activePrenda.id, { nuevoEstado });
+      const updated = await prendasService.getById(activePrenda.id);
+      setActivePrenda(updated);
+      onSaved();
+      alert('Estado actualizado correctamente.');
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Error al actualizar el estado');
+    }
+  };
+
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 1000, 
@@ -190,6 +226,20 @@ export function PrendaModal({
         
         {/* Prenda Form */}
         <form onSubmit={handleSavePrenda} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+          {activePrenda && (
+            <div className="form-group" style={{ marginBottom: 'var(--space-2)' }}>
+              <label className="form-label" style={{ fontWeight: 'bold', color: 'var(--color-primary)' }}>Estado Actual de la Prenda</label>
+              <select 
+                className="form-select" 
+                value={activePrenda.estadoActual}
+                onChange={e => handleCambiarEstado(e.target.value as EstadoPrenda)}
+                style={{ borderColor: 'var(--color-primary)', background: 'rgba(59, 130, 246, 0.05)' }}
+              >
+                {ESTADOS_PRENDA.map(e => <option key={e} value={e}>{ESTADO_LABELS[e]}</option>)}
+              </select>
+            </div>
+          )}
+          
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
             <div className="form-group">
               <label className="form-label">Tipo de Prenda</label>

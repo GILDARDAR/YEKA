@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { facturasService } from './facturas.service';
 import type { Factura, EstadoPago } from '../../shared/types';
 import { Search, Plus, Filter, FileText } from 'lucide-react';
 import { NuevaFacturaModal } from './NuevaFacturaModal';
-import { useAuth } from '../../shared/auth.context';
+
 
 const ESTADO_BADGE: Record<EstadoPago, string> = {
   PENDIENTE: 'badge-neutral',
@@ -21,9 +21,6 @@ const ESTADO_LABEL: Record<EstadoPago, string> = {
 };
 
 export function FacturasPage() {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  
   const [facturas, setFacturas]   = useState<Factura[]>([]);
   const [loading, setLoading]     = useState(true);
   const [filter, setFilter]       = useState<EstadoPago | ''>('');

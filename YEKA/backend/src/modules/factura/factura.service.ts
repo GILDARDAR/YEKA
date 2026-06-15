@@ -27,6 +27,14 @@ export class FacturaService {
     return this.facturaFacade.anularFactura(facturaId, usuarioId);
   }
 
+  async updateAbono(abonoId: number, dto: any, usuarioId: number): Promise<FacturaResponseDto> {
+    return this.facturaFacade.updateAbono(abonoId, dto, usuarioId);
+  }
+
+  async deleteAbono(abonoId: number, usuarioId: number): Promise<FacturaResponseDto> {
+    return this.facturaFacade.deleteAbono(abonoId, usuarioId);
+  }
+
   async recalcularFactura(facturaId: number): Promise<FacturaResponseDto> {
     return this.facturaFacade.recalcularFactura(facturaId);
   }

@@ -43,6 +43,21 @@ export class UpdateFacturaDto {
   notas?: string;
 }
 
+export class UpdateAbonoDto {
+  @IsOptional()
+  @IsNumber()
+  @Min(0.01, { message: 'El monto del abono debe ser mayor a cero' })
+  monto?: number;
+
+  @IsOptional()
+  @IsEnum(MetodoPago, { message: 'El método de pago debe ser válido' })
+  metodoPago?: MetodoPago;
+
+  @IsOptional()
+  @IsString()
+  notas?: string;
+}
+
 export class AbonoResponseDto {
   id: number;
   facturaId: number;

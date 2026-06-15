@@ -93,6 +93,32 @@ export class FacturaDAO {
     });
   }
 
+  async getAbonoById(abonoId: number): Promise<Abono | null> {
+    return this.prisma.abono.findUnique({
+      where: { id: abonoId },
+    });
+  }
+
+  async updateAbono(
+    abonoId: number,
+    data: { monto?: number; metodoPago?: MetodoPago; notas?: string },
+  ): Promise<Abono> {
+    return this.prisma.abono.update({
+      where: { id: abonoId },
+      data: {
+        ...(data.monto !== undefined && { monto: new Prisma.Decimal(data.monto) }),
+        ...(data.metodoPago && { metodoPago: data.metodoPago }),
+        ...(data.notas !== undefined && { notas: data.notas }),
+      },
+    });
+  }
+
+  async deleteAbono(abonoId: number): Promise<Abono> {
+    return this.prisma.abono.delete({
+      where: { id: abonoId },
+    });
+  }
+
   /**
    * Recalculates subtotal and total based on the sum of precioFinal
    * in all PrendaServicio records associated with all Prendas in this Factura.

@@ -107,7 +107,7 @@ export function PrendasPage() {
                       <QrCode size={14} /> {p.codigoQR}
                     </Link>
                   </td>
-                  <td style={{ fontWeight: 'var(--font-medium)' }}>{p.tipoPrenda}</td>
+                  <td style={{ fontWeight: 'var(--font-medium)' }}>{p.tipoPrendaId}</td>
                   <td>
                     <Link to={`/facturas/${p.facturaId}`} style={{ color: 'var(--color-text-light)', fontSize: 'var(--text-sm)' }}>
                       #{p.facturaId}

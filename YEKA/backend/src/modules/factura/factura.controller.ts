@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { FacturaService } from './factura.service';
-import { CreateFacturaDto, AddAbonoDto, FacturaResponseDto } from './factura.dto';
+import { CreateFacturaDto, AddAbonoDto, UpdateAbonoDto, FacturaResponseDto } from './factura.dto';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -60,6 +60,23 @@ export class FacturaController {
     @CurrentUser('sub') usuarioId: number,
   ): Promise<FacturaResponseDto> {
     return this.facturaService.addAbono(id, dto, usuarioId);
+  }
+
+  @Patch('abonos/:abonoId')
+  async updateAbono(
+    @Param('abonoId', ParseIntPipe) abonoId: number,
+    @Body() dto: UpdateAbonoDto,
+    @CurrentUser('sub') usuarioId: number,
+  ): Promise<FacturaResponseDto> {
+    return this.facturaService.updateAbono(abonoId, dto, usuarioId);
+  }
+
+  @Delete('abonos/:abonoId')
+  async deleteAbono(
+    @Param('abonoId', ParseIntPipe) abonoId: number,
+    @CurrentUser('sub') usuarioId: number,
+  ): Promise<FacturaResponseDto> {
+    return this.facturaService.deleteAbono(abonoId, usuarioId);
   }
 
   @Get(':id/pdf')

@@ -25,6 +25,7 @@ export function FacturaDetail() {
 
   // Abono Modal
   const [isAbonoModalOpen, setIsAbonoModalOpen] = useState(false);
+  const [abonoToEdit, setAbonoToEdit] = useState<any | null>(null);
   const [abonoForm, setAbonoForm] = useState({
     monto: '',
     metodoPago: 'EFECTIVO',
@@ -85,18 +86,47 @@ export function FacturaDetail() {
     if (!factura) return;
     try {
       setSavingAbono(true);
-      await facturasService.addAbono(factura.id, {
-        monto: Number(abonoForm.monto),
-        metodoPago: abonoForm.metodoPago as any,
-        notas: abonoForm.notas || undefined
-      });
+      if (abonoToEdit) {
+        await facturasService.updateAbono(abonoToEdit.id, {
+          monto: Number(abonoForm.monto),
+          metodoPago: abonoForm.metodoPago as any,
+          notas: abonoForm.notas || undefined
+        });
+      } else {
+        await facturasService.addAbono(factura.id, {
+          monto: Number(abonoForm.monto),
+          metodoPago: abonoForm.metodoPago as any,
+          notas: abonoForm.notas || undefined
+        });
+      }
       setIsAbonoModalOpen(false);
+      setAbonoToEdit(null);
       setAbonoForm({ monto: '', metodoPago: 'EFECTIVO', notas: '' });
       await fetchFactura();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Error al registrar abono');
+      alert(err.response?.data?.message || 'Error al guardar abono');
     } finally {
       setSavingAbono(false);
+    }
+  };
+
+  const handleOpenEditAbono = (a: any) => {
+    setAbonoToEdit(a);
+    setAbonoForm({
+      monto: a.monto.toString(),
+      metodoPago: a.metodoPago,
+      notas: a.notas || ''
+    });
+    setIsAbonoModalOpen(true);
+  };
+
+  const handleDeleteAbono = async (abonoId: number) => {
+    if (!window.confirm('¿Seguro que deseas eliminar este abono?')) return;
+    try {
+      await facturasService.deleteAbono(abonoId);
+      await fetchFactura();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Error al eliminar abono');
     }
   };
 
@@ -183,7 +213,11 @@ export function FacturaDetail() {
           <div style={{ marginLeft: 'var(--space-6)' }}>
             <button 
               className="btn btn-primary" 
-              onClick={() => setIsAbonoModalOpen(true)}
+              onClick={() => {
+                setAbonoToEdit(null);
+                setAbonoForm({ monto: '', metodoPago: 'EFECTIVO', notas: '' });
+                setIsAbonoModalOpen(true);
+              }}
               disabled={factura.estadoPago === 'PAGADO' || factura.estadoPago === 'ANULADO'}
             >
               <CreditCard size={16} /> Abonar
@@ -191,6 +225,50 @@ export function FacturaDetail() {
           </div>
         </div>
       </div>
+
+      {/* Resumen de Abonos */}
+      {factura.abonos && factura.abonos.length > 0 && (
+        <div style={{ marginTop: 'var(--space-4)', display: 'flex', flexDirection: 'column', background: 'var(--bg-card)', padding: 'var(--space-4)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
+          <h3 style={{ fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-3)' }}>
+            Abonos Registrados
+          </h3>
+          <div className="table-wrapper" style={{ overflowY: 'auto' }}>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Método de Pago</th>
+                  <th>Notas</th>
+                  <th style={{ textAlign: 'right' }}>Monto</th>
+                  <th style={{ textAlign: 'center' }}>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {factura.abonos.map(abono => (
+                  <tr key={abono.id}>
+                    <td>{new Date(abono.fecha).toLocaleString()}</td>
+                    <td>{abono.metodoPago}</td>
+                    <td>{abono.notas || '-'}</td>
+                    <td style={{ textAlign: 'right', fontWeight: 'bold', color: 'var(--color-success)' }}>
+                      €{Number(abono.monto).toFixed(2)}
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', justifyContent: 'center', gap: '4px' }}>
+                        <button className="btn btn-ghost btn-sm btn-icon" onClick={() => handleOpenEditAbono(abono)} style={{ color: 'var(--color-primary)' }} title="Editar abono" disabled={factura.estadoPago === 'ANULADO'}>
+                          <Edit2 size={16} />
+                        </button>
+                        <button className="btn btn-ghost btn-sm btn-icon" onClick={() => handleDeleteAbono(abono.id)} style={{ color: 'var(--color-danger)' }} title="Eliminar abono" disabled={factura.estadoPago === 'ANULADO'}>
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Prendas List */}
       <div style={{ marginTop: 'var(--space-4)', flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--bg-card)', padding: 'var(--space-4)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
@@ -302,7 +380,7 @@ export function FacturaDetail() {
         }}>
           <div className="card" style={{ width: '100%', maxWidth: '400px', padding: 'var(--space-6)' }}>
             <h2 style={{ fontSize: 'var(--text-xl)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-4)' }}>
-              Registrar Abono
+              {abonoToEdit ? 'Editar Abono' : 'Registrar Abono'}
             </h2>
             
             <form onSubmit={handleAbonar} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
@@ -312,7 +390,11 @@ export function FacturaDetail() {
                   type="number" 
                   step="0.01"
                   min="0.01"
-                  max={Math.max(0, Number(factura.total) - (factura.abonos?.reduce((sum, a) => sum + Number(a.monto), 0) || 0)).toFixed(2)}
+                  max={
+                    abonoToEdit
+                      ? (Math.max(0, Number(factura.total) - (factura.abonos?.reduce((sum, a) => sum + Number(a.monto), 0) || 0)) + Number(abonoToEdit.monto)).toFixed(2)
+                      : Math.max(0, Number(factura.total) - (factura.abonos?.reduce((sum, a) => sum + Number(a.monto), 0) || 0)).toFixed(2)
+                  }
                   required 
                   className="form-input" 
                   value={abonoForm.monto} 
@@ -345,11 +427,14 @@ export function FacturaDetail() {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 'var(--space-2)', gap: 'var(--space-2)' }}>
-                <button type="button" className="btn btn-ghost" onClick={() => setIsAbonoModalOpen(false)}>
+                <button type="button" className="btn btn-ghost" onClick={() => {
+                  setIsAbonoModalOpen(false);
+                  setAbonoToEdit(null);
+                }}>
                   Cancelar
                 </button>
                 <button type="submit" className="btn btn-primary" disabled={savingAbono}>
-                  {savingAbono ? 'Guardando...' : 'Registrar'}
+                  {savingAbono ? 'Guardando...' : (abonoToEdit ? 'Actualizar' : 'Registrar')}
                 </button>
               </div>
             </form>

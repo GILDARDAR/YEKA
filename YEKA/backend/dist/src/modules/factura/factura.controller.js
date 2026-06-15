@@ -41,6 +41,12 @@ let FacturaController = class FacturaController {
     async addAbono(id, dto, usuarioId) {
         return this.facturaService.addAbono(id, dto, usuarioId);
     }
+    async updateAbono(abonoId, dto, usuarioId) {
+        return this.facturaService.updateAbono(abonoId, dto, usuarioId);
+    }
+    async deleteAbono(abonoId, usuarioId) {
+        return this.facturaService.deleteAbono(abonoId, usuarioId);
+    }
     async downloadPdf(id, res) {
         const pdfBuffer = await this.facturaService.generatePdf(id);
         const factura = await this.facturaService.getFacturaById(id);
@@ -93,6 +99,23 @@ __decorate([
     __metadata("design:paramtypes", [Number, factura_dto_1.AddAbonoDto, Number]),
     __metadata("design:returntype", Promise)
 ], FacturaController.prototype, "addAbono", null);
+__decorate([
+    (0, common_1.Patch)('abonos/:abonoId'),
+    __param(0, (0, common_1.Param)('abonoId', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, current_user_decorator_1.CurrentUser)('sub')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, factura_dto_1.UpdateAbonoDto, Number]),
+    __metadata("design:returntype", Promise)
+], FacturaController.prototype, "updateAbono", null);
+__decorate([
+    Delete('abonos/:abonoId'),
+    __param(0, (0, common_1.Param)('abonoId', common_1.ParseIntPipe)),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('sub')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:returntype", Promise)
+], FacturaController.prototype, "deleteAbono", null);
 __decorate([
     (0, common_1.Get)(':id/pdf'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),

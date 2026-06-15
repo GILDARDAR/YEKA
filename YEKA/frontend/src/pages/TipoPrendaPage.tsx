@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { TipoPrenda } from '../shared/types';
 import tipoPrendaService from '../services/tipo-prenda.service';
 import { useAuth } from '../shared/auth.context';
-import { Layers, Plus, Pencil, Tag } from 'lucide-react';
+import { Layers, Plus, Pencil } from 'lucide-react';
 
 const TipoPrendaPage: React.FC = () => {
   const { user } = useAuth();

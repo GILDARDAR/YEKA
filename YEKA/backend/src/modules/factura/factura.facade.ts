@@ -199,6 +199,121 @@ export class FacturaFacade {
     return toResponseDto(freshFactura!);
   }
 
+  async updateAbono(abonoId: number, dto: any, usuarioId: number): Promise<FacturaResponseDto> {
+    const abono = await this.facturaDAO.getAbonoById(abonoId);
+    if (!abono) {
+      throw new NotFoundException(`Abono con id ${abonoId} no encontrado`);
+    }
+
+    const facturaId = abono.facturaId;
+    const factura = await this.facturaDAO.findById(facturaId);
+    if (!factura) {
+      throw new NotFoundException(`Factura con id ${facturaId} no encontrada`);
+    }
+
+    if (factura.estadoPago === EstadoPago.ANULADO) {
+      throw new BadRequestException('No se puede modificar un abono en una factura anulada');
+    }
+
+    const abonos = await this.facturaDAO.getAbonos(facturaId);
+    const totalAbonadoActual = abonos.reduce((sum, item) => sum + item.monto.toNumber(), 0);
+    const totalFactura = factura.total.toNumber();
+
+    if (dto.monto !== undefined) {
+      const nuevoTotalAbonado = totalAbonadoActual - abono.monto.toNumber() + dto.monto;
+      if (nuevoTotalAbonado > totalFactura + 0.001) {
+        throw new BadRequestException(
+          `El monto del abono modificado superaría el saldo total de la factura.`,
+        );
+      }
+    }
+
+    const valorAnterior = { ...factura };
+    await this.facturaDAO.updateAbono(abonoId, dto);
+
+    // Recalculate status
+    const nuevosAbonos = await this.facturaDAO.getAbonos(facturaId);
+    const nuevoTotalAbonado = nuevosAbonos.reduce((sum, item) => sum + item.monto.toNumber(), 0);
+    let nuevoEstado: EstadoPago = EstadoPago.PENDIENTE;
+
+    if (Math.abs(nuevoTotalAbonado - totalFactura) < 0.01) {
+      nuevoEstado = EstadoPago.PAGADO;
+    } else if (nuevoTotalAbonado > 0) {
+      nuevoEstado = EstadoPago.PARCIAL;
+    }
+
+    const updatedFactura = await this.facturaDAO.update(facturaId, {
+      estadoPago: nuevoEstado,
+    });
+
+    await this.prismaService.auditLog.create({
+      data: {
+        usuarioId,
+        accion: 'MODIFICACION_ABONO' as any,
+        entidadAfectada: 'Factura',
+        entidadId: facturaId,
+        valorAnterior: valorAnterior as any,
+        valorNuevo: updatedFactura as any,
+      },
+    });
+
+    if (nuevoEstado === EstadoPago.PAGADO && factura.clienteId) {
+      await this.clienteFacade.recalcularNivelPremium(factura.clienteId);
+    }
+
+    const freshFactura = await this.facturaDAO.findById(facturaId);
+    return toResponseDto(freshFactura!);
+  }
+
+  async deleteAbono(abonoId: number, usuarioId: number): Promise<FacturaResponseDto> {
+    const abono = await this.facturaDAO.getAbonoById(abonoId);
+    if (!abono) {
+      throw new NotFoundException(`Abono con id ${abonoId} no encontrado`);
+    }
+
+    const facturaId = abono.facturaId;
+    const factura = await this.facturaDAO.findById(facturaId);
+    if (!factura) {
+      throw new NotFoundException(`Factura con id ${facturaId} no encontrada`);
+    }
+
+    if (factura.estadoPago === EstadoPago.ANULADO) {
+      throw new BadRequestException('No se puede eliminar un abono en una factura anulada');
+    }
+
+    const valorAnterior = { ...factura };
+    await this.facturaDAO.deleteAbono(abonoId);
+
+    // Recalculate status
+    const nuevosAbonos = await this.facturaDAO.getAbonos(facturaId);
+    const nuevoTotalAbonado = nuevosAbonos.reduce((sum, item) => sum + item.monto.toNumber(), 0);
+    let nuevoEstado: EstadoPago = EstadoPago.PENDIENTE;
+
+    if (Math.abs(nuevoTotalAbonado - factura.total.toNumber()) < 0.01) {
+      nuevoEstado = EstadoPago.PAGADO;
+    } else if (nuevoTotalAbonado > 0) {
+      nuevoEstado = EstadoPago.PARCIAL;
+    }
+
+    const updatedFactura = await this.facturaDAO.update(facturaId, {
+      estadoPago: nuevoEstado,
+    });
+
+    await this.prismaService.auditLog.create({
+      data: {
+        usuarioId,
+        accion: 'ELIMINACION_ABONO' as any,
+        entidadAfectada: 'Factura',
+        entidadId: facturaId,
+        valorAnterior: valorAnterior as any,
+        valorNuevo: updatedFactura as any,
+      },
+    });
+
+    const freshFactura = await this.facturaDAO.findById(facturaId);
+    return toResponseDto(freshFactura!);
+  }
+
   async anularFactura(facturaId: number, usuarioId: number): Promise<FacturaResponseDto> {
     const factura = await this.facturaDAO.findById(facturaId);
     if (!factura) {

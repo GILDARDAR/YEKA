@@ -16,4 +16,10 @@ export const facturasService = {
 
   addAbono: (id: number, dto: AddAbonoDto) =>
     api.post<Factura>(`/facturas/${id}/abonos`, dto).then(r => r.data),
+
+  updateAbono: (abonoId: number, dto: Partial<AddAbonoDto>) =>
+    api.patch<Factura>(`/facturas/abonos/${abonoId}`, dto).then(r => r.data),
+
+  deleteAbono: (abonoId: number) =>
+    api.delete<Factura>(`/facturas/abonos/${abonoId}`).then(r => r.data),
 };

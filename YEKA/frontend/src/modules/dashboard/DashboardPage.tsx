@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../shared/auth.context';
 import { facturasService } from '../facturas/facturas.service';
@@ -6,8 +6,12 @@ import { clientesService } from '../clientes/clientes.service';
 import { prendasService } from '../prendas/prendas.service';
 import { sedesService } from '../sedes/sedes.service';
 import { usuariosService } from '../usuarios/usuarios.service';
-import type { CapacidadResponse, EstadoPago, EstadoPrenda, Sede } from '../../shared/types';
-import { Users, FileText, Shirt, TrendingUp, AlertCircle, CheckCircle, Bell, AlertTriangle, Tag, Calendar, Search } from 'lucide-react';
+import tipoPrendaService from '../../services/tipo-prenda.service';
+import { catalogoService } from '../catalogo/catalogo.service';
+import api from '../../shared/api';
+import type { Sede, CapacidadResponse, TipoPrenda, CatalogoServicio, Prenda, EstadoPago, EstadoPrenda, Factura } from '../../shared/types';
+import { PrendaModal } from '../prendas/PrendaModal';
+import { FileText, Tag, Bell, TrendingUp, Shirt, AlertCircle, CheckCircle, AlertTriangle } from 'lucide-react';
 
 import { NuevaFacturaModal } from '../facturas/NuevaFacturaModal';
 
@@ -40,12 +44,21 @@ export function DashboardPage() {
   });
   const [capacidad, setCapacidad] = useState<CapacidadResponse | null>(null);
   const [facturasList, setFacturasList] = useState<any[]>([]);
-  const [searchCliente, setSearchCliente] = useState('');
+  const [prendasList, setPrendasList] = useState<Prenda[]>([]);
+  
+  const [tiposPrenda, setTiposPrenda] = useState<TipoPrenda[]>([]);
+  const [catalogoServicios, setCatalogoServicios] = useState<CatalogoServicio[]>([]);
+  const [config, setConfig] = useState<any>({});
+  
+  const [showPrendaModal, setShowPrendaModal] = useState(false);
+  const [prendaToEdit, setPrendaToEdit] = useState<any>(null);
+  
   const [searchPrenda, setSearchPrenda] = useState('');
-  const [searchFecha, setSearchFecha] = useState('');
   const [searchNroFactura, setSearchNroFactura] = useState('');
   const [isNroFacturaDropdownOpen, setIsNroFacturaDropdownOpen] = useState(false);
-  const nroFacturaDropdownRef = React.useRef<HTMLDivElement>(null);
+  const [isPrendaDropdownOpen, setIsPrendaDropdownOpen] = useState(false);
+  const nroFacturaDropdownRef = useRef<HTMLDivElement>(null);
+  const prendaDropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -70,44 +83,45 @@ export function DashboardPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [clientes, facturas, prendas] = await Promise.all([
+        const [clientes, facturas, prendas, tps, cats, confRes] = await Promise.all([
           clientesService.getAll(),
           facturasService.getAll(),
           prendasService.getAll(),
+          tipoPrendaService.getTiposPrenda(),
+          catalogoService.getAll(),
+          api.get('/configuracion'),
         ]);
+
+        setTiposPrenda(tps.filter((t: TipoPrenda) => t.activo));
+        setCatalogoServicios(cats.filter((c: CatalogoServicio) => c.activo));
+        setConfig(confRes.data);
 
         const filterSedeId = selectedSedeId ? parseInt(selectedSedeId, 10) : null;
 
         // Filter data based on selected Sede
-        // Note: For Clientes, we might filter by clients whose origin is this Sede
         const filteredClientes = filterSedeId
-          ? clientes.filter(c => c.sedeOrigenId === filterSedeId)
+          ? clientes.filter((c: any) => c.sedeOrigenId === filterSedeId)
           : clientes;
 
         const filteredFacturas = filterSedeId
-          ? facturas.filter(f => f.sedeId === filterSedeId)
+          ? facturas.filter((f: Factura) => f.sedeId === filterSedeId)
           : facturas;
 
         const filteredPrendas = filterSedeId
-          ? prendas.filter(p => p.factura?.sedeId === filterSedeId)
+          ? prendas.filter((p: Prenda) => p.factura?.sedeId === filterSedeId)
           : prendas;
 
         const today = new Date().toISOString().split('T')[0];
-        const todayFacturas = filteredFacturas.filter(f => f.createdAt.startsWith(today));
+        const todayFacturas = filteredFacturas.filter((f: Factura) => f.createdAt.startsWith(today));
 
-        // Calculation of today's stats:
-        // 1. Quantity of registered invoices today (excluding ANULADO)
-        const activeTodayFacturas = todayFacturas.filter(f => f.estadoPago !== 'ANULADO');
+        const activeTodayFacturas = todayFacturas.filter((f: Factura) => f.estadoPago !== 'ANULADO');
         const countHoy = activeTodayFacturas.length;
+        const valorHoy = activeTodayFacturas.reduce((sum: number, f: Factura) => sum + Number(f.total), 0);
 
-        // 2. Sum of total value of today's invoices (excluding ANULADO)
-        const valorHoy = activeTodayFacturas.reduce((sum, f) => sum + Number(f.total), 0);
-
-        // 3. Cash received today (sum of all today's abonos with method EFECTIVO)
         let efectivoHoy = 0;
         let tarjetaHoy = 0;
 
-        filteredFacturas.forEach(f => {
+        filteredFacturas.forEach((f: Factura) => {
           if (f.abonos) {
             f.abonos.forEach((a: any) => {
               if (a.fecha.startsWith(today)) {
@@ -123,9 +137,9 @@ export function DashboardPage() {
 
         setStats({
           totalClientes: filteredClientes.length,
-          facturasPendientes: filteredFacturas.filter(f => f.estadoPago === 'PENDIENTE' || f.estadoPago === 'PARCIAL').length,
-          prendasActivas: filteredPrendas.filter(p => p.estadoActual !== 'ENTREGADA' && p.estadoActual !== 'PROPIEDAD_TALLER').length,
-          prendasUrgentes: filteredPrendas.filter(p => PRENDA_URGENTE.includes(p.estadoActual)).length,
+          facturasPendientes: filteredFacturas.filter((f: Factura) => f.estadoPago === 'PENDIENTE' || f.estadoPago === 'PARCIAL').length,
+          prendasActivas: filteredPrendas.filter((p: Prenda) => p.estadoActual !== 'ENTREGADA' && p.estadoActual !== 'PROPIEDAD_TALLER').length,
+          prendasUrgentes: filteredPrendas.filter((p: Prenda) => PRENDA_URGENTE.includes(p.estadoActual)).length,
           facturasHoyCount: countHoy,
           facturasHoyValor: valorHoy,
           facturasHoyEfectivo: efectivoHoy,
@@ -133,8 +147,8 @@ export function DashboardPage() {
         });
 
         setFacturasList(filteredFacturas);
+        setPrendasList(filteredPrendas);
 
-        // Capacity is only relevant when a single Sede is selected
         const capacitySedeId = filterSedeId || user?.sedeId;
         if (capacitySedeId) {
           try {
@@ -146,7 +160,6 @@ export function DashboardPage() {
         } else {
           setCapacidad(null);
         }
-        // Try to find the active Sede name or the user's assigned Sede name
         if (user?.sedeId && user.rol !== 'ADMIN') {
           try {
             const res = await sedesService.getById(user.sedeId);
@@ -155,7 +168,6 @@ export function DashboardPage() {
             setAssignedSede(null);
           }
         }
-        // Fetch Audit Logs if user is ADMIN
         if (user?.rol === 'ADMIN') {
           try {
             const logs = await usuariosService.getAuditLogs();
@@ -177,44 +189,44 @@ export function DashboardPage() {
       if (nroFacturaDropdownRef.current && !nroFacturaDropdownRef.current.contains(event.target as Node)) {
         setIsNroFacturaDropdownOpen(false);
       }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      if (prendaDropdownRef.current && !prendaDropdownRef.current.contains(event.target as Node)) {
+        setIsPrendaDropdownOpen(false);
+      }
     };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const filteredFacturasByNro = useMemo(() => {
     if (!searchNroFactura) return [];
-    const term = searchNroFactura.toLowerCase();
-    return facturasList.filter(f => f.numero.toLowerCase().includes(term)).slice(0, 5);
+    return facturasList
+      .filter(f => f.numero.includes(searchNroFactura))
+      .slice(0, 10);
   }, [facturasList, searchNroFactura]);
+
+  const filteredPrendasBySearch = useMemo(() => {
+    if (!searchPrenda) return [];
+    const term = searchPrenda.toLowerCase();
+    return prendasList.filter(p => 
+      p.id.toString() === term || 
+      (p.codigoQR && p.codigoQR.toLowerCase().includes(term))
+    ).slice(0, 10);
+  }, [searchPrenda, prendasList]);
 
   const displayedFacturas = useMemo(() => {
     let result = facturasList;
-    if (searchCliente) {
-      const term = searchCliente.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-      result = result.filter(f => {
-        const nombre = f.cliente?.nombre?.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() || '';
-        const tel = f.cliente?.celular || '';
-        return nombre.includes(term) || tel.includes(term);
-      });
-    }
     if (searchPrenda) {
       const term = searchPrenda.toLowerCase();
       result = result.filter(f => f.prendas?.some((p: any) => p.codigoQR?.toLowerCase().includes(term)));
     }
-    if (searchFecha) {
-      result = result.filter(f => f.createdAt.startsWith(searchFecha));
-    }
     
     // Si hay búsqueda activa, mostramos todos los que coincidan (limitado a 50 para rendimiento).
     // Si no hay búsqueda, solo mostramos las últimas 5.
-    if (searchCliente || searchPrenda || searchFecha) {
+    if (searchPrenda) {
       return result.slice(0, 50);
     }
     return result.slice(0, 5);
-  }, [facturasList, searchCliente, searchPrenda, searchFecha]);
+  }, [facturasList, searchPrenda]);
 
   const [assignedSede, setAssignedSede] = useState<Sede | null>(null);
 
@@ -377,17 +389,58 @@ export function DashboardPage() {
             )}
           </div>
 
-          <div className="form-group" style={{ position: 'relative', margin: 0 }}>
-            <div style={{ position: 'absolute', top: '8px', left: '8px', color: 'var(--color-text-light)' }}><Users size={16} /></div>
-            <input type="text" className="form-input" style={{ paddingLeft: '32px', fontSize: '13px', padding: '6px 8px 6px 32px' }} placeholder="Cliente" value={searchCliente} onChange={e => setSearchCliente(e.target.value)} />
-          </div>
-          <div className="form-group" style={{ position: 'relative', margin: 0 }}>
+          <div className="form-group" style={{ position: 'relative', margin: 0 }} ref={prendaDropdownRef}>
             <div style={{ position: 'absolute', top: '8px', left: '8px', color: 'var(--color-text-light)' }}><Tag size={16} /></div>
-            <input type="text" className="form-input" style={{ paddingLeft: '32px', fontSize: '13px', padding: '6px 8px 6px 32px' }} placeholder="Prenda" value={searchPrenda} onChange={e => setSearchPrenda(e.target.value)} />
-          </div>
-          <div className="form-group" style={{ position: 'relative', margin: 0 }}>
-            <div style={{ position: 'absolute', top: '8px', left: '8px', color: 'var(--color-text-light)' }}><Calendar size={16} /></div>
-            <input type="date" className="form-input" style={{ paddingLeft: '32px', fontSize: '13px', padding: '6px 8px 6px 32px', color: searchFecha ? 'var(--color-text)' : 'var(--color-text-light)' }} placeholder="Fecha" value={searchFecha} onChange={e => setSearchFecha(e.target.value)} />
+            <input 
+              type="text" 
+              className="form-input" 
+              style={{ paddingLeft: '32px', fontSize: '13px', padding: '6px 8px 6px 32px' }} 
+              placeholder="Prenda (ID o Código QR)" 
+              value={searchPrenda} 
+              onChange={e => {
+                setSearchPrenda(e.target.value);
+                setIsPrendaDropdownOpen(true);
+              }}
+              onFocus={() => setIsPrendaDropdownOpen(true)}
+            />
+
+            {isPrendaDropdownOpen && searchPrenda.length > 0 && (
+              <div style={{
+                position: 'absolute', top: '100%', left: 0, right: 0,
+                background: 'rgba(15, 23, 42, 0.85)',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: 'var(--radius-md)', zIndex: 20,
+                boxShadow: '0 10px 15px -3px rgba(0,0,0,0.5)',
+                marginTop: '4px', maxHeight: '200px', overflowY: 'auto'
+              }}>
+                {filteredPrendasBySearch.length > 0 ? (
+                  filteredPrendasBySearch.map(p => (
+                    <div 
+                      key={p.id} 
+                      style={{ padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.1)' }}
+                      onClick={() => {
+                        setIsPrendaDropdownOpen(false);
+                        setPrendaToEdit(p);
+                        setShowPrendaModal(true);
+                      }}
+                      className="hover-bg"
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <div style={{ fontWeight: 'var(--font-medium)', color: '#f8fafc' }}>
+                        {p.codigoQR ? `QR: ${p.codigoQR}` : `ID: ${p.id}`}
+                      </div>
+                      <div style={{ fontSize: 'var(--text-xs)', color: '#94a3b8' }}>Factura #{p.facturaId}</div>
+                    </div>
+                  ))
+                ) : (
+                  <div style={{ padding: '8px 12px', fontSize: 'var(--text-sm)', color: '#94a3b8' }}>
+                    No encontrada
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -699,6 +752,22 @@ export function DashboardPage() {
           }
         }
       `}</style>
+      {showPrendaModal && (
+        <PrendaModal
+          facturaId={prendaToEdit?.facturaId || 0}
+          onClose={() => setShowPrendaModal(false)}
+          onSaved={() => {
+            // Recargar datos o simplemente cerrar si se actualizó
+            // Para mantener simple, cerramos el modal y recargamos
+            setShowPrendaModal(false);
+            window.location.reload();
+          }}
+          tiposPrenda={tiposPrenda}
+          catalogoServicios={catalogoServicios}
+          config={config}
+          prendaToEdit={prendaToEdit}
+        />
+      )}
     </div>
   );
 }

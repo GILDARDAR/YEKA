@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FacturaResponseDto = exports.AbonoResponseDto = exports.UpdateFacturaDto = exports.AddAbonoDto = exports.CreateFacturaDto = void 0;
+exports.FacturaResponseDto = exports.AbonoResponseDto = exports.UpdateAbonoDto = exports.UpdateFacturaDto = exports.AddAbonoDto = exports.CreateFacturaDto = void 0;
 const class_validator_1 = require("class-validator");
 const client_1 = require("../../../generated/prisma/client");
 class CreateFacturaDto {
@@ -62,6 +62,28 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateFacturaDto.prototype, "notas", void 0);
+class UpdateAbonoDto {
+    monto;
+    metodoPago;
+    notas;
+}
+exports.UpdateAbonoDto = UpdateAbonoDto;
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.Min)(0.01, { message: 'El monto del abono debe ser mayor a cero' }),
+    __metadata("design:type", Number)
+], UpdateAbonoDto.prototype, "monto", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(client_1.MetodoPago, { message: 'El método de pago debe ser válido' }),
+    __metadata("design:type", String)
+], UpdateAbonoDto.prototype, "metodoPago", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateAbonoDto.prototype, "notas", void 0);
 class AbonoResponseDto {
     id;
     facturaId;

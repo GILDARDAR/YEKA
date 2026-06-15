@@ -1,4 +1,5 @@
-import { useEffect, useState, FormEvent } from 'react';
+import { useState, useEffect } from 'react';
+import type { FormEvent } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { clientesService } from './clientes.service';
 import { sedesService } from '../sedes/sedes.service';

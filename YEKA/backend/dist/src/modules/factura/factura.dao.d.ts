@@ -20,5 +20,12 @@ export declare class FacturaDAO {
         notas?: string;
     }): Promise<Abono>;
     getAbonos(facturaId: number): Promise<Abono[]>;
+    getAbonoById(abonoId: number): Promise<Abono | null>;
+    updateAbono(abonoId: number, data: {
+        monto?: number;
+        metodoPago?: MetodoPago;
+        notas?: string;
+    }): Promise<Abono>;
+    deleteAbono(abonoId: number): Promise<Abono>;
     recalcularTotales(facturaId: number): Promise<Factura>;
 }

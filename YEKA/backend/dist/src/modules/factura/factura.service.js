@@ -32,6 +32,12 @@ let FacturaService = class FacturaService {
     async anularFactura(facturaId, usuarioId) {
         return this.facturaFacade.anularFactura(facturaId, usuarioId);
     }
+    async updateAbono(abonoId, dto, usuarioId) {
+        return this.facturaFacade.updateAbono(abonoId, dto, usuarioId);
+    }
+    async deleteAbono(abonoId, usuarioId) {
+        return this.facturaFacade.deleteAbono(abonoId, usuarioId);
+    }
     async recalcularFactura(facturaId) {
         return this.facturaFacade.recalcularFactura(facturaId);
     }

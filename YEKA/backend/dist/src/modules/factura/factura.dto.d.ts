@@ -12,6 +12,11 @@ export declare class AddAbonoDto {
 export declare class UpdateFacturaDto {
     notas?: string;
 }
+export declare class UpdateAbonoDto {
+    monto?: number;
+    metodoPago?: MetodoPago;
+    notas?: string;
+}
 export declare class AbonoResponseDto {
     id: number;
     facturaId: number;

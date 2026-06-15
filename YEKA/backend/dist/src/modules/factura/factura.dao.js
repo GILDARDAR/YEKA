@@ -85,6 +85,26 @@ let FacturaDAO = class FacturaDAO {
             orderBy: { fecha: 'asc' },
         });
     }
+    async getAbonoById(abonoId) {
+        return this.prisma.abono.findUnique({
+            where: { id: abonoId },
+        });
+    }
+    async updateAbono(abonoId, data) {
+        return this.prisma.abono.update({
+            where: { id: abonoId },
+            data: {
+                ...(data.monto !== undefined && { monto: new client_1.Prisma.Decimal(data.monto) }),
+                ...(data.metodoPago && { metodoPago: data.metodoPago }),
+                ...(data.notas !== undefined && { notas: data.notas }),
+            },
+        });
+    }
+    async deleteAbono(abonoId) {
+        return this.prisma.abono.delete({
+            where: { id: abonoId },
+        });
+    }
     async recalcularTotales(facturaId) {
         const asignaciones = await this.prisma.prendaServicio.findMany({
             where: {

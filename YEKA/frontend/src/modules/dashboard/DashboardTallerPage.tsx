@@ -7,25 +7,13 @@ import { prendasService } from '../prendas/prendas.service';
 import tipoPrendaService from '../../services/tipo-prenda.service';
 import { catalogoService } from '../catalogo/catalogo.service';
 import api from '../../shared/api';
-import type { EstadoPago, EstadoPrenda, Factura, Cliente, TipoPrenda, CatalogoServicio, Prenda } from '../../shared/types';
-import { Users, FileText, Shirt, TrendingUp, AlertCircle, Calendar, Search, Plus, Edit2, Trash2, Tag, Euro, PlusCircle } from 'lucide-react';
+import type { Prenda, EstadoPrenda, Factura, Cliente, TipoPrenda, CatalogoServicio } from '../../shared/types';
+import { FileText, Tag, Search, Plus, Shirt, Edit2, Trash2, PlusCircle, TrendingUp, AlertCircle } from 'lucide-react';
 
 import { ClienteModal } from '../clientes/ClienteModal';
 import { PrendaModal } from '../prendas/PrendaModal';
 
-const ESTADO_LABELS: Record<EstadoPago, string> = {
-  PENDIENTE: 'Pendiente',
-  PARCIAL: 'Parcial',
-  PAGADO: 'Pagado',
-  ANULADO: 'Anulado',
-};
-
 const PRENDA_URGENTE: EstadoPrenda[] = ['PENDIENTE_RECOGIDA', 'ESPERANDO_PRUEBA'];
-
-const toTitleCase = (str: string) => {
-  if (!str) return '';
-  return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
-};
 
 export function DashboardTallerPage() {
   const { user } = useAuth();
@@ -42,14 +30,15 @@ export function DashboardTallerPage() {
   });
 
   // Search KPIs
-  const [searchCliente, setSearchCliente] = useState('');
   const [searchPrenda, setSearchPrenda] = useState('');
-  const [searchFecha, setSearchFecha] = useState('');
   const [searchNroFactura, setSearchNroFactura] = useState('');
   const [isNroFacturaDropdownOpen, setIsNroFacturaDropdownOpen] = useState(false);
+  const [isPrendaDropdownOpen, setIsPrendaDropdownOpen] = useState(false);
   const nroFacturaDropdownRef = useRef<HTMLDivElement>(null);
+  const prendaDropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const [facturasList, setFacturasList] = useState<Factura[]>([]);
+  const [prendasList, setPrendasList] = useState<Prenda[]>([]);
   
   // Draft Invoice State
   const [draftFactura, setDraftFactura] = useState<Factura | null>(null);
@@ -63,15 +52,19 @@ export function DashboardTallerPage() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Modals
   const [isClienteModalOpen, setIsClienteModalOpen] = useState(false);
   const [isPrendaModalOpen, setIsPrendaModalOpen] = useState(false);
   const [prendaToEdit, setPrendaToEdit] = useState<Prenda | null>(null);
+
+  const [showSearchPrendaModal, setShowSearchPrendaModal] = useState(false);
+  const [searchPrendaToEdit, setSearchPrendaToEdit] = useState<Prenda | null>(null);
 
   // Catalog Data
   const [tiposPrenda, setTiposPrenda] = useState<TipoPrenda[]>([]);
   const [catalogoServicios, setCatalogoServicios] = useState<CatalogoServicio[]>([]);
   const [config, setConfig] = useState<any>({});
+
+
 
   // Initial load
   useEffect(() => {
@@ -98,6 +91,7 @@ export function DashboardTallerPage() {
         const filteredPrendas = filterSedeId ? prs.filter(p => p.factura?.sedeId === filterSedeId) : prs;
 
         setFacturasList(filteredFacturas);
+        setPrendasList(filteredPrendas);
 
         const today = new Date().toISOString().split('T')[0];
         const todayFacturas = filteredFacturas.filter(f => f.createdAt.startsWith(today));
@@ -139,18 +133,19 @@ export function DashboardTallerPage() {
 
   // Handle outside click for dropdown
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setIsClientDropdownOpen(false);
       }
-      if (nroFacturaDropdownRef.current && !nroFacturaDropdownRef.current.contains(event.target as Node)) {
+      if (nroFacturaDropdownRef.current && !nroFacturaDropdownRef.current.contains(e.target as Node)) {
         setIsNroFacturaDropdownOpen(false);
       }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      if (prendaDropdownRef.current && !prendaDropdownRef.current.contains(e.target as Node)) {
+        setIsPrendaDropdownOpen(false);
+      }
     };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const refreshDraftInvoice = async () => {
@@ -205,9 +200,19 @@ export function DashboardTallerPage() {
 
   const filteredFacturasByNro = useMemo(() => {
     if (!searchNroFactura) return [];
-    const term = searchNroFactura.toLowerCase();
-    return facturasList.filter(f => f.numero.toLowerCase().includes(term)).slice(0, 5);
+    return facturasList
+      .filter(f => f.numero.includes(searchNroFactura))
+      .slice(0, 10);
   }, [facturasList, searchNroFactura]);
+
+  const filteredPrendasBySearch = useMemo(() => {
+    if (!searchPrenda) return [];
+    const term = searchPrenda.toLowerCase();
+    return prendasList.filter(p => 
+      p.id.toString() === term || 
+      (p.codigoQR && p.codigoQR.toLowerCase().includes(term))
+    ).slice(0, 10);
+  }, [searchPrenda, prendasList]);
 
   const handleSelectCliente = async (c: Cliente) => {
     setClienteSearch(`${c.nombre} ${c.celular ? `(${c.celular})` : ''}`);
@@ -276,7 +281,7 @@ export function DashboardTallerPage() {
       setDraftFactura(null);
       setClienteSearch('');
       // Refrescar KPIs
-      const facs = await facturasService.getAll();
+      await facturasService.getAll();
       // ... update stats ...
     } catch (e) {
       console.error(e);
@@ -575,17 +580,58 @@ export function DashboardTallerPage() {
                 )}
               </div>
 
-              <div className="form-group" style={{ position: 'relative', margin: 0 }}>
-                <div style={{ position: 'absolute', top: '8px', left: '8px', color: 'var(--color-text-light)' }}><Users size={16} /></div>
-                <input type="text" className="form-input" style={{ paddingLeft: '32px', fontSize: '13px', padding: '6px 8px 6px 32px' }} placeholder="Cliente" value={searchCliente} onChange={e => setSearchCliente(e.target.value)} />
-              </div>
-              <div className="form-group" style={{ position: 'relative', margin: 0 }}>
+              <div className="form-group" style={{ position: 'relative', margin: 0 }} ref={prendaDropdownRef}>
                 <div style={{ position: 'absolute', top: '8px', left: '8px', color: 'var(--color-text-light)' }}><Tag size={16} /></div>
-                <input type="text" className="form-input" style={{ paddingLeft: '32px', fontSize: '13px', padding: '6px 8px 6px 32px' }} placeholder="Prenda" value={searchPrenda} onChange={e => setSearchPrenda(e.target.value)} />
-              </div>
-              <div className="form-group" style={{ position: 'relative', margin: 0 }}>
-                <div style={{ position: 'absolute', top: '8px', left: '8px', color: 'var(--color-text-light)' }}><Calendar size={16} /></div>
-                <input type="date" className="form-input" style={{ paddingLeft: '32px', fontSize: '13px', padding: '6px 8px 6px 32px', color: searchFecha ? 'var(--color-text)' : 'var(--color-text-light)' }} placeholder="Fecha" value={searchFecha} onChange={e => setSearchFecha(e.target.value)} />
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  style={{ paddingLeft: '32px', fontSize: '13px', padding: '6px 8px 6px 32px' }} 
+                  placeholder="Prenda (ID o Código QR)" 
+                  value={searchPrenda} 
+                  onChange={e => {
+                    setSearchPrenda(e.target.value);
+                    setIsPrendaDropdownOpen(true);
+                  }} 
+                  onFocus={() => setIsPrendaDropdownOpen(true)}
+                />
+
+                {isPrendaDropdownOpen && searchPrenda.length > 0 && (
+                  <div style={{
+                    position: 'absolute', top: '100%', left: 0, right: 0,
+                    background: 'rgba(15, 23, 42, 0.85)',
+                    backdropFilter: 'blur(8px)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 'var(--radius-md)', zIndex: 20,
+                    boxShadow: '0 10px 15px -3px rgba(0,0,0,0.5)',
+                    marginTop: '4px', maxHeight: '200px', overflowY: 'auto'
+                  }}>
+                    {filteredPrendasBySearch.length > 0 ? (
+                      filteredPrendasBySearch.map(p => (
+                        <div 
+                          key={p.id} 
+                          style={{ padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.1)' }}
+                          onClick={() => {
+                            setIsPrendaDropdownOpen(false);
+                            setSearchPrendaToEdit(p);
+                            setShowSearchPrendaModal(true);
+                          }}
+                          className="hover-bg"
+                          onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                        >
+                          <div style={{ fontWeight: 'var(--font-medium)', color: '#f8fafc' }}>
+                            {p.codigoQR ? `QR: ${p.codigoQR}` : `ID: ${p.id}`}
+                          </div>
+                          <div style={{ fontSize: 'var(--text-xs)', color: '#94a3b8' }}>Factura #{p.facturaId}</div>
+                        </div>
+                      ))
+                    ) : (
+                      <div style={{ padding: '8px 12px', fontSize: 'var(--text-sm)', color: '#94a3b8' }}>
+                        No encontrada
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               
               <Link to="/facturas" className="btn btn-secondary btn-sm" style={{ marginTop: '4px', width: '100%', justifyContent: 'center' }}>
@@ -670,6 +716,21 @@ export function DashboardTallerPage() {
           config={config}
           onClose={() => setIsPrendaModalOpen(false)}
           onSaved={refreshDraftInvoice}
+        />
+      )}
+
+      {showSearchPrendaModal && (
+        <PrendaModal
+          facturaId={searchPrendaToEdit?.facturaId || 0}
+          prendaToEdit={searchPrendaToEdit}
+          tiposPrenda={tiposPrenda}
+          catalogoServicios={catalogoServicios}
+          config={config}
+          onClose={() => setShowSearchPrendaModal(false)}
+          onSaved={() => {
+            setShowSearchPrendaModal(false);
+            window.location.reload();
+          }}
         />
       )}
     </div>
