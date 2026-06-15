@@ -7,7 +7,7 @@ import { prendasService } from '../prendas/prendas.service';
 import tipoPrendaService from '../../services/tipo-prenda.service';
 import { catalogoService } from '../catalogo/catalogo.service';
 import api from '../../shared/api';
-import type { Prenda, EstadoPrenda, Factura, Cliente, TipoPrenda, CatalogoServicio } from '../../shared/types';
+import type { Prenda, EstadoPrenda, Factura, Cliente, TipoPrenda, CatalogoServicio, MetodoPago } from '../../shared/types';
 import { FileText, Tag, Search, Plus, Shirt, Edit2, Trash2, PlusCircle, TrendingUp, AlertCircle } from 'lucide-react';
 
 import { ClienteModal } from '../clientes/ClienteModal';
@@ -58,6 +58,16 @@ export function DashboardTallerPage() {
 
   const [showSearchPrendaModal, setShowSearchPrendaModal] = useState(false);
   const [searchPrendaToEdit, setSearchPrendaToEdit] = useState<Prenda | null>(null);
+
+  // Abonos State
+  const [isAbonoModalOpen, setIsAbonoModalOpen] = useState(false);
+  const [abonoToEdit, setAbonoToEdit] = useState<any | null>(null);
+  const [savingAbono, setSavingAbono] = useState(false);
+  const [abonoForm, setAbonoForm] = useState({
+    monto: '',
+    metodoPago: 'EFECTIVO',
+    notas: ''
+  });
 
   // Catalog Data
   const [tiposPrenda, setTiposPrenda] = useState<TipoPrenda[]>([]);
@@ -259,6 +269,59 @@ export function DashboardTallerPage() {
       await refreshDraftInvoice();
     } catch (err: any) {
       alert(err.response?.data?.message || 'Error al cambiar tipo express');
+    }
+  };
+
+  const handleOpenAddAbono = async () => {
+    await ensureDraftFactura();
+    setAbonoToEdit(null);
+    setAbonoForm({ monto: '', metodoPago: 'EFECTIVO', notas: '' });
+    setIsAbonoModalOpen(true);
+  };
+
+  const handleAbonar = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!draftFactura) return;
+    setSavingAbono(true);
+    try {
+      const payload = {
+        monto: Number(abonoForm.monto),
+        metodoPago: abonoForm.metodoPago as MetodoPago,
+        notas: abonoForm.notas || undefined
+      };
+      if (abonoToEdit) {
+        await facturasService.updateAbono(abonoToEdit.id, payload);
+      } else {
+        await facturasService.addAbono(draftFactura.id, payload);
+      }
+      setIsAbonoModalOpen(false);
+      setAbonoToEdit(null);
+      setAbonoForm({ monto: '', metodoPago: 'EFECTIVO', notas: '' });
+      await refreshDraftInvoice();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Error al guardar abono');
+    } finally {
+      setSavingAbono(false);
+    }
+  };
+
+  const handleOpenEditAbono = (a: any) => {
+    setAbonoToEdit(a);
+    setAbonoForm({
+      monto: a.monto.toString(),
+      metodoPago: a.metodoPago,
+      notas: a.notas || ''
+    });
+    setIsAbonoModalOpen(true);
+  };
+
+  const handleDeleteAbono = async (abonoId: number) => {
+    if (!window.confirm('¿Seguro que deseas eliminar este abono?')) return;
+    try {
+      await facturasService.deleteAbono(abonoId);
+      await refreshDraftInvoice();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Error al eliminar abono');
     }
   };
 
@@ -469,16 +532,72 @@ export function DashboardTallerPage() {
                 </table>
               </div>
 
-              <button 
-                type="button" 
-                className="btn btn-outline" 
-                style={{ width: 'max-content', borderStyle: 'dashed' }}
-                onClick={handleOpenAddPrenda}
-                disabled={creatingDraft}
-              >
-                {creatingDraft ? <span className="spinner spinner-sm" /> : <Plus size={16} />} 
-                Agregar Prenda
-              </button>
+              <div style={{ display: 'flex', gap: 'var(--space-3)', marginTop: 'var(--space-2)' }}>
+                <button 
+                  type="button" 
+                  className="btn btn-outline" 
+                  style={{ width: 'max-content', borderStyle: 'dashed' }}
+                  onClick={handleOpenAddPrenda}
+                  disabled={creatingDraft}
+                >
+                  {creatingDraft ? <span className="spinner spinner-sm" /> : <Plus size={16} />} 
+                  Agregar Prenda
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-outline" 
+                  style={{ width: 'max-content', borderStyle: 'dashed' }}
+                  onClick={handleOpenAddAbono}
+                  disabled={creatingDraft || !draftFactura}
+                >
+                  <Plus size={16} /> 
+                  Hacer Abono
+                </button>
+              </div>
+
+              {/* TABLA DE ABONOS */}
+              {draftFactura?.abonos && draftFactura.abonos.length > 0 && (
+                <div style={{ marginTop: 'var(--space-5)' }}>
+                  <h3 style={{ fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-3)' }}>
+                    Abonos Registrados
+                  </h3>
+                  <div className="table-wrapper" style={{ maxHeight: '250px', overflowY: 'auto' }}>
+                    <table className="table">
+                      <thead style={{ position: 'sticky', top: 0, background: 'var(--bg-card)', zIndex: 1 }}>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Método</th>
+                          <th>Notas</th>
+                          <th style={{ textAlign: 'right' }}>Monto</th>
+                          <th style={{ textAlign: 'center' }}>Acciones</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {draftFactura.abonos.map((a: any) => (
+                          <tr key={a.id}>
+                            <td style={{ whiteSpace: 'nowrap' }}>{new Date(a.fecha).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' })}</td>
+                            <td><span className="badge badge-neutral">{a.metodoPago}</span></td>
+                            <td style={{ color: 'var(--color-text-light)' }}>{a.notas || '-'}</td>
+                            <td style={{ textAlign: 'right', fontWeight: 'bold', color: 'var(--color-success)' }}>
+                              €{Number(a.monto).toFixed(2)}
+                            </td>
+                            <td>
+                              <div style={{ display: 'flex', justifyContent: 'center', gap: '4px' }}>
+                                <button className="btn btn-ghost btn-sm btn-icon" onClick={() => handleOpenEditAbono(a)} style={{ color: 'var(--color-primary)' }} title="Editar abono">
+                                  <Edit2 size={16} />
+                                </button>
+                                <button className="btn btn-ghost btn-sm btn-icon" onClick={() => handleDeleteAbono(a.id)} style={{ color: 'var(--color-danger)' }} title="Eliminar abono">
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* FOOTER TOTALIZADOR */}
@@ -509,6 +628,15 @@ export function DashboardTallerPage() {
                   <span>IVA ({draftFactura?.impuestosJson?.iva || 21}%):</span>
                   <span>€{Number(draftFactura?.impuestosJson?.monto || 0).toFixed(2)}</span>
                 </div>
+                
+                {/* Mostrar Abonos en el total */}
+                {(draftFactura?.abonos?.length ?? 0) > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: 'var(--text-sm)', color: 'var(--color-success)' }}>
+                    <span>Abonos realizados:</span>
+                    <span>-€{Number(draftFactura?.abonos?.reduce((sum, a) => sum + Number(a.monto), 0) || 0).toFixed(2)}</span>
+                  </div>
+                )}
+                
                 <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--color-border)', paddingTop: '8px' }}>
                   <span style={{ fontWeight: 'bold', fontSize: 'var(--text-lg)' }}>Total:</span>
                   <span style={{ fontFamily: 'var(--font-heading)', fontSize: 'var(--text-2xl)', color: 'var(--color-primary)', fontWeight: 'bold' }}>
@@ -717,6 +845,77 @@ export function DashboardTallerPage() {
           onClose={() => setIsPrendaModalOpen(false)}
           onSaved={refreshDraftInvoice}
         />
+      )}
+
+      {/* Agregar Abono Modal */}
+      {isAbonoModalOpen && draftFactura && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 1000, 
+          display: 'flex', alignItems: 'center', justifyContent: 'center', 
+          backgroundColor: 'rgba(0,0,0,0.7)', padding: 'var(--space-4)'
+        }}>
+          <div className="card" style={{ width: '100%', maxWidth: '400px', padding: 'var(--space-6)' }}>
+            <h2 style={{ fontSize: 'var(--text-xl)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-4)' }}>
+              {abonoToEdit ? 'Editar Abono' : 'Registrar Abono'}
+            </h2>
+            
+            <form onSubmit={handleAbonar} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+              <div className="form-group">
+                <label className="form-label">Monto a abonar (€)</label>
+                <input 
+                  type="number" 
+                  step="0.01"
+                  min="0.01"
+                  max={
+                    abonoToEdit
+                      ? (Math.max(0, Number(draftFactura.total) - (draftFactura.abonos?.reduce((sum, a) => sum + Number(a.monto), 0) || 0)) + Number(abonoToEdit.monto)).toFixed(2)
+                      : Math.max(0, Number(draftFactura.total) - (draftFactura.abonos?.reduce((sum, a) => sum + Number(a.monto), 0) || 0)).toFixed(2)
+                  }
+                  required 
+                  className="form-input" 
+                  value={abonoForm.monto} 
+                  onChange={e => setAbonoForm(f => ({ ...f, monto: e.target.value }))} 
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Método de Pago</label>
+                <select 
+                  className="form-select" 
+                  value={abonoForm.metodoPago}
+                  onChange={e => setAbonoForm(f => ({ ...f, metodoPago: e.target.value }))}
+                >
+                  <option value="EFECTIVO">Efectivo</option>
+                  <option value="TARJETA">Tarjeta</option>
+                  <option value="TRANSFERENCIA">Transferencia</option>
+                  <option value="OTRO">Otro</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Notas (Opcional)</label>
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  value={abonoForm.notas} 
+                  onChange={e => setAbonoForm(f => ({ ...f, notas: e.target.value }))} 
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 'var(--space-2)', gap: 'var(--space-2)' }}>
+                <button type="button" className="btn btn-ghost" onClick={() => {
+                  setIsAbonoModalOpen(false);
+                  setAbonoToEdit(null);
+                }}>
+                  Cancelar
+                </button>
+                <button type="submit" className="btn btn-primary" disabled={savingAbono}>
+                  {savingAbono ? 'Guardando...' : (abonoToEdit ? 'Actualizar' : 'Registrar')}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
 
       {showSearchPrendaModal && (
