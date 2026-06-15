@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../shared/auth.context';
 import { facturasService } from '../facturas/facturas.service';
 import { clientesService } from '../clientes/clientes.service';
@@ -43,6 +43,10 @@ export function DashboardPage() {
   const [searchCliente, setSearchCliente] = useState('');
   const [searchPrenda, setSearchPrenda] = useState('');
   const [searchFecha, setSearchFecha] = useState('');
+  const [searchNroFactura, setSearchNroFactura] = useState('');
+  const [isNroFacturaDropdownOpen, setIsNroFacturaDropdownOpen] = useState(false);
+  const nroFacturaDropdownRef = React.useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user?.rol === 'ADMIN') {
@@ -167,6 +171,24 @@ export function DashboardPage() {
     };
     load();
   }, [user, selectedSedeId]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (nroFacturaDropdownRef.current && !nroFacturaDropdownRef.current.contains(event.target as Node)) {
+        setIsNroFacturaDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const filteredFacturasByNro = useMemo(() => {
+    if (!searchNroFactura) return [];
+    const term = searchNroFactura.toLowerCase();
+    return facturasList.filter(f => f.numero.toLowerCase().includes(term)).slice(0, 5);
+  }, [facturasList, searchNroFactura]);
 
   const displayedFacturas = useMemo(() => {
     let result = facturasList;
@@ -303,6 +325,58 @@ export function DashboardPage() {
       <div className="grid-4" style={{ marginBottom: 'var(--space-8)' }}>
         <div className="stat-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <p className="stat-card-label" style={{ marginBottom: '4px' }}>Búsqueda de Facturas</p>
+          
+          <div className="form-group" style={{ position: 'relative', margin: 0 }} ref={nroFacturaDropdownRef}>
+            <div style={{ position: 'absolute', top: '8px', left: '8px', color: 'var(--color-text-light)' }}><FileText size={16} /></div>
+            <input 
+              type="text" 
+              className="form-input" 
+              style={{ paddingLeft: '32px', fontSize: '13px', padding: '6px 8px 6px 32px' }} 
+              placeholder="Nro Factura" 
+              value={searchNroFactura} 
+              onChange={e => {
+                setSearchNroFactura(e.target.value);
+                setIsNroFacturaDropdownOpen(true);
+              }}
+              onFocus={() => setIsNroFacturaDropdownOpen(true)}
+            />
+            
+            {isNroFacturaDropdownOpen && searchNroFactura.length > 0 && (
+              <div style={{
+                position: 'absolute', top: '100%', left: 0, right: 0,
+                background: 'rgba(15, 23, 42, 0.85)',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: 'var(--radius-md)', zIndex: 20,
+                boxShadow: '0 10px 15px -3px rgba(0,0,0,0.5)',
+                marginTop: '4px', maxHeight: '200px', overflowY: 'auto'
+              }}>
+                {filteredFacturasByNro.length > 0 ? (
+                  filteredFacturasByNro.map(f => (
+                    <div 
+                      key={f.id} 
+                      style={{ padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.1)' }}
+                      onClick={() => {
+                        setIsNroFacturaDropdownOpen(false);
+                        navigate(`/facturas/${f.id}`);
+                      }}
+                      className="hover-bg"
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <div style={{ fontWeight: 'var(--font-medium)', color: '#f8fafc' }}>#{f.numero}</div>
+                      <div style={{ fontSize: 'var(--text-xs)', color: '#94a3b8' }}>{f.cliente?.nombre || 'Consumidor Final'}</div>
+                    </div>
+                  ))
+                ) : (
+                  <div style={{ padding: '8px 12px', fontSize: 'var(--text-sm)', color: '#94a3b8' }}>
+                    No encontrada
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
           <div className="form-group" style={{ position: 'relative', margin: 0 }}>
             <div style={{ position: 'absolute', top: '8px', left: '8px', color: 'var(--color-text-light)' }}><Users size={16} /></div>
             <input type="text" className="form-input" style={{ paddingLeft: '32px', fontSize: '13px', padding: '6px 8px 6px 32px' }} placeholder="Cliente" value={searchCliente} onChange={e => setSearchCliente(e.target.value)} />

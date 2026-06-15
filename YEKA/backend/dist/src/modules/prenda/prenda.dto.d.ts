@@ -20,6 +20,7 @@ export declare class AsignarServicioDto {
     servicioId: number;
     medidaEntregada?: number;
     tipoExpress: TipoExpress;
+    observaciones?: string;
 }
 export declare class CambiarEstadoDto {
     nuevoEstado: EstadoPrenda;
@@ -55,5 +56,6 @@ export declare class PrendaServicioResponseDto {
     medidaEntregada: string | null;
     tipoExpress: TipoExpress;
     precioFinal: string;
+    observaciones: string | null;
     createdAt: Date;
 }

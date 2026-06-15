@@ -4,43 +4,43 @@ export declare class TipoPrendaController {
     private readonly tipoPrendaService;
     constructor(tipoPrendaService: TipoPrendaService);
     findAll(): Promise<{
-        nombre: string;
         id: number;
-        activo: boolean;
+        nombre: string;
         createdAt: Date;
         updatedAt: Date;
+        activo: boolean;
         descripcion: string | null;
     }[]>;
     findOne(id: number): Promise<{
-        nombre: string;
         id: number;
-        activo: boolean;
+        nombre: string;
         createdAt: Date;
         updatedAt: Date;
+        activo: boolean;
         descripcion: string | null;
     }>;
     create(dto: CreateTipoPrendaDto): Promise<{
-        nombre: string;
         id: number;
-        activo: boolean;
+        nombre: string;
         createdAt: Date;
         updatedAt: Date;
+        activo: boolean;
         descripcion: string | null;
     }>;
     update(id: number, dto: UpdateTipoPrendaDto): Promise<{
-        nombre: string;
         id: number;
-        activo: boolean;
+        nombre: string;
         createdAt: Date;
         updatedAt: Date;
+        activo: boolean;
         descripcion: string | null;
     }>;
     remove(id: number): Promise<{
-        nombre: string;
         id: number;
-        activo: boolean;
+        nombre: string;
         createdAt: Date;
         updatedAt: Date;
+        activo: boolean;
         descripcion: string | null;
     }>;
 }

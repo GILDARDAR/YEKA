@@ -47,6 +47,7 @@ function toPrendaServicioResponseDto(ps) {
         medidaEntregada: ps.medidaEntregada ? ps.medidaEntregada.toString() : null,
         tipoExpress: ps.tipoExpress,
         precioFinal: ps.precioFinal.toString(),
+        observaciones: ps.observaciones || null,
         createdAt: ps.createdAt,
     };
 }
@@ -188,6 +189,12 @@ let PrendaFacade = class PrendaFacade {
             const multStr = await this.configuracionService.get('EXPRESS_24H_MULTIPLIER');
             multiplier = parseFloat(multStr);
         }
+        if (dto.observaciones) {
+            const wordCount = dto.observaciones.trim().split(/\s+/).filter(Boolean).length;
+            if (wordCount > 500) {
+                throw new common_1.BadRequestException('Las observaciones del servicio no pueden superar las 500 palabras');
+            }
+        }
         const finalPrice = basePrice * multiplier;
         const ps = await this.prendaDAO.asignarServicio({
             prendaId,
@@ -195,6 +202,7 @@ let PrendaFacade = class PrendaFacade {
             medidaEntregada: dto.medidaEntregada,
             tipoExpress: dto.tipoExpress,
             precioFinal: finalPrice,
+            observaciones: dto.observaciones,
         });
         await this.facturaFacade.recalcularFactura(prenda.facturaId);
         await this.prismaService.auditLog.create({
@@ -209,6 +217,7 @@ let PrendaFacade = class PrendaFacade {
                     servicioId: dto.servicioId,
                     tipoExpress: dto.tipoExpress,
                     precioFinal: finalPrice,
+                    observaciones: dto.observaciones,
                 },
             },
         });

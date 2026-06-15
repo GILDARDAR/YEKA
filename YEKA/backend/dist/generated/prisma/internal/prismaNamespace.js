@@ -200,7 +200,8 @@ exports.PrendaServicioScalarFieldEnum = {
     tipoExpress: 'tipoExpress',
     precioFinal: 'precioFinal',
     createdAt: 'createdAt',
-    medidaEntregada: 'medidaEntregada'
+    medidaEntregada: 'medidaEntregada',
+    observaciones: 'observaciones'
 };
 exports.InventarioScalarFieldEnum = {
     id: 'id',

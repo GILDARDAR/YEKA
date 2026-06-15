@@ -166,6 +166,7 @@ model PrendaServicio {
   precioFinal     Decimal          @db.Decimal(10, 2)
   createdAt       DateTime         @default(now())
   medidaEntregada Decimal?         @db.Decimal(10, 2)
+  observaciones   String?
   prenda          Prenda           @relation(fields: [prendaId], references: [id], onDelete: Cascade)
   servicio        CatalogoServicio @relation(fields: [servicioId], references: [id])
 }

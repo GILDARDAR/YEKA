@@ -7,7 +7,8 @@ import {
 import './Sidebar.css';
 
 const navItems = [
-  { to: '/', icon: LayoutDashboard, label: 'Dashboard', roles: ['ADMIN', 'RECEPCION', 'TALLER'] },
+  { to: '/', icon: LayoutDashboard, label: 'Dashboard', roles: ['ADMIN', 'RECEPCION'] },
+  { to: '/taller', icon: Scissors, label: 'Taller', roles: ['ADMIN', 'TALLER', 'RECEPCION'] },
   { to: '/clientes', icon: Users, label: 'Clientes', roles: ['ADMIN', 'RECEPCION', 'TALLER'] },
   { to: '/facturas', icon: FileText, label: 'Facturas', roles: ['ADMIN', 'RECEPCION', 'TALLER'] },
   { to: '/prendas', icon: Shirt, label: 'Prendas', roles: ['ADMIN', 'RECEPCION', 'TALLER'] },
@@ -22,12 +23,33 @@ export function Sidebar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(() => {
+    const saved = localStorage.getItem('sidebarOpen');
+    return saved !== null ? saved === 'true' : true;
+  });
 
-  // Close sidebar on route change (mobile)
+  const toggleSidebar = (state: boolean) => {
+    setIsOpen(state);
+    localStorage.setItem('sidebarOpen', String(state));
+  };
+
+  // Close sidebar on route change only for mobile
   useEffect(() => {
-    setIsOpen(false);
+    if (window.innerWidth < 768) {
+      setIsOpen(false);
+      // We don't save to localStorage here so desktop preference is kept
+    }
   }, [location.pathname]);
+
+  // Sync body class for push effect
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('sidebar-is-open');
+    } else {
+      document.body.classList.remove('sidebar-is-open');
+    }
+    return () => document.body.classList.remove('sidebar-is-open');
+  }, [isOpen]);
 
   const handleLogout = () => {
     logout();
@@ -40,11 +62,9 @@ export function Sidebar() {
 
   return (
     <>
-      <button className="hamburger-btn" onClick={() => setIsOpen(true)}>
+      <button className="hamburger-btn" onClick={() => toggleSidebar(true)}>
         <Menu size={24} />
       </button>
-
-      {isOpen && <div className="sidebar-backdrop" onClick={() => setIsOpen(false)} />}
 
       <aside className={`sidebar ${isOpen ? 'sidebar--open' : ''}`}>
         {/* Logo */}
@@ -54,7 +74,7 @@ export function Sidebar() {
             <span className="sidebar-logo-text" style={{ lineHeight: 1 }}>YEKA</span>
             <span className="sidebar-logo-subtitle" style={{ lineHeight: 1, marginTop: '2px' }}>ERP</span>
           </div>
-          <button className="sidebar-close-btn" onClick={() => setIsOpen(false)}>
+          <button className="sidebar-close-btn" onClick={() => toggleSidebar(false)}>
             <X size={20} />
           </button>
         </div>

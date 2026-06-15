@@ -5,6 +5,7 @@ import { AppLayout } from './layout/AppLayout';
 
 import { LoginPage }      from './modules/auth/LoginPage';
 import { DashboardPage }  from './modules/dashboard/DashboardPage';
+import { DashboardTallerPage } from './modules/dashboard/DashboardTallerPage';
 import { ClientesPage }   from './modules/clientes/ClientesPage';
 import { ClienteForm }    from './modules/clientes/ClienteForm';
 import { FacturasPage }   from './modules/facturas/FacturasPage';
@@ -16,6 +17,13 @@ import { UsuariosPage }   from './modules/usuarios/UsuariosPage';
 import { SedesPage }      from './modules/sedes/SedesPage';
 import TipoPrendaPage     from './pages/TipoPrendaPage';
 import { ConfiguracionPage } from './modules/configuracion/ConfiguracionPage';
+import { useAuth } from './shared/auth.context';
+
+function IndexRedirect() {
+  const { user } = useAuth();
+  if (user?.rol === 'TALLER') return <Navigate to="/taller" replace />;
+  return <DashboardPage />;
+}
 
 export default function App() {
   return (
@@ -31,7 +39,12 @@ export default function App() {
               <AppLayout />
             </RouteGuard>
           }>
-            <Route index element={<DashboardPage />} />
+            <Route index element={<IndexRedirect />} />
+            <Route path="/taller" element={
+              <RouteGuard allowedRoles={['ADMIN', 'TALLER', 'RECEPCION']}>
+                <DashboardTallerPage />
+              </RouteGuard>
+            }/>
 
             {/* Clientes */}
             <Route path="/clientes" element={

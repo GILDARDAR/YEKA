@@ -82,6 +82,10 @@ export class AsignarServicioDto {
   @IsEnum(TipoExpress)
   @IsNotEmpty()
   tipoExpress: TipoExpress;
+
+  @IsString()
+  @IsOptional()
+  observaciones?: string;
 }
 
 // ─── CAMBIAR ESTADO ───────────────────────────────────────────
@@ -137,5 +141,6 @@ export class PrendaServicioResponseDto {
   medidaEntregada: string | null;
   tipoExpress: TipoExpress;
   precioFinal: string; // Decimal serialized as string
+  observaciones: string | null;
   createdAt: Date;
 }

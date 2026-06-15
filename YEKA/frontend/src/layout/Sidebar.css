@@ -9,6 +9,11 @@
   flex-direction: column;
   z-index: 100;
   border-right: 1px solid rgba(255,255,255,0.08);
+  transform: translateX(-100%);
+  transition: transform var(--transition-base);
+}
+.sidebar--open {
+  transform: translateX(0);
 }
 
 /* ─── Logo ───────────────────────────────────── */
@@ -150,7 +155,9 @@
 
 /* ─── Mobile Hamburger ───────────────────────── */
 .hamburger-btn {
-  display: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: fixed;
   top: var(--space-4);
   left: var(--space-4);
@@ -165,7 +172,7 @@
 }
 
 .sidebar-backdrop {
-  display: none;
+  display: block;
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.5);
@@ -173,36 +180,11 @@
 }
 
 .sidebar-close-btn {
-  display: none;
+  display: block;
   background: none;
   border: none;
   color: var(--color-text-muted);
   cursor: pointer;
   padding: var(--space-1);
   margin-left: auto;
-}
-
-@media (max-width: 768px) {
-  .hamburger-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .sidebar-backdrop {
-    display: block;
-  }
-  
-  .sidebar {
-    transform: translateX(-100%);
-    transition: transform var(--transition-base);
-  }
-  
-  .sidebar--open {
-    transform: translateX(0);
-  }
-  
-  .sidebar-close-btn {
-    display: block;
-  }
 }

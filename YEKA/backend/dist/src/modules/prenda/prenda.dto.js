@@ -98,6 +98,7 @@ class AsignarServicioDto {
     servicioId;
     medidaEntregada;
     tipoExpress;
+    observaciones;
 }
 exports.AsignarServicioDto = AsignarServicioDto;
 __decorate([
@@ -116,6 +117,11 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], AsignarServicioDto.prototype, "tipoExpress", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], AsignarServicioDto.prototype, "observaciones", void 0);
 class CambiarEstadoDto {
     nuevoEstado;
     usuarioTallerId;
@@ -169,6 +175,7 @@ class PrendaServicioResponseDto {
     medidaEntregada;
     tipoExpress;
     precioFinal;
+    observaciones;
     createdAt;
 }
 exports.PrendaServicioResponseDto = PrendaServicioResponseDto;

@@ -31,6 +31,7 @@ export type PrendaServicioMinAggregateOutputType = {
     precioFinal: runtime.Decimal | null;
     createdAt: Date | null;
     medidaEntregada: runtime.Decimal | null;
+    observaciones: string | null;
 };
 export type PrendaServicioMaxAggregateOutputType = {
     id: number | null;
@@ -40,6 +41,7 @@ export type PrendaServicioMaxAggregateOutputType = {
     precioFinal: runtime.Decimal | null;
     createdAt: Date | null;
     medidaEntregada: runtime.Decimal | null;
+    observaciones: string | null;
 };
 export type PrendaServicioCountAggregateOutputType = {
     id: number;
@@ -49,6 +51,7 @@ export type PrendaServicioCountAggregateOutputType = {
     precioFinal: number;
     createdAt: number;
     medidaEntregada: number;
+    observaciones: number;
     _all: number;
 };
 export type PrendaServicioAvgAggregateInputType = {
@@ -73,6 +76,7 @@ export type PrendaServicioMinAggregateInputType = {
     precioFinal?: true;
     createdAt?: true;
     medidaEntregada?: true;
+    observaciones?: true;
 };
 export type PrendaServicioMaxAggregateInputType = {
     id?: true;
@@ -82,6 +86,7 @@ export type PrendaServicioMaxAggregateInputType = {
     precioFinal?: true;
     createdAt?: true;
     medidaEntregada?: true;
+    observaciones?: true;
 };
 export type PrendaServicioCountAggregateInputType = {
     id?: true;
@@ -91,6 +96,7 @@ export type PrendaServicioCountAggregateInputType = {
     precioFinal?: true;
     createdAt?: true;
     medidaEntregada?: true;
+    observaciones?: true;
     _all?: true;
 };
 export type PrendaServicioAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -129,6 +135,7 @@ export type PrendaServicioGroupByOutputType = {
     precioFinal: runtime.Decimal;
     createdAt: Date;
     medidaEntregada: runtime.Decimal | null;
+    observaciones: string | null;
     _count: PrendaServicioCountAggregateOutputType | null;
     _avg: PrendaServicioAvgAggregateOutputType | null;
     _sum: PrendaServicioSumAggregateOutputType | null;
@@ -149,6 +156,7 @@ export type PrendaServicioWhereInput = {
     precioFinal?: Prisma.DecimalFilter<"PrendaServicio"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Prisma.DateTimeFilter<"PrendaServicio"> | Date | string;
     medidaEntregada?: Prisma.DecimalNullableFilter<"PrendaServicio"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: Prisma.StringNullableFilter<"PrendaServicio"> | string | null;
     prenda?: Prisma.XOR<Prisma.PrendaScalarRelationFilter, Prisma.PrendaWhereInput>;
     servicio?: Prisma.XOR<Prisma.CatalogoServicioScalarRelationFilter, Prisma.CatalogoServicioWhereInput>;
 };
@@ -160,6 +168,7 @@ export type PrendaServicioOrderByWithRelationInput = {
     precioFinal?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     medidaEntregada?: Prisma.SortOrderInput | Prisma.SortOrder;
+    observaciones?: Prisma.SortOrderInput | Prisma.SortOrder;
     prenda?: Prisma.PrendaOrderByWithRelationInput;
     servicio?: Prisma.CatalogoServicioOrderByWithRelationInput;
 };
@@ -174,6 +183,7 @@ export type PrendaServicioWhereUniqueInput = Prisma.AtLeast<{
     precioFinal?: Prisma.DecimalFilter<"PrendaServicio"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Prisma.DateTimeFilter<"PrendaServicio"> | Date | string;
     medidaEntregada?: Prisma.DecimalNullableFilter<"PrendaServicio"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: Prisma.StringNullableFilter<"PrendaServicio"> | string | null;
     prenda?: Prisma.XOR<Prisma.PrendaScalarRelationFilter, Prisma.PrendaWhereInput>;
     servicio?: Prisma.XOR<Prisma.CatalogoServicioScalarRelationFilter, Prisma.CatalogoServicioWhereInput>;
 }, "id">;
@@ -185,6 +195,7 @@ export type PrendaServicioOrderByWithAggregationInput = {
     precioFinal?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     medidaEntregada?: Prisma.SortOrderInput | Prisma.SortOrder;
+    observaciones?: Prisma.SortOrderInput | Prisma.SortOrder;
     _count?: Prisma.PrendaServicioCountOrderByAggregateInput;
     _avg?: Prisma.PrendaServicioAvgOrderByAggregateInput;
     _max?: Prisma.PrendaServicioMaxOrderByAggregateInput;
@@ -202,12 +213,14 @@ export type PrendaServicioScalarWhereWithAggregatesInput = {
     precioFinal?: Prisma.DecimalWithAggregatesFilter<"PrendaServicio"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Prisma.DateTimeWithAggregatesFilter<"PrendaServicio"> | Date | string;
     medidaEntregada?: Prisma.DecimalNullableWithAggregatesFilter<"PrendaServicio"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: Prisma.StringNullableWithAggregatesFilter<"PrendaServicio"> | string | null;
 };
 export type PrendaServicioCreateInput = {
     tipoExpress?: $Enums.TipoExpress;
     precioFinal: runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Date | string;
     medidaEntregada?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: string | null;
     prenda: Prisma.PrendaCreateNestedOneWithoutServiciosInput;
     servicio: Prisma.CatalogoServicioCreateNestedOneWithoutAsignacionesInput;
 };
@@ -219,12 +232,14 @@ export type PrendaServicioUncheckedCreateInput = {
     precioFinal: runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Date | string;
     medidaEntregada?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: string | null;
 };
 export type PrendaServicioUpdateInput = {
     tipoExpress?: Prisma.EnumTipoExpressFieldUpdateOperationsInput | $Enums.TipoExpress;
     precioFinal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     medidaEntregada?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     prenda?: Prisma.PrendaUpdateOneRequiredWithoutServiciosNestedInput;
     servicio?: Prisma.CatalogoServicioUpdateOneRequiredWithoutAsignacionesNestedInput;
 };
@@ -236,6 +251,7 @@ export type PrendaServicioUncheckedUpdateInput = {
     precioFinal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     medidaEntregada?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 export type PrendaServicioCreateManyInput = {
     id?: number;
@@ -245,12 +261,14 @@ export type PrendaServicioCreateManyInput = {
     precioFinal: runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Date | string;
     medidaEntregada?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: string | null;
 };
 export type PrendaServicioUpdateManyMutationInput = {
     tipoExpress?: Prisma.EnumTipoExpressFieldUpdateOperationsInput | $Enums.TipoExpress;
     precioFinal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     medidaEntregada?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 export type PrendaServicioUncheckedUpdateManyInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -260,6 +278,7 @@ export type PrendaServicioUncheckedUpdateManyInput = {
     precioFinal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     medidaEntregada?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 export type PrendaServicioListRelationFilter = {
     every?: Prisma.PrendaServicioWhereInput;
@@ -277,6 +296,7 @@ export type PrendaServicioCountOrderByAggregateInput = {
     precioFinal?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     medidaEntregada?: Prisma.SortOrder;
+    observaciones?: Prisma.SortOrder;
 };
 export type PrendaServicioAvgOrderByAggregateInput = {
     id?: Prisma.SortOrder;
@@ -293,6 +313,7 @@ export type PrendaServicioMaxOrderByAggregateInput = {
     precioFinal?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     medidaEntregada?: Prisma.SortOrder;
+    observaciones?: Prisma.SortOrder;
 };
 export type PrendaServicioMinOrderByAggregateInput = {
     id?: Prisma.SortOrder;
@@ -302,6 +323,7 @@ export type PrendaServicioMinOrderByAggregateInput = {
     precioFinal?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     medidaEntregada?: Prisma.SortOrder;
+    observaciones?: Prisma.SortOrder;
 };
 export type PrendaServicioSumOrderByAggregateInput = {
     id?: Prisma.SortOrder;
@@ -398,6 +420,7 @@ export type PrendaServicioCreateWithoutPrendaInput = {
     precioFinal: runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Date | string;
     medidaEntregada?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: string | null;
     servicio: Prisma.CatalogoServicioCreateNestedOneWithoutAsignacionesInput;
 };
 export type PrendaServicioUncheckedCreateWithoutPrendaInput = {
@@ -407,6 +430,7 @@ export type PrendaServicioUncheckedCreateWithoutPrendaInput = {
     precioFinal: runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Date | string;
     medidaEntregada?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: string | null;
 };
 export type PrendaServicioCreateOrConnectWithoutPrendaInput = {
     where: Prisma.PrendaServicioWhereUniqueInput;
@@ -440,12 +464,14 @@ export type PrendaServicioScalarWhereInput = {
     precioFinal?: Prisma.DecimalFilter<"PrendaServicio"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Prisma.DateTimeFilter<"PrendaServicio"> | Date | string;
     medidaEntregada?: Prisma.DecimalNullableFilter<"PrendaServicio"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: Prisma.StringNullableFilter<"PrendaServicio"> | string | null;
 };
 export type PrendaServicioCreateWithoutServicioInput = {
     tipoExpress?: $Enums.TipoExpress;
     precioFinal: runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Date | string;
     medidaEntregada?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: string | null;
     prenda: Prisma.PrendaCreateNestedOneWithoutServiciosInput;
 };
 export type PrendaServicioUncheckedCreateWithoutServicioInput = {
@@ -455,6 +481,7 @@ export type PrendaServicioUncheckedCreateWithoutServicioInput = {
     precioFinal: runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Date | string;
     medidaEntregada?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: string | null;
 };
 export type PrendaServicioCreateOrConnectWithoutServicioInput = {
     where: Prisma.PrendaServicioWhereUniqueInput;
@@ -484,12 +511,14 @@ export type PrendaServicioCreateManyPrendaInput = {
     precioFinal: runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Date | string;
     medidaEntregada?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: string | null;
 };
 export type PrendaServicioUpdateWithoutPrendaInput = {
     tipoExpress?: Prisma.EnumTipoExpressFieldUpdateOperationsInput | $Enums.TipoExpress;
     precioFinal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     medidaEntregada?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     servicio?: Prisma.CatalogoServicioUpdateOneRequiredWithoutAsignacionesNestedInput;
 };
 export type PrendaServicioUncheckedUpdateWithoutPrendaInput = {
@@ -499,6 +528,7 @@ export type PrendaServicioUncheckedUpdateWithoutPrendaInput = {
     precioFinal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     medidaEntregada?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 export type PrendaServicioUncheckedUpdateManyWithoutPrendaInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -507,6 +537,7 @@ export type PrendaServicioUncheckedUpdateManyWithoutPrendaInput = {
     precioFinal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     medidaEntregada?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 export type PrendaServicioCreateManyServicioInput = {
     id?: number;
@@ -515,12 +546,14 @@ export type PrendaServicioCreateManyServicioInput = {
     precioFinal: runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Date | string;
     medidaEntregada?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: string | null;
 };
 export type PrendaServicioUpdateWithoutServicioInput = {
     tipoExpress?: Prisma.EnumTipoExpressFieldUpdateOperationsInput | $Enums.TipoExpress;
     precioFinal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     medidaEntregada?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     prenda?: Prisma.PrendaUpdateOneRequiredWithoutServiciosNestedInput;
 };
 export type PrendaServicioUncheckedUpdateWithoutServicioInput = {
@@ -530,6 +563,7 @@ export type PrendaServicioUncheckedUpdateWithoutServicioInput = {
     precioFinal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     medidaEntregada?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 export type PrendaServicioUncheckedUpdateManyWithoutServicioInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -538,6 +572,7 @@ export type PrendaServicioUncheckedUpdateManyWithoutServicioInput = {
     precioFinal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     medidaEntregada?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    observaciones?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 export type PrendaServicioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -547,6 +582,7 @@ export type PrendaServicioSelect<ExtArgs extends runtime.Types.Extensions.Intern
     precioFinal?: boolean;
     createdAt?: boolean;
     medidaEntregada?: boolean;
+    observaciones?: boolean;
     prenda?: boolean | Prisma.PrendaDefaultArgs<ExtArgs>;
     servicio?: boolean | Prisma.CatalogoServicioDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["prendaServicio"]>;
@@ -558,6 +594,7 @@ export type PrendaServicioSelectCreateManyAndReturn<ExtArgs extends runtime.Type
     precioFinal?: boolean;
     createdAt?: boolean;
     medidaEntregada?: boolean;
+    observaciones?: boolean;
     prenda?: boolean | Prisma.PrendaDefaultArgs<ExtArgs>;
     servicio?: boolean | Prisma.CatalogoServicioDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["prendaServicio"]>;
@@ -569,6 +606,7 @@ export type PrendaServicioSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
     precioFinal?: boolean;
     createdAt?: boolean;
     medidaEntregada?: boolean;
+    observaciones?: boolean;
     prenda?: boolean | Prisma.PrendaDefaultArgs<ExtArgs>;
     servicio?: boolean | Prisma.CatalogoServicioDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["prendaServicio"]>;
@@ -580,8 +618,9 @@ export type PrendaServicioSelectScalar = {
     precioFinal?: boolean;
     createdAt?: boolean;
     medidaEntregada?: boolean;
+    observaciones?: boolean;
 };
-export type PrendaServicioOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "prendaId" | "servicioId" | "tipoExpress" | "precioFinal" | "createdAt" | "medidaEntregada", ExtArgs["result"]["prendaServicio"]>;
+export type PrendaServicioOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "prendaId" | "servicioId" | "tipoExpress" | "precioFinal" | "createdAt" | "medidaEntregada" | "observaciones", ExtArgs["result"]["prendaServicio"]>;
 export type PrendaServicioInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     prenda?: boolean | Prisma.PrendaDefaultArgs<ExtArgs>;
     servicio?: boolean | Prisma.CatalogoServicioDefaultArgs<ExtArgs>;
@@ -608,6 +647,7 @@ export type $PrendaServicioPayload<ExtArgs extends runtime.Types.Extensions.Inte
         precioFinal: runtime.Decimal;
         createdAt: Date;
         medidaEntregada: runtime.Decimal | null;
+        observaciones: string | null;
     }, ExtArgs["result"]["prendaServicio"]>;
     composites: {};
 };
@@ -674,6 +714,7 @@ export interface PrendaServicioFieldRefs {
     readonly precioFinal: Prisma.FieldRef<"PrendaServicio", 'Decimal'>;
     readonly createdAt: Prisma.FieldRef<"PrendaServicio", 'DateTime'>;
     readonly medidaEntregada: Prisma.FieldRef<"PrendaServicio", 'Decimal'>;
+    readonly observaciones: Prisma.FieldRef<"PrendaServicio", 'String'>;
 }
 export type PrendaServicioFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.PrendaServicioSelect<ExtArgs> | null;

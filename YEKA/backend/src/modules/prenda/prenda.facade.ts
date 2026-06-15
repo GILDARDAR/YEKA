@@ -55,6 +55,7 @@ function toPrendaServicioResponseDto(ps: PrendaServicio): PrendaServicioResponse
     medidaEntregada: ps.medidaEntregada ? ps.medidaEntregada.toString() : null,
     tipoExpress: ps.tipoExpress,
     precioFinal: ps.precioFinal.toString(),
+    observaciones: (ps as any).observaciones || null,
     createdAt: ps.createdAt,
   };
 }
@@ -235,6 +236,14 @@ export class PrendaFacade {
       multiplier = parseFloat(multStr);
     }
 
+    // 3.8 Validate observaciones if present
+    if (dto.observaciones) {
+      const wordCount = dto.observaciones.trim().split(/\s+/).filter(Boolean).length;
+      if (wordCount > 500) {
+        throw new BadRequestException('Las observaciones del servicio no pueden superar las 500 palabras');
+      }
+    }
+
     const finalPrice = basePrice * multiplier;
 
     // 4. Create PrendaServicio pivot record
@@ -244,6 +253,7 @@ export class PrendaFacade {
       medidaEntregada: dto.medidaEntregada,
       tipoExpress: dto.tipoExpress,
       precioFinal: finalPrice,
+      observaciones: dto.observaciones,
     });
 
     // 5. Recalculate invoice totals
@@ -262,6 +272,7 @@ export class PrendaFacade {
           servicioId: dto.servicioId,
           tipoExpress: dto.tipoExpress,
           precioFinal: finalPrice,
+          observaciones: dto.observaciones,
         },
       },
     });

@@ -164,6 +164,7 @@ export declare const PrendaServicioScalarFieldEnum: {
     readonly precioFinal: "precioFinal";
     readonly createdAt: "createdAt";
     readonly medidaEntregada: "medidaEntregada";
+    readonly observaciones: "observaciones";
 };
 export type PrendaServicioScalarFieldEnum = (typeof PrendaServicioScalarFieldEnum)[keyof typeof PrendaServicioScalarFieldEnum];
 export declare const InventarioScalarFieldEnum: {

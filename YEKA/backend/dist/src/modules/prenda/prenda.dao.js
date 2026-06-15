@@ -81,6 +81,7 @@ let PrendaDAO = class PrendaDAO {
                 medidaEntregada: data.medidaEntregada !== undefined ? new client_1.Prisma.Decimal(data.medidaEntregada) : null,
                 tipoExpress: data.tipoExpress,
                 precioFinal: new client_1.Prisma.Decimal(data.precioFinal),
+                observaciones: data.observaciones || null,
             },
         });
     }

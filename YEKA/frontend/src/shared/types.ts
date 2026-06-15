@@ -245,6 +245,7 @@ export interface PrendaServicio {
   medidaEntregada: string | null;
   tipoExpress: TipoExpress;
   precioFinal: string;
+  observaciones?: string | null;
   createdAt: string;
 
   servicio?: CatalogoServicio;
@@ -264,6 +265,7 @@ export interface AsignarServicioDto {
   servicioId: number;
   medidaEntregada?: number;
   tipoExpress: TipoExpress;
+  observaciones?: string;
 }
 
 export interface CambiarEstadoDto {
