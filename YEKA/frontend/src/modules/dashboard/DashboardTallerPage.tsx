@@ -532,7 +532,7 @@ export function DashboardTallerPage() {
                 </table>
               </div>
 
-              <div style={{ display: 'flex', gap: 'var(--space-3)', marginTop: 'var(--space-2)' }}>
+              <div style={{ marginTop: 'var(--space-2)' }}>
                 <button 
                   type="button" 
                   className="btn btn-outline" 
@@ -543,25 +543,17 @@ export function DashboardTallerPage() {
                   {creatingDraft ? <span className="spinner spinner-sm" /> : <Plus size={16} />} 
                   Agregar Prenda
                 </button>
-                <button 
-                  type="button" 
-                  className="btn btn-outline" 
-                  style={{ width: 'max-content', borderStyle: 'dashed' }}
-                  onClick={handleOpenAddAbono}
-                  disabled={creatingDraft || !draftFactura}
-                >
-                  <Plus size={16} /> 
-                  Hacer Abono
-                </button>
               </div>
 
-              {/* TABLA DE ABONOS */}
-              {draftFactura?.abonos && draftFactura.abonos.length > 0 && (
-                <div style={{ marginTop: 'var(--space-5)' }}>
-                  <h3 style={{ fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-3)' }}>
-                    Abonos Registrados
-                  </h3>
-                  <div className="table-wrapper" style={{ maxHeight: '250px', overflowY: 'auto' }}>
+              <hr style={{ margin: 'var(--space-6) 0', borderColor: 'var(--color-border)' }} />
+
+              {/* ZONA DE ABONOS */}
+              <div style={{ marginBottom: 'var(--space-2)' }}>
+                <h3 style={{ fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-3)' }}>
+                  Abonos Registrados
+                </h3>
+                {draftFactura?.abonos && draftFactura.abonos.length > 0 ? (
+                  <div className="table-wrapper" style={{ maxHeight: '250px', overflowY: 'auto', marginBottom: 'var(--space-3)' }}>
                     <table className="table">
                       <thead style={{ position: 'sticky', top: 0, background: 'var(--bg-card)', zIndex: 1 }}>
                         <tr>
@@ -596,8 +588,23 @@ export function DashboardTallerPage() {
                       </tbody>
                     </table>
                   </div>
-                </div>
-              )}
+                ) : (
+                  <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--text-sm)', marginBottom: 'var(--space-3)' }}>
+                    No hay abonos registrados para esta factura.
+                  </p>
+                )}
+                
+                <button 
+                  type="button" 
+                  className="btn btn-outline" 
+                  style={{ width: 'max-content', borderStyle: 'dashed' }}
+                  onClick={handleOpenAddAbono}
+                  disabled={creatingDraft || !draftFactura}
+                >
+                  <Plus size={16} /> 
+                  Hacer Abono
+                </button>
+              </div>
             </div>
 
             {/* FOOTER TOTALIZADOR */}
