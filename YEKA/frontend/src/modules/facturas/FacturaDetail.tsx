@@ -302,9 +302,10 @@ export function FacturaDetail() {
                 factura.prendas.map(p => {
                   const tipo = tiposPrenda.find(t => t.id === p.tipoPrendaId)?.nombre || 'Desconocido';
                   const val = p.servicios?.reduce((acc, s) => acc + Number(s.precioFinal), 0) || 0;
-                  const srvResumen = p.servicios?.map(s => {
-                    const c = catalogoServicios.find(cs => cs.id === s.servicioId);
-                    return c ? c.tipoEspecifico : 'Servicio';
+                  const srvResumen = p.servicios?.map((s: any) => {
+                    const c = catalogoServicios.find((cs: any) => cs.id === s.servicioId);
+                    const name = c ? c.tipoEspecifico : 'Servicio';
+                    return s.observaciones ? `${name} (Obs: ${s.observaciones})` : name;
                   }).join(', ') || 'Sin servicios';
 
                   return (
