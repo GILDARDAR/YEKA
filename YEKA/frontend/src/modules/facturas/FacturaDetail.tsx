@@ -6,7 +6,7 @@ import { prendasService } from '../prendas/prendas.service';
 import tipoPrendaService from '../../services/tipo-prenda.service';
 import { catalogoService } from '../catalogo/catalogo.service';
 import type { Factura, Prenda, TipoPrenda, CatalogoServicio } from '../../shared/types';
-import { ChevronLeft, FileText, Plus, Trash2, CreditCard, Edit2 } from 'lucide-react';
+import { FileText, Edit2, Trash2, ChevronLeft, CreditCard, Plus, Printer, Tag } from 'lucide-react';
 import { PrendaModal } from '../prendas/PrendaModal';
 
 export function FacturaDetail() {
@@ -130,6 +130,20 @@ export function FacturaDetail() {
     }
   };
 
+  const handlePrintFactura = () => {
+    document.body.classList.remove('print-prendas-mode');
+    window.print();
+  };
+
+  const handlePrintPrendas = () => {
+    document.body.classList.add('print-prendas-mode');
+    window.print();
+    // After print dialog is closed
+    setTimeout(() => {
+      document.body.classList.remove('print-prendas-mode');
+    }, 1000);
+  };
+
   if (loading) {
     return <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}><div className="spinner spinner-lg" /></div>;
   }
@@ -146,11 +160,21 @@ export function FacturaDetail() {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-6)' }}>
-        <Link to="/facturas" className="btn btn-ghost btn-sm btn-icon">
-          <ChevronLeft size={18} />
-        </Link>
-        <h1 className="page-title">Factura {factura.numero}</h1>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-6)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+          <Link to="/facturas" className="btn btn-ghost btn-sm btn-icon">
+            <ChevronLeft size={18} />
+          </Link>
+          <h1 className="page-title">Factura {factura.numero}</h1>
+        </div>
+        <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+          <button className="btn btn-outline btn-sm" onClick={handlePrintFactura} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <Printer size={16} /> Imprimir Factura
+          </button>
+          <button className="btn btn-outline btn-sm" onClick={handlePrintPrendas} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <Tag size={16} /> Imprimir Prendas
+          </button>
+        </div>
       </div>
 
       <div className="card" style={{ marginBottom: 'var(--space-6)' }}>
@@ -441,6 +465,25 @@ export function FacturaDetail() {
           </div>
         </div>
       )}
+      {/* Container Oculto para impresión de Prendas */}
+      <div className="print-prendas-container">
+        {factura.prendas?.map((p: any) => (
+          <div key={p.id} className="prenda-ticket">
+            <h4>Factura #{factura.numero} - Prenda #{p.id}</h4>
+            <p><strong>Tipo:</strong> {tiposPrenda.find(t => t.id === p.tipoPrendaId)?.nombre || 'Desconocido'}</p>
+            <div className="services-list">
+              {p.servicios?.map((s: any, idx: number) => {
+                const c = catalogoServicios.find(cs => cs.id === s.servicioId);
+                return (
+                  <div key={idx}>
+                    - {c ? c.tipoEspecifico : 'Servicio'}{s.observaciones ? `: ${s.observaciones}` : ''}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

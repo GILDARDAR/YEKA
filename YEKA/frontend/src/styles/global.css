@@ -553,3 +553,76 @@ input, select, textarea, button {
 @media (max-width: 768px) {
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
 }
+
+/* ============================================================
+   Print Styles
+   ============================================================ */
+
+@media print {
+  /* Ocultar elementos no deseados en impresión general */
+  .sidebar, .hamburger-btn, .btn, button, .modal, .toast {
+    display: none !important;
+  }
+  
+  .app-main {
+    margin-left: 0 !important;
+  }
+
+  /* Modo impresión de prendas (Etiquetas compactas) */
+  body.print-prendas-mode * {
+    visibility: hidden;
+  }
+
+  body.print-prendas-mode .print-prendas-container,
+  body.print-prendas-mode .print-prendas-container * {
+    visibility: visible;
+  }
+
+  body.print-prendas-mode .print-prendas-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .print-prendas-container {
+    display: none;
+  }
+}
+
+@media screen {
+  .print-prendas-container {
+    display: none !important;
+  }
+}
+
+/* Print Ticket Styles */
+.prenda-ticket {
+  height: 3cm;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px;
+  border-bottom: 1px dashed #000;
+  page-break-inside: avoid;
+  font-family: monospace;
+  color: #000;
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.prenda-ticket h4 {
+  font-size: 12px;
+  margin: 0 0 2px 0;
+  padding: 0;
+}
+
+.prenda-ticket p {
+  margin: 0 0 2px 0;
+}
+
+.prenda-ticket .services-list {
+  font-size: 9px;
+  margin-top: 2px;
+}
