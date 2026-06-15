@@ -171,9 +171,6 @@ export function FacturaDetail() {
           <button className="btn btn-outline btn-sm" onClick={handlePrintFactura} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             <Printer size={16} /> Imprimir Factura
           </button>
-          <button className="btn btn-outline btn-sm" onClick={handlePrintPrendas} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Tag size={16} /> Imprimir Prendas
-          </button>
         </div>
       </div>
 
@@ -252,9 +249,14 @@ export function FacturaDetail() {
 
       {/* Prendas List */}
       <div style={{ marginTop: 'var(--space-4)', flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--bg-card)', padding: 'var(--space-4)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
-        <h3 style={{ fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-3)' }}>
-          Prendas de la Factura
-        </h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
+          <h3 style={{ fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)', margin: 0 }}>
+            Prendas de la Factura
+          </h3>
+          <button className="btn btn-outline btn-sm" onClick={handlePrintPrendas} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <Tag size={16} /> Imprimir Prendas
+          </button>
+        </div>
         
         <div className="table-wrapper" style={{ maxHeight: '400px', overflowY: 'auto', marginBottom: 'var(--space-4)' }}>
           <table className="table">
