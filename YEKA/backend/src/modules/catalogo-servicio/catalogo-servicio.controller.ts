@@ -37,13 +37,11 @@ export class CatalogoServicioController {
   }
 
   @Post()
-  @Roles(Rol.ADMIN)
   async createServicio(@Body() dto: CreateCatalogoServicioDto): Promise<CatalogoServicioResponseDto> {
     return this.service.createServicio(dto);
   }
 
   @Patch(':id')
-  @Roles(Rol.ADMIN)
   async updateServicio(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateCatalogoServicioDto,
@@ -52,7 +50,6 @@ export class CatalogoServicioController {
   }
 
   @Delete(':id')
-  @Roles(Rol.ADMIN)
   async deleteServicio(@Param('id', ParseIntPipe) id: number): Promise<CatalogoServicioResponseDto> {
     return this.service.deleteServicio(id);
   }

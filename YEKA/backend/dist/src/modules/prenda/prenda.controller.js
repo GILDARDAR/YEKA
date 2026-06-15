@@ -19,7 +19,6 @@ const prenda_dto_1 = require("./prenda.dto");
 const jwt_auth_guard_1 = require("../../auth/jwt-auth.guard");
 const roles_guard_1 = require("../../common/guards/roles.guard");
 const current_user_decorator_1 = require("../../common/decorators/current-user.decorator");
-const roles_decorator_1 = require("../../common/decorators/roles.decorator");
 const client_1 = require("../../../generated/prisma/client");
 let PrendaController = class PrendaController {
     prendaService;
@@ -139,7 +138,6 @@ __decorate([
 ], PrendaController.prototype, "subirFoto", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    (0, roles_decorator_1.Roles)(client_1.Rol.ADMIN),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),

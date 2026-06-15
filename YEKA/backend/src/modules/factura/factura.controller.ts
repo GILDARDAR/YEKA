@@ -9,6 +9,7 @@ import {
   UseGuards,
   ParseIntPipe,
   Res,
+  Delete,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { FacturaService } from './factura.service';

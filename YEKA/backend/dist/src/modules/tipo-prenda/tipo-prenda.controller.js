@@ -18,8 +18,6 @@ const tipo_prenda_service_1 = require("./tipo-prenda.service");
 const tipo_prenda_dto_1 = require("./tipo-prenda.dto");
 const jwt_auth_guard_1 = require("../../auth/jwt-auth.guard");
 const roles_guard_1 = require("../../common/guards/roles.guard");
-const roles_decorator_1 = require("../../common/decorators/roles.decorator");
-const client_1 = require("../../../generated/prisma/client");
 let TipoPrendaController = class TipoPrendaController {
     tipoPrendaService;
     constructor(tipoPrendaService) {
@@ -43,14 +41,12 @@ let TipoPrendaController = class TipoPrendaController {
 };
 exports.TipoPrendaController = TipoPrendaController;
 __decorate([
-    (0, roles_decorator_1.Roles)(client_1.Rol.ADMIN, client_1.Rol.RECEPCION, client_1.Rol.TALLER),
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], TipoPrendaController.prototype, "findAll", null);
 __decorate([
-    (0, roles_decorator_1.Roles)(client_1.Rol.ADMIN, client_1.Rol.RECEPCION, client_1.Rol.TALLER),
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -58,7 +54,6 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], TipoPrendaController.prototype, "findOne", null);
 __decorate([
-    (0, roles_decorator_1.Roles)(client_1.Rol.ADMIN),
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -66,7 +61,6 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], TipoPrendaController.prototype, "create", null);
 __decorate([
-    (0, roles_decorator_1.Roles)(client_1.Rol.ADMIN),
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
@@ -75,7 +69,6 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], TipoPrendaController.prototype, "update", null);
 __decorate([
-    (0, roles_decorator_1.Roles)(client_1.Rol.ADMIN),
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),

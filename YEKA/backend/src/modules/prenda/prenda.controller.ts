@@ -106,7 +106,6 @@ export class PrendaController {
   }
 
   @Delete(':id')
-  @Roles(Rol.ADMIN)
   async deletePrenda(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser('id') usuarioId: number,

@@ -33,13 +33,11 @@ export class SedeController {
   }
 
   @Post()
-  @Roles(Rol.ADMIN)
   async createSede(@Body() dto: CreateSedeDto): Promise<SedeResponseDto> {
     return this.SedeService.createSede(dto);
   }
 
   @Patch(':id')
-  @Roles(Rol.ADMIN)
   async updateSede(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateSedeDto,
@@ -48,7 +46,6 @@ export class SedeController {
   }
 
   @Delete(':id')
-  @Roles(Rol.ADMIN)
   async deleteSede(@Param('id', ParseIntPipe) id: number): Promise<SedeResponseDto> {
     return this.SedeService.deleteSede(id);
   }

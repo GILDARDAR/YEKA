@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import type { TipoPrenda } from '../shared/types';
 import tipoPrendaService from '../services/tipo-prenda.service';
-import { useAuth } from '../shared/auth.context';
 import { Layers, Plus, Pencil } from 'lucide-react';
 
 const TipoPrendaPage: React.FC = () => {
-  const { user } = useAuth();
-  const isAdmin = user?.rol === 'ADMIN';
 
   const [tipos, setTipos] = useState<TipoPrenda[]>([]);
   const [loading, setLoading] = useState(true);
@@ -93,14 +90,12 @@ const TipoPrendaPage: React.FC = () => {
           <h1 className="page-title">Tipos de Prenda</h1>
           <p className="page-subtitle">Gestión de las categorías de prendas</p>
         </div>
-        {isAdmin && (
           <button
             onClick={() => handleOpenModal()}
             className="btn btn-primary"
           >
             <Plus size={16} /> Nuevo Tipo
           </button>
-        )}
       </div>
 
       {error && <div style={{ color: 'var(--color-danger)', marginBottom: 'var(--space-4)' }}>{error}</div>}
@@ -122,7 +117,7 @@ const TipoPrendaPage: React.FC = () => {
                 <th>Nombre</th>
                 <th>Descripción</th>
                 <th>Estado</th>
-                {isAdmin && <th style={{ textAlign: 'right' }}>Acciones</th>}
+                <th style={{ textAlign: 'right' }}>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -135,7 +130,6 @@ const TipoPrendaPage: React.FC = () => {
                       {tipo.activo ? 'Activo' : 'Inactivo'}
                     </span>
                   </td>
-                  {isAdmin && (
                     <td style={{ textAlign: 'right' }}>
                       <button
                         onClick={() => handleOpenModal(tipo)}
@@ -145,7 +139,6 @@ const TipoPrendaPage: React.FC = () => {
                         <Pencil size={14} />
                       </button>
                     </td>
-                  )}
                 </tr>
               ))}
             </tbody>

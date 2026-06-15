@@ -11,31 +11,26 @@ import { Rol } from '../../../generated/prisma/client';
 export class TipoPrendaController {
   constructor(private readonly tipoPrendaService: TipoPrendaService) {}
 
-  @Roles(Rol.ADMIN, Rol.RECEPCION, Rol.TALLER)
   @Get()
   findAll() {
     return this.tipoPrendaService.findAll();
   }
 
-  @Roles(Rol.ADMIN, Rol.RECEPCION, Rol.TALLER)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.tipoPrendaService.findOne(id);
   }
 
-  @Roles(Rol.ADMIN)
   @Post()
   create(@Body() dto: CreateTipoPrendaDto) {
     return this.tipoPrendaService.create(dto);
   }
 
-  @Roles(Rol.ADMIN)
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateTipoPrendaDto) {
     return this.tipoPrendaService.update(id, dto);
   }
 
-  @Roles(Rol.ADMIN)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.tipoPrendaService.remove(id);

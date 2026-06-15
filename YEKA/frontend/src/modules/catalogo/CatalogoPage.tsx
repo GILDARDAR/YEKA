@@ -3,11 +3,7 @@ import { catalogoService } from './catalogo.service';
 import tipoPrendaService from '../../services/tipo-prenda.service';
 import type { CatalogoServicio, TipoPrenda, CreateCatalogoServicioDto } from '../../shared/types';
 import { Tag, Plus, Pencil, ChevronDown, ChevronRight, Package, Settings } from 'lucide-react';
-import { useAuth } from '../../shared/auth.context';
-
 export function CatalogoPage() {
-  const { user } = useAuth();
-  const isAdmin = user?.rol === 'ADMIN';
 
   const [servicios, setServicios] = useState<CatalogoServicio[]>([]);
   const [tiposPrenda, setTiposPrenda] = useState<TipoPrenda[]>([]);
@@ -182,11 +178,9 @@ export function CatalogoPage() {
           <h1 className="page-title">Catálogo de Servicios</h1>
           <p className="page-subtitle">{servicios.filter(s => s.activo).length} servicios activos · {tiposPrenda.length} tipos de prenda</p>
         </div>
-        {isAdmin && (
           <button className="btn btn-primary" onClick={() => handleOpenModal()}>
             <Plus size={16} /> Nuevo servicio
           </button>
-        )}
       </div>
 
       {/* Selector de vista */}
@@ -274,7 +268,6 @@ export function CatalogoPage() {
                               <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--text-sm)' }}>
                                 ⚠️ Ningún servicio configurado para este tipo de prenda.
                               </p>
-                              {isAdmin && (
                                 <button
                                   className="btn btn-sm btn-primary"
                                   style={{ marginTop: 'var(--space-2)' }}
@@ -282,7 +275,6 @@ export function CatalogoPage() {
                                 >
                                   <Plus size={13} /> Crear servicio
                                 </button>
-                              )}
                             </div>
                           ) : (
                             <table className="table" style={{ margin: 0 }}>
@@ -294,7 +286,7 @@ export function CatalogoPage() {
                                   <th>Medida base (cm)</th>
                                   <th>Precio extra / unidad</th>
                                   <th>Peso pts</th>
-                                  {isAdmin && <th></th>}
+                                  <th></th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -318,13 +310,11 @@ export function CatalogoPage() {
                                       <td>
                                         <span className="badge badge-neutral">{s.pesoPuntos} pts</span>
                                       </td>
-                                      {isAdmin && (
                                         <td>
                                           <button className="btn btn-ghost btn-sm btn-icon" onClick={() => handleOpenModal(s)} title="Editar servicio">
                                             <Pencil size={14} />
                                           </button>
                                         </td>
-                                      )}
                                     </tr>
                                   );
                                 })}
@@ -365,7 +355,7 @@ export function CatalogoPage() {
                               <th>Servicio</th>
                               <th>Tipos de Prenda cubiertos</th>
                               <th>Peso pts</th>
-                              {isAdmin && <th></th>}
+                              <th></th>
                             </tr>
                           </thead>
                           <tbody>
@@ -391,13 +381,11 @@ export function CatalogoPage() {
                                 <td>
                                   <span className="badge badge-neutral">{s.pesoPuntos} pts</span>
                                 </td>
-                                {isAdmin && (
                                   <td>
                                     <button className="btn btn-ghost btn-sm btn-icon" onClick={() => handleOpenModal(s)}>
                                       <Pencil size={14} />
                                     </button>
                                   </td>
-                                )}
                               </tr>
                             ))}
                           </tbody>

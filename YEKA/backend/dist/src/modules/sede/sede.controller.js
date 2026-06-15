@@ -18,8 +18,6 @@ const sede_service_1 = require("./sede.service");
 const sede_dto_1 = require("./sede.dto");
 const jwt_auth_guard_1 = require("../../auth/jwt-auth.guard");
 const roles_guard_1 = require("../../common/guards/roles.guard");
-const roles_decorator_1 = require("../../common/decorators/roles.decorator");
-const client_1 = require("../../../generated/prisma/client");
 let SedeController = class SedeController {
     SedeService;
     constructor(SedeService) {
@@ -61,7 +59,6 @@ __decorate([
 ], SedeController.prototype, "getSedeById", null);
 __decorate([
     (0, common_1.Post)(),
-    (0, roles_decorator_1.Roles)(client_1.Rol.ADMIN),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [sede_dto_1.CreateSedeDto]),
@@ -69,7 +66,6 @@ __decorate([
 ], SedeController.prototype, "createSede", null);
 __decorate([
     (0, common_1.Patch)(':id'),
-    (0, roles_decorator_1.Roles)(client_1.Rol.ADMIN),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -78,7 +74,6 @@ __decorate([
 ], SedeController.prototype, "updateSede", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    (0, roles_decorator_1.Roles)(client_1.Rol.ADMIN),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
