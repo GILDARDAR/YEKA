@@ -392,8 +392,8 @@ export function FacturaDetail() {
                   min="0.01"
                   max={
                     abonoToEdit
-                      ? (Math.max(0, Number(factura.total) - (factura.abonos?.reduce((sum, a) => sum + Number(a.monto), 0) || 0)) + Number(abonoToEdit.monto)).toFixed(2)
-                      : Math.max(0, Number(factura.total) - (factura.abonos?.reduce((sum, a) => sum + Number(a.monto), 0) || 0)).toFixed(2)
+                      ? Math.min(1000, Math.max(0, Number(factura.total) - (factura.abonos?.reduce((sum, a) => sum + Number(a.monto), 0) || 0)) + Number(abonoToEdit.monto)).toFixed(2)
+                      : Math.min(1000, Math.max(0, Number(factura.total) - (factura.abonos?.reduce((sum, a) => sum + Number(a.monto), 0) || 0))).toFixed(2)
                   }
                   required 
                   className="form-input" 
