@@ -226,50 +226,6 @@ export function FacturaDetail() {
         </div>
       </div>
 
-      {/* Resumen de Abonos */}
-      {factura.abonos && factura.abonos.length > 0 && (
-        <div style={{ marginTop: 'var(--space-4)', display: 'flex', flexDirection: 'column', background: 'var(--bg-card)', padding: 'var(--space-4)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
-          <h3 style={{ fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-3)' }}>
-            Abonos Registrados
-          </h3>
-          <div className="table-wrapper" style={{ overflowY: 'auto' }}>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Método de Pago</th>
-                  <th>Notas</th>
-                  <th style={{ textAlign: 'right' }}>Monto</th>
-                  <th style={{ textAlign: 'center' }}>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {factura.abonos.map(abono => (
-                  <tr key={abono.id}>
-                    <td>{new Date(abono.fecha).toLocaleString()}</td>
-                    <td>{abono.metodoPago}</td>
-                    <td>{abono.notas || '-'}</td>
-                    <td style={{ textAlign: 'right', fontWeight: 'bold', color: 'var(--color-success)' }}>
-                      €{Number(abono.monto).toFixed(2)}
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', justifyContent: 'center', gap: '4px' }}>
-                        <button className="btn btn-ghost btn-sm btn-icon" onClick={() => handleOpenEditAbono(abono)} style={{ color: 'var(--color-primary)' }} title="Editar abono" disabled={factura.estadoPago === 'ANULADO'}>
-                          <Edit2 size={16} />
-                        </button>
-                        <button className="btn btn-ghost btn-sm btn-icon" onClick={() => handleDeleteAbono(abono.id)} style={{ color: 'var(--color-danger)' }} title="Eliminar abono" disabled={factura.estadoPago === 'ANULADO'}>
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
       {/* Prendas List */}
       <div style={{ marginTop: 'var(--space-4)', flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--bg-card)', padding: 'var(--space-4)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
         <h3 style={{ fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-3)' }}>
@@ -358,6 +314,50 @@ export function FacturaDetail() {
           Agregar Prenda
         </button>
       </div>
+
+      {/* Resumen de Abonos */}
+      {factura.abonos && factura.abonos.length > 0 && (
+        <div style={{ marginTop: 'var(--space-4)', display: 'flex', flexDirection: 'column', background: 'var(--bg-card)', padding: 'var(--space-4)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
+          <h3 style={{ fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-3)' }}>
+            Abonos Registrados
+          </h3>
+          <div className="table-wrapper" style={{ overflowY: 'auto' }}>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Método de Pago</th>
+                  <th>Notas</th>
+                  <th style={{ textAlign: 'right' }}>Monto</th>
+                  <th style={{ textAlign: 'center' }}>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {factura.abonos.map(abono => (
+                  <tr key={abono.id}>
+                    <td>{new Date(abono.fecha).toLocaleString()}</td>
+                    <td>{abono.metodoPago}</td>
+                    <td>{abono.notas || '-'}</td>
+                    <td style={{ textAlign: 'right', fontWeight: 'bold', color: 'var(--color-success)' }}>
+                      €{Number(abono.monto).toFixed(2)}
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', justifyContent: 'center', gap: '4px' }}>
+                        <button className="btn btn-ghost btn-sm btn-icon" onClick={() => handleOpenEditAbono(abono)} style={{ color: 'var(--color-primary)' }} title="Editar abono" disabled={factura.estadoPago === 'ANULADO'}>
+                          <Edit2 size={16} />
+                        </button>
+                        <button className="btn btn-ghost btn-sm btn-icon" onClick={() => handleDeleteAbono(abono.id)} style={{ color: 'var(--color-danger)' }} title="Eliminar abono" disabled={factura.estadoPago === 'ANULADO'}>
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {isPrendaModalOpen && (
         <PrendaModal
