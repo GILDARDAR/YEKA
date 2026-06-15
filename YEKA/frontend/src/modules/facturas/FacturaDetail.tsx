@@ -502,7 +502,7 @@ export function FacturaDetail() {
                 const c = catalogoServicios.find(cs => cs.id === s.servicioId);
                 return (
                   <div key={idx}>
-                    - {c ? c.tipoEspecifico : 'Servicio'}{s.observaciones ? `: ${s.observaciones}` : ''}
+                    - {c ? c.tipoEspecifico : 'Servicio'}{s.observaciones ? ` - Obs: ${s.observaciones}` : ''}
                   </div>
                 );
               })}
@@ -542,7 +542,7 @@ export function FacturaDetail() {
                   const c = catalogoServicios.find(cs => cs.id === s.servicioId);
                   return (
                     <div key={idx} style={{ fontSize: '0.9em', marginLeft: '8px', display: 'flex', justifyContent: 'space-between' }}>
-                      <span>- {c ? c.tipoEspecifico : 'Servicio'} {s.observaciones ? `(${s.observaciones})` : ''}</span>
+                      <span>- {c ? c.tipoEspecifico : 'Servicio'}{s.observaciones ? ` - Obs: ${s.observaciones}` : ''}</span>
                     </div>
                   );
                 })}
