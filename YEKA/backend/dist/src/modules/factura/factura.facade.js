@@ -67,6 +67,7 @@ function toResponseDto(factura) {
                 medidaEntregada: s.medidaEntregada ? s.medidaEntregada.toString() : null,
                 tipoExpress: s.tipoExpress,
                 precioFinal: s.precioFinal?.toString() ?? '0',
+                observaciones: s.observaciones || null,
                 createdAt: s.createdAt,
             })),
         })),
