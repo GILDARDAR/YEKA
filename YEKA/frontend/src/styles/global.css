@@ -588,13 +588,33 @@ input, select, textarea, button {
     padding: 0;
   }
 
-  .print-prendas-container {
+  /* Modo impresión de Factura (Ticket/Recibo) */
+  body.print-factura-mode * {
+    visibility: hidden;
+  }
+
+  body.print-factura-mode .print-factura-container,
+  body.print-factura-mode .print-factura-container * {
+    visibility: visible;
+  }
+
+  body.print-factura-mode .print-factura-container {
+    display: block !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .print-prendas-container, .print-factura-container {
     display: none;
   }
 }
 
 @media screen {
-  .print-prendas-container {
+  .print-prendas-container, .print-factura-container {
     display: none !important;
   }
 }
@@ -626,4 +646,83 @@ input, select, textarea, button {
 .prenda-ticket .services-list {
   font-size: 9px;
   margin-top: 2px;
+}
+
+/* Factura Print Styles */
+.print-factura-container {
+  font-family: monospace;
+  color: #000;
+  box-sizing: border-box;
+}
+
+/* Format 80mm */
+.print-factura-container.ticket-80mm {
+  width: 80mm;
+  padding: 4mm;
+  font-size: 12px;
+}
+
+/* Format A4 */
+.print-factura-container.a4-format {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-size: 14px;
+}
+
+.factura-header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.factura-logo {
+  margin: 0;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.factura-sede {
+  margin: 4px 0 0;
+  font-size: 0.9em;
+}
+
+.factura-info {
+  margin-bottom: 16px;
+  border-bottom: 1px dashed #ccc;
+  padding-bottom: 8px;
+}
+
+.factura-info p {
+  margin: 2px 0;
+}
+
+.section-title {
+  margin: 0 0 8px;
+  font-size: 1.1em;
+  border-bottom: 1px solid #000;
+}
+
+.factura-prendas, .factura-abonos {
+  margin-bottom: 16px;
+}
+
+.factura-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.factura-totales {
+  margin-top: 16px;
+  border-top: 1px dashed #ccc;
+  padding-top: 8px;
+}
+
+.factura-row-total {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 1.2em;
+  margin-top: 8px;
 }

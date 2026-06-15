@@ -33,6 +33,16 @@ export function FacturaDetail() {
   });
   const [savingAbono, setSavingAbono] = useState(false);
 
+  const [isTicketFormat, setIsTicketFormat] = useState(() => {
+    return localStorage.getItem('facturaPrintFormat') !== 'a4';
+  });
+
+  const handleFormatChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isTicket = e.target.checked;
+    setIsTicketFormat(isTicket);
+    localStorage.setItem('facturaPrintFormat', isTicket ? 'ticket' : 'a4');
+  };
+
   const fetchFactura = async () => {
     if (!id) return;
     try {
@@ -132,7 +142,11 @@ export function FacturaDetail() {
 
   const handlePrintFactura = () => {
     document.body.classList.remove('print-prendas-mode');
+    document.body.classList.add('print-factura-mode');
     window.print();
+    setTimeout(() => {
+      document.body.classList.remove('print-factura-mode');
+    }, 1000);
   };
 
   const handlePrintPrendas = () => {
@@ -167,7 +181,15 @@ export function FacturaDetail() {
           </Link>
           <h1 className="page-title">Factura {factura.numero}</h1>
         </div>
-        <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+        <div style={{ display: 'flex', gap: 'var(--space-4)', alignItems: 'center' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)' }}>
+            <input 
+              type="checkbox" 
+              checked={isTicketFormat} 
+              onChange={handleFormatChange}
+            />
+            Formato Ticket (80mm)
+          </label>
           <button className="btn btn-outline btn-sm" onClick={handlePrintFactura} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             <Printer size={16} /> Imprimir Factura
           </button>
@@ -473,6 +495,7 @@ export function FacturaDetail() {
           <div key={p.id} className="prenda-ticket">
             <h4>Factura #{factura.numero} - Prenda #{p.id}</h4>
             <p><strong>Tipo:</strong> {tiposPrenda.find(t => t.id === p.tipoPrendaId)?.nombre || 'Desconocido'}</p>
+            {p.notas && <p style={{ fontStyle: 'italic', fontSize: '9px', marginTop: '2px' }}>Notas: {p.notas}</p>}
             <div className="services-list">
               {p.servicios?.map((s: any, idx: number) => {
                 const c = catalogoServicios.find(cs => cs.id === s.servicioId);
@@ -485,6 +508,60 @@ export function FacturaDetail() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Container Oculto para impresión de Factura */}
+      <div className={`print-factura-container ${isTicketFormat ? 'ticket-80mm' : 'a4-format'}`}>
+        <div className="factura-header">
+          <h2 className="factura-logo">YEKA</h2>
+          <p className="factura-sede">Sede Principal</p>
+        </div>
+        
+        <div className="factura-info">
+          <p><strong>Cliente:</strong> {factura.cliente?.nombre || 'Consumidor Final'} {factura.cliente?.celular ? `- ${factura.cliente.celular}` : ''}</p>
+          <p><strong>Fecha Recibido:</strong> {new Date(factura.createdAt).toLocaleString()}</p>
+        </div>
+
+        <div className="factura-prendas">
+          <h4 className="section-title">Prendas</h4>
+          {factura.prendas?.map((p: any) => {
+            const tipo = tiposPrenda.find(t => t.id === p.tipoPrendaId)?.nombre || 'Desconocido';
+            const val = p.servicios?.reduce((acc: number, s: any) => acc + Number(s.precioFinal), 0) || 0;
+            return (
+              <div key={p.id} className="factura-row">
+                <span>#{p.id} - {tipo}</span>
+                <span>€{val.toFixed(2)}</span>
+              </div>
+            );
+          })}
+        </div>
+
+        {(factura.abonos && factura.abonos.length > 0) && (
+          <div className="factura-abonos">
+            <h4 className="section-title">Abonos</h4>
+            {factura.abonos.map((a: any) => (
+              <div key={a.id} className="factura-row">
+                <span>{new Date(a.fecha).toLocaleDateString()} ({a.metodoPago})</span>
+                <span>€{Number(a.monto).toFixed(2)}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="factura-totales">
+          <div className="factura-row">
+            <span>Subtotal:</span>
+            <span>€{Number(factura.subtotal).toFixed(2)}</span>
+          </div>
+          <div className="factura-row">
+            <span>Abonado:</span>
+            <span>€{factura.abonos?.reduce((sum: number, a: any) => sum + Number(a.monto), 0).toFixed(2) || '0.00'}</span>
+          </div>
+          <div className="factura-row-total">
+            <span>Pendiente:</span>
+            <span>€{Math.max(0, Number(factura.total) - (factura.abonos?.reduce((sum: number, a: any) => sum + Number(a.monto), 0) || 0)).toFixed(2)}</span>
+          </div>
+        </div>
       </div>
     </div>
   );
