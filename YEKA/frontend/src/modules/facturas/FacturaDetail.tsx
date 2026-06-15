@@ -495,6 +495,7 @@ export function FacturaDetail() {
           <div key={p.id} className="prenda-ticket">
             <h4>Factura #{factura.numero} - Prenda #{p.id}</h4>
             <p><strong>Tipo:</strong> {tiposPrenda.find(t => t.id === p.tipoPrendaId)?.nombre || 'Desconocido'}</p>
+            {p.color && <p><strong>Color:</strong> {p.color}</p>}
             {p.notas && <p style={{ fontStyle: 'italic', fontSize: '9px', marginTop: '2px' }}>Notas: {p.notas}</p>}
             <div className="services-list">
               {p.servicios?.map((s: any, idx: number) => {
@@ -520,6 +521,9 @@ export function FacturaDetail() {
         <div className="factura-info">
           <p><strong>Cliente:</strong> {factura.cliente?.nombre || 'Consumidor Final'} {factura.cliente?.celular ? `- ${factura.cliente.celular}` : ''}</p>
           <p><strong>Fecha Recibido:</strong> {new Date(factura.createdAt).toLocaleString()}</p>
+          {factura.prendas?.some(p => p.fechaCompromiso) && (
+            <p><strong>Fecha Estimada:</strong> {new Date(Math.max(...(factura.prendas.map(p => p.fechaCompromiso ? new Date(p.fechaCompromiso).getTime() : 0)))).toLocaleDateString()}</p>
+          )}
         </div>
 
         <div className="factura-prendas">
@@ -528,9 +532,20 @@ export function FacturaDetail() {
             const tipo = tiposPrenda.find(t => t.id === p.tipoPrendaId)?.nombre || 'Desconocido';
             const val = p.servicios?.reduce((acc: number, s: any) => acc + Number(s.precioFinal), 0) || 0;
             return (
-              <div key={p.id} className="factura-row">
-                <span>#{p.id} - {tipo}</span>
-                <span>€{val.toFixed(2)}</span>
+              <div key={p.id} className="factura-row" style={{ flexDirection: 'column', marginBottom: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <strong>#{p.id} - {tipo} {p.color ? `(${p.color})` : ''}</strong>
+                  <span>€{val.toFixed(2)}</span>
+                </div>
+                {p.notas && <div style={{ fontSize: '0.9em', fontStyle: 'italic' }}>Obs: {p.notas}</div>}
+                {p.servicios?.map((s: any, idx: number) => {
+                  const c = catalogoServicios.find(cs => cs.id === s.servicioId);
+                  return (
+                    <div key={idx} style={{ fontSize: '0.9em', marginLeft: '8px', display: 'flex', justifyContent: 'space-between' }}>
+                      <span>- {c ? c.tipoEspecifico : 'Servicio'} {s.observaciones ? `(${s.observaciones})` : ''}</span>
+                    </div>
+                  );
+                })}
               </div>
             );
           })}
@@ -552,6 +567,16 @@ export function FacturaDetail() {
           <div className="factura-row">
             <span>Subtotal:</span>
             <span>€{Number(factura.subtotal).toFixed(2)}</span>
+          </div>
+          {factura.impuestosJson && (
+            <div className="factura-row">
+              <span>IVA ({factura.impuestosJson.iva}%):</span>
+              <span>€{Number(factura.impuestosJson.monto).toFixed(2)}</span>
+            </div>
+          )}
+          <div className="factura-row" style={{ borderBottom: '1px solid #000', paddingBottom: '4px', marginBottom: '4px' }}>
+            <strong>Total:</strong>
+            <strong>€{Number(factura.total).toFixed(2)}</strong>
           </div>
           <div className="factura-row">
             <span>Abonado:</span>
