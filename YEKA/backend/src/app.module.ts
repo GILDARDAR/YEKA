@@ -12,6 +12,7 @@ import { CatalogoServicioModule } from './modules/catalogo-servicio/catalogo-ser
 import { PrendaModule } from './modules/prenda/prenda.module';
 import { TipoPrendaModule } from './modules/tipo-prenda/tipo-prenda.module';
 import { ConfiguracionModule } from './modules/configuracion/configuracion.module';
+import { AnunciosModule } from './modules/anuncios/anuncios.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ConfiguracionModule } from './modules/configuracion/configuracion.modul
     PrendaModule,
     TipoPrendaModule,
     ConfiguracionModule,
+    AnunciosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

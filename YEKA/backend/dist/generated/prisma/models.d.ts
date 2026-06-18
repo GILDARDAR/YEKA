@@ -12,4 +12,6 @@ export type * from './models/PrendaServicio.js';
 export type * from './models/Inventario.js';
 export type * from './models/AuditLog.js';
 export type * from './models/Configuracion.js';
+export type * from './models/Anuncio.js';
+export type * from './models/AnuncioRespuesta.js';
 export type * from './commonInputTypes.js';

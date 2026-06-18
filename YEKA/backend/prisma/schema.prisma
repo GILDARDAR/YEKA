@@ -21,6 +21,7 @@ model Sede {
   facturas           Factura[]
   inventarios        Inventario[]
   usuarios           Usuario[]
+  anuncios           Anuncio[]
 }
 
 model Usuario {
@@ -40,6 +41,8 @@ model Usuario {
   prendasTaller Prenda[]          @relation("OperariaPrenda")
   jornadas      RegistroJornada[]
   sede          Sede              @relation(fields: [sedeId], references: [id])
+  anunciosCreados Anuncio[]       @relation("AnuncioAdmin")
+  anunciosLeidos  AnuncioRespuesta[] @relation("AnuncioUsuario")
 }
 
 model RegistroJornada {
@@ -249,4 +252,29 @@ enum TipoExpress {
   NORMAL
   EXPRESS_48H
   EXPRESS_24H
+}
+
+model Anuncio {
+  id          Int      @id @default(autoincrement())
+  sedeId      Int
+  adminId     Int
+  mensaje     String
+  createdAt   DateTime @default(now())
+  
+  sede        Sede     @relation(fields: [sedeId], references: [id])
+  admin       Usuario  @relation("AnuncioAdmin", fields: [adminId], references: [id])
+  respuestas  AnuncioRespuesta[]
+}
+
+model AnuncioRespuesta {
+  id          Int       @id @default(autoincrement())
+  anuncioId   Int
+  usuarioId   Int
+  respuesta   String
+  leidoAt     DateTime  @default(now())
+  
+  anuncio     Anuncio   @relation(fields: [anuncioId], references: [id], onDelete: Cascade)
+  usuario     Usuario   @relation("AnuncioUsuario", fields: [usuarioId], references: [id])
+
+  @@unique([anuncioId, usuarioId])
 }

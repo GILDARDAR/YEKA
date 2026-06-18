@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.JsonNullValueFilter = exports.NullsOrder = exports.QueryMode = exports.NullableJsonNullValueInput = exports.SortOrder = exports.ConfiguracionScalarFieldEnum = exports.AuditLogScalarFieldEnum = exports.InventarioScalarFieldEnum = exports.PrendaServicioScalarFieldEnum = exports.PrecioServicioScalarFieldEnum = exports.CatalogoServicioScalarFieldEnum = exports.PrendaScalarFieldEnum = exports.TipoPrendaScalarFieldEnum = exports.AbonoScalarFieldEnum = exports.FacturaScalarFieldEnum = exports.ClienteScalarFieldEnum = exports.RegistroJornadaScalarFieldEnum = exports.UsuarioScalarFieldEnum = exports.SedeScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.Decimal = void 0;
+exports.JsonNullValueFilter = exports.NullsOrder = exports.QueryMode = exports.NullableJsonNullValueInput = exports.SortOrder = exports.AnuncioRespuestaScalarFieldEnum = exports.AnuncioScalarFieldEnum = exports.ConfiguracionScalarFieldEnum = exports.AuditLogScalarFieldEnum = exports.InventarioScalarFieldEnum = exports.PrendaServicioScalarFieldEnum = exports.PrecioServicioScalarFieldEnum = exports.CatalogoServicioScalarFieldEnum = exports.PrendaScalarFieldEnum = exports.TipoPrendaScalarFieldEnum = exports.AbonoScalarFieldEnum = exports.FacturaScalarFieldEnum = exports.ClienteScalarFieldEnum = exports.RegistroJornadaScalarFieldEnum = exports.UsuarioScalarFieldEnum = exports.SedeScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.Decimal = void 0;
 const runtime = __importStar(require("@prisma/client/runtime/index-browser"));
 exports.Decimal = runtime.Decimal;
 exports.NullTypes = {
@@ -58,7 +58,9 @@ exports.ModelName = {
     PrendaServicio: 'PrendaServicio',
     Inventario: 'Inventario',
     AuditLog: 'AuditLog',
-    Configuracion: 'Configuracion'
+    Configuracion: 'Configuracion',
+    Anuncio: 'Anuncio',
+    AnuncioRespuesta: 'AnuncioRespuesta'
 };
 exports.TransactionIsolationLevel = runtime.makeStrictEnum({
     ReadUncommitted: 'ReadUncommitted',
@@ -213,6 +215,20 @@ exports.ConfiguracionScalarFieldEnum = {
     clave: 'clave',
     valor: 'valor',
     updatedAt: 'updatedAt'
+};
+exports.AnuncioScalarFieldEnum = {
+    id: 'id',
+    sedeId: 'sedeId',
+    adminId: 'adminId',
+    mensaje: 'mensaje',
+    createdAt: 'createdAt'
+};
+exports.AnuncioRespuestaScalarFieldEnum = {
+    id: 'id',
+    anuncioId: 'anuncioId',
+    usuarioId: 'usuarioId',
+    respuesta: 'respuesta',
+    leidoAt: 'leidoAt'
 };
 exports.SortOrder = {
     asc: 'asc',

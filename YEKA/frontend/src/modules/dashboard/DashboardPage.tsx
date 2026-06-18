@@ -11,7 +11,7 @@ import { catalogoService } from '../catalogo/catalogo.service';
 import api from '../../shared/api';
 import type { Sede, CapacidadResponse, TipoPrenda, CatalogoServicio, Prenda, EstadoPago, EstadoPrenda, Factura } from '../../shared/types';
 import { PrendaModal } from '../prendas/PrendaModal';
-import { FileText, Tag, Bell, TrendingUp, Shirt, AlertCircle, CheckCircle, AlertTriangle } from 'lucide-react';
+import { FileText, Tag, Bell, TrendingUp, Shirt, AlertCircle, CheckCircle, AlertTriangle, MessageSquare, Send } from 'lucide-react';
 
 import { NuevaFacturaModal } from '../facturas/NuevaFacturaModal';
 
@@ -59,7 +59,14 @@ export function DashboardPage() {
   const [isPrendaDropdownOpen, setIsPrendaDropdownOpen] = useState(false);
   const nroFacturaDropdownRef = useRef<HTMLDivElement>(null);
   const prendaDropdownRef = useRef<HTMLDivElement>(null);
+  const messagePopoverRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  // Quick message state
+  const [isMessagePopoverOpen, setIsMessagePopoverOpen] = useState(false);
+  const [quickSedeId, setQuickSedeId] = useState<string>('');
+  const [quickMensaje, setQuickMensaje] = useState<string>('');
+  const [quickSending, setQuickSending] = useState(false);
 
   useEffect(() => {
     if (user?.rol === 'ADMIN') {
@@ -192,6 +199,9 @@ export function DashboardPage() {
       if (prendaDropdownRef.current && !prendaDropdownRef.current.contains(event.target as Node)) {
         setIsPrendaDropdownOpen(false);
       }
+      if (messagePopoverRef.current && !messagePopoverRef.current.contains(event.target as Node)) {
+        setIsMessagePopoverOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -258,6 +268,24 @@ export function DashboardPage() {
     }
   };
 
+  const handleSendQuickMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quickSedeId || !quickMensaje.trim()) return;
+    
+    setQuickSending(true);
+    try {
+      await api.post('/anuncios', { sedeId: Number(quickSedeId), mensaje: quickMensaje });
+      setQuickSedeId('');
+      setQuickMensaje('');
+      setIsMessagePopoverOpen(false);
+      alert('Anuncio enviado exitosamente');
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Error al enviar anuncio');
+    } finally {
+      setQuickSending(false);
+    }
+  };
+
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
@@ -319,6 +347,69 @@ export function DashboardPage() {
                         background: 'var(--color-warning)' 
                       }} 
                     />
+                  )}
+                </div>
+                
+                <div style={{ position: 'relative' }} ref={messagePopoverRef}>
+                  <button
+                    className="btn btn-ghost btn-icon"
+                    onClick={() => setIsMessagePopoverOpen(!isMessagePopoverOpen)}
+                    title="Enviar Anuncio Rápido"
+                    style={{ background: 'var(--color-surface-alt)' }}
+                  >
+                    <MessageSquare size={20} />
+                  </button>
+                  
+                  {isMessagePopoverOpen && (
+                    <div style={{
+                      position: 'absolute', top: '100%', right: 0,
+                      background: 'var(--color-surface)',
+                      border: '1px solid var(--color-border)',
+                      borderRadius: 'var(--radius-md)', zIndex: 30,
+                      boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)',
+                      marginTop: '8px', width: '300px', padding: '16px'
+                    }}>
+                      <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', borderBottom: '1px solid var(--color-border)', paddingBottom: '8px' }}>
+                        Anuncio Rápido
+                      </h4>
+                      <form onSubmit={handleSendQuickMessage} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <div className="form-group" style={{ margin: 0 }}>
+                          <label className="form-label" style={{ fontSize: '12px' }}>Sede Destino</label>
+                          <select
+                            className="form-input"
+                            value={quickSedeId}
+                            onChange={(e) => setQuickSedeId(e.target.value)}
+                            required
+                            style={{ padding: '6px' }}
+                          >
+                            <option value="">Seleccionar Sede...</option>
+                            {sedes.filter(s => s.activa).map(s => (
+                              <option key={s.id} value={s.id}>{s.nombre}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="form-group" style={{ margin: 0 }}>
+                          <label className="form-label" style={{ fontSize: '12px' }}>Mensaje</label>
+                          <textarea
+                            className="form-input"
+                            value={quickMensaje}
+                            onChange={(e) => setQuickMensaje(e.target.value)}
+                            required
+                            rows={3}
+                            placeholder="Escribe el anuncio..."
+                            style={{ padding: '8px', resize: 'vertical' }}
+                          />
+                        </div>
+                        <button 
+                          type="submit" 
+                          className="btn btn-primary" 
+                          disabled={!quickSedeId || !quickMensaje.trim() || quickSending}
+                          style={{ padding: '6px', fontSize: '13px' }}
+                        >
+                          <Send size={14} /> {quickSending ? 'Enviando...' : 'Enviar Anuncio'}
+                        </button>
+                      </form>
+                    </div>
                   )}
                 </div>
               </div>

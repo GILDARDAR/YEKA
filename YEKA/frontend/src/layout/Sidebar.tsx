@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../shared/auth.context';
 import {
-  LayoutDashboard, Users, FileText, Shirt, Tag, UserCog, Building2, LogOut, Scissors, Layers, Menu, X, Settings
+  LayoutDashboard, Users, FileText, Shirt, Tag, UserCog, Building2, LogOut, Scissors, Layers, Menu, X, Settings, Megaphone
 } from 'lucide-react';
 import './Sidebar.css';
 
@@ -16,6 +16,7 @@ const navItems = [
   { to: '/tipos-prenda', icon: Layers, label: 'Tipos Prenda', roles: ['ADMIN'] },
   { to: '/usuarios', icon: UserCog, label: 'Usuarios', roles: ['ADMIN'] },
   { to: '/sedes', icon: Building2, label: 'Sedes', roles: ['ADMIN'] },
+  { to: '/admin/anuncios', icon: Megaphone, label: 'Anuncios', roles: ['ADMIN'] },
   { to: '/configuracion', icon: Settings, label: 'Configuración', roles: ['ADMIN'] },
 ];
 

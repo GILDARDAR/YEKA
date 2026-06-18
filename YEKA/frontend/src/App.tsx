@@ -17,6 +17,7 @@ import { UsuariosPage }   from './modules/usuarios/UsuariosPage';
 import { SedesPage }      from './modules/sedes/SedesPage';
 import TipoPrendaPage     from './pages/TipoPrendaPage';
 import { ConfiguracionPage } from './modules/configuracion/ConfiguracionPage';
+import { AdminAnunciosPage } from './pages/admin/AdminAnunciosPage';
 import { useAuth } from './shared/auth.context';
 
 function IndexRedirect() {
@@ -113,6 +114,11 @@ export default function App() {
             <Route path="/configuracion" element={
               <RouteGuard allowedRoles={['ADMIN']}>
                 <ConfiguracionPage />
+              </RouteGuard>
+            }/>
+            <Route path="/admin/anuncios" element={
+              <RouteGuard allowedRoles={['ADMIN']}>
+                <AdminAnunciosPage />
               </RouteGuard>
             }/>
 

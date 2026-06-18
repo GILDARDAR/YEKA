@@ -25,6 +25,8 @@ export declare const ModelName: {
     readonly Inventario: "Inventario";
     readonly AuditLog: "AuditLog";
     readonly Configuracion: "Configuracion";
+    readonly Anuncio: "Anuncio";
+    readonly AnuncioRespuesta: "AnuncioRespuesta";
 };
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
 export declare const TransactionIsolationLevel: {
@@ -196,6 +198,22 @@ export declare const ConfiguracionScalarFieldEnum: {
     readonly updatedAt: "updatedAt";
 };
 export type ConfiguracionScalarFieldEnum = (typeof ConfiguracionScalarFieldEnum)[keyof typeof ConfiguracionScalarFieldEnum];
+export declare const AnuncioScalarFieldEnum: {
+    readonly id: "id";
+    readonly sedeId: "sedeId";
+    readonly adminId: "adminId";
+    readonly mensaje: "mensaje";
+    readonly createdAt: "createdAt";
+};
+export type AnuncioScalarFieldEnum = (typeof AnuncioScalarFieldEnum)[keyof typeof AnuncioScalarFieldEnum];
+export declare const AnuncioRespuestaScalarFieldEnum: {
+    readonly id: "id";
+    readonly anuncioId: "anuncioId";
+    readonly usuarioId: "usuarioId";
+    readonly respuesta: "respuesta";
+    readonly leidoAt: "leidoAt";
+};
+export type AnuncioRespuestaScalarFieldEnum = (typeof AnuncioRespuestaScalarFieldEnum)[keyof typeof AnuncioRespuestaScalarFieldEnum];
 export declare const SortOrder: {
     readonly asc: "asc";
     readonly desc: "desc";

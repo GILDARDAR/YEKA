@@ -20,3 +20,5 @@ export type PrendaServicio = Prisma.PrendaServicioModel;
 export type Inventario = Prisma.InventarioModel;
 export type AuditLog = Prisma.AuditLogModel;
 export type Configuracion = Prisma.ConfiguracionModel;
+export type Anuncio = Prisma.AnuncioModel;
+export type AnuncioRespuesta = Prisma.AnuncioRespuestaModel;

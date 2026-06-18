@@ -148,6 +148,7 @@ export type SedeWhereInput = {
     facturas?: Prisma.FacturaListRelationFilter;
     inventarios?: Prisma.InventarioListRelationFilter;
     usuarios?: Prisma.UsuarioListRelationFilter;
+    anuncios?: Prisma.AnuncioListRelationFilter;
 };
 export type SedeOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
@@ -162,6 +163,7 @@ export type SedeOrderByWithRelationInput = {
     facturas?: Prisma.FacturaOrderByRelationAggregateInput;
     inventarios?: Prisma.InventarioOrderByRelationAggregateInput;
     usuarios?: Prisma.UsuarioOrderByRelationAggregateInput;
+    anuncios?: Prisma.AnuncioOrderByRelationAggregateInput;
 };
 export type SedeWhereUniqueInput = Prisma.AtLeast<{
     id?: number;
@@ -179,6 +181,7 @@ export type SedeWhereUniqueInput = Prisma.AtLeast<{
     facturas?: Prisma.FacturaListRelationFilter;
     inventarios?: Prisma.InventarioListRelationFilter;
     usuarios?: Prisma.UsuarioListRelationFilter;
+    anuncios?: Prisma.AnuncioListRelationFilter;
 }, "id" | "codigoSede">;
 export type SedeOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
@@ -220,6 +223,7 @@ export type SedeCreateInput = {
     facturas?: Prisma.FacturaCreateNestedManyWithoutSedeInput;
     inventarios?: Prisma.InventarioCreateNestedManyWithoutSedeInput;
     usuarios?: Prisma.UsuarioCreateNestedManyWithoutSedeInput;
+    anuncios?: Prisma.AnuncioCreateNestedManyWithoutSedeInput;
 };
 export type SedeUncheckedCreateInput = {
     id?: number;
@@ -234,6 +238,7 @@ export type SedeUncheckedCreateInput = {
     facturas?: Prisma.FacturaUncheckedCreateNestedManyWithoutSedeInput;
     inventarios?: Prisma.InventarioUncheckedCreateNestedManyWithoutSedeInput;
     usuarios?: Prisma.UsuarioUncheckedCreateNestedManyWithoutSedeInput;
+    anuncios?: Prisma.AnuncioUncheckedCreateNestedManyWithoutSedeInput;
 };
 export type SedeUpdateInput = {
     codigoSede?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -247,6 +252,7 @@ export type SedeUpdateInput = {
     facturas?: Prisma.FacturaUpdateManyWithoutSedeNestedInput;
     inventarios?: Prisma.InventarioUpdateManyWithoutSedeNestedInput;
     usuarios?: Prisma.UsuarioUpdateManyWithoutSedeNestedInput;
+    anuncios?: Prisma.AnuncioUpdateManyWithoutSedeNestedInput;
 };
 export type SedeUncheckedUpdateInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -261,6 +267,7 @@ export type SedeUncheckedUpdateInput = {
     facturas?: Prisma.FacturaUncheckedUpdateManyWithoutSedeNestedInput;
     inventarios?: Prisma.InventarioUncheckedUpdateManyWithoutSedeNestedInput;
     usuarios?: Prisma.UsuarioUncheckedUpdateManyWithoutSedeNestedInput;
+    anuncios?: Prisma.AnuncioUncheckedUpdateManyWithoutSedeNestedInput;
 };
 export type SedeCreateManyInput = {
     id?: number;
@@ -400,6 +407,18 @@ export type SedeUpdateOneRequiredWithoutInventariosNestedInput = {
     connect?: Prisma.SedeWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.SedeUpdateToOneWithWhereWithoutInventariosInput, Prisma.SedeUpdateWithoutInventariosInput>, Prisma.SedeUncheckedUpdateWithoutInventariosInput>;
 };
+export type SedeCreateNestedOneWithoutAnunciosInput = {
+    create?: Prisma.XOR<Prisma.SedeCreateWithoutAnunciosInput, Prisma.SedeUncheckedCreateWithoutAnunciosInput>;
+    connectOrCreate?: Prisma.SedeCreateOrConnectWithoutAnunciosInput;
+    connect?: Prisma.SedeWhereUniqueInput;
+};
+export type SedeUpdateOneRequiredWithoutAnunciosNestedInput = {
+    create?: Prisma.XOR<Prisma.SedeCreateWithoutAnunciosInput, Prisma.SedeUncheckedCreateWithoutAnunciosInput>;
+    connectOrCreate?: Prisma.SedeCreateOrConnectWithoutAnunciosInput;
+    upsert?: Prisma.SedeUpsertWithoutAnunciosInput;
+    connect?: Prisma.SedeWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.SedeUpdateToOneWithWhereWithoutAnunciosInput, Prisma.SedeUpdateWithoutAnunciosInput>, Prisma.SedeUncheckedUpdateWithoutAnunciosInput>;
+};
 export type SedeCreateWithoutUsuariosInput = {
     codigoSede: string;
     nombre: string;
@@ -411,6 +430,7 @@ export type SedeCreateWithoutUsuariosInput = {
     clientes?: Prisma.ClienteCreateNestedManyWithoutSedeOrigenInput;
     facturas?: Prisma.FacturaCreateNestedManyWithoutSedeInput;
     inventarios?: Prisma.InventarioCreateNestedManyWithoutSedeInput;
+    anuncios?: Prisma.AnuncioCreateNestedManyWithoutSedeInput;
 };
 export type SedeUncheckedCreateWithoutUsuariosInput = {
     id?: number;
@@ -424,6 +444,7 @@ export type SedeUncheckedCreateWithoutUsuariosInput = {
     clientes?: Prisma.ClienteUncheckedCreateNestedManyWithoutSedeOrigenInput;
     facturas?: Prisma.FacturaUncheckedCreateNestedManyWithoutSedeInput;
     inventarios?: Prisma.InventarioUncheckedCreateNestedManyWithoutSedeInput;
+    anuncios?: Prisma.AnuncioUncheckedCreateNestedManyWithoutSedeInput;
 };
 export type SedeCreateOrConnectWithoutUsuariosInput = {
     where: Prisma.SedeWhereUniqueInput;
@@ -449,6 +470,7 @@ export type SedeUpdateWithoutUsuariosInput = {
     clientes?: Prisma.ClienteUpdateManyWithoutSedeOrigenNestedInput;
     facturas?: Prisma.FacturaUpdateManyWithoutSedeNestedInput;
     inventarios?: Prisma.InventarioUpdateManyWithoutSedeNestedInput;
+    anuncios?: Prisma.AnuncioUpdateManyWithoutSedeNestedInput;
 };
 export type SedeUncheckedUpdateWithoutUsuariosInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -462,6 +484,7 @@ export type SedeUncheckedUpdateWithoutUsuariosInput = {
     clientes?: Prisma.ClienteUncheckedUpdateManyWithoutSedeOrigenNestedInput;
     facturas?: Prisma.FacturaUncheckedUpdateManyWithoutSedeNestedInput;
     inventarios?: Prisma.InventarioUncheckedUpdateManyWithoutSedeNestedInput;
+    anuncios?: Prisma.AnuncioUncheckedUpdateManyWithoutSedeNestedInput;
 };
 export type SedeCreateWithoutClientesInput = {
     codigoSede: string;
@@ -474,6 +497,7 @@ export type SedeCreateWithoutClientesInput = {
     facturas?: Prisma.FacturaCreateNestedManyWithoutSedeInput;
     inventarios?: Prisma.InventarioCreateNestedManyWithoutSedeInput;
     usuarios?: Prisma.UsuarioCreateNestedManyWithoutSedeInput;
+    anuncios?: Prisma.AnuncioCreateNestedManyWithoutSedeInput;
 };
 export type SedeUncheckedCreateWithoutClientesInput = {
     id?: number;
@@ -487,6 +511,7 @@ export type SedeUncheckedCreateWithoutClientesInput = {
     facturas?: Prisma.FacturaUncheckedCreateNestedManyWithoutSedeInput;
     inventarios?: Prisma.InventarioUncheckedCreateNestedManyWithoutSedeInput;
     usuarios?: Prisma.UsuarioUncheckedCreateNestedManyWithoutSedeInput;
+    anuncios?: Prisma.AnuncioUncheckedCreateNestedManyWithoutSedeInput;
 };
 export type SedeCreateOrConnectWithoutClientesInput = {
     where: Prisma.SedeWhereUniqueInput;
@@ -512,6 +537,7 @@ export type SedeUpdateWithoutClientesInput = {
     facturas?: Prisma.FacturaUpdateManyWithoutSedeNestedInput;
     inventarios?: Prisma.InventarioUpdateManyWithoutSedeNestedInput;
     usuarios?: Prisma.UsuarioUpdateManyWithoutSedeNestedInput;
+    anuncios?: Prisma.AnuncioUpdateManyWithoutSedeNestedInput;
 };
 export type SedeUncheckedUpdateWithoutClientesInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -525,6 +551,7 @@ export type SedeUncheckedUpdateWithoutClientesInput = {
     facturas?: Prisma.FacturaUncheckedUpdateManyWithoutSedeNestedInput;
     inventarios?: Prisma.InventarioUncheckedUpdateManyWithoutSedeNestedInput;
     usuarios?: Prisma.UsuarioUncheckedUpdateManyWithoutSedeNestedInput;
+    anuncios?: Prisma.AnuncioUncheckedUpdateManyWithoutSedeNestedInput;
 };
 export type SedeCreateWithoutFacturasInput = {
     codigoSede: string;
@@ -537,6 +564,7 @@ export type SedeCreateWithoutFacturasInput = {
     clientes?: Prisma.ClienteCreateNestedManyWithoutSedeOrigenInput;
     inventarios?: Prisma.InventarioCreateNestedManyWithoutSedeInput;
     usuarios?: Prisma.UsuarioCreateNestedManyWithoutSedeInput;
+    anuncios?: Prisma.AnuncioCreateNestedManyWithoutSedeInput;
 };
 export type SedeUncheckedCreateWithoutFacturasInput = {
     id?: number;
@@ -550,6 +578,7 @@ export type SedeUncheckedCreateWithoutFacturasInput = {
     clientes?: Prisma.ClienteUncheckedCreateNestedManyWithoutSedeOrigenInput;
     inventarios?: Prisma.InventarioUncheckedCreateNestedManyWithoutSedeInput;
     usuarios?: Prisma.UsuarioUncheckedCreateNestedManyWithoutSedeInput;
+    anuncios?: Prisma.AnuncioUncheckedCreateNestedManyWithoutSedeInput;
 };
 export type SedeCreateOrConnectWithoutFacturasInput = {
     where: Prisma.SedeWhereUniqueInput;
@@ -575,6 +604,7 @@ export type SedeUpdateWithoutFacturasInput = {
     clientes?: Prisma.ClienteUpdateManyWithoutSedeOrigenNestedInput;
     inventarios?: Prisma.InventarioUpdateManyWithoutSedeNestedInput;
     usuarios?: Prisma.UsuarioUpdateManyWithoutSedeNestedInput;
+    anuncios?: Prisma.AnuncioUpdateManyWithoutSedeNestedInput;
 };
 export type SedeUncheckedUpdateWithoutFacturasInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -588,6 +618,7 @@ export type SedeUncheckedUpdateWithoutFacturasInput = {
     clientes?: Prisma.ClienteUncheckedUpdateManyWithoutSedeOrigenNestedInput;
     inventarios?: Prisma.InventarioUncheckedUpdateManyWithoutSedeNestedInput;
     usuarios?: Prisma.UsuarioUncheckedUpdateManyWithoutSedeNestedInput;
+    anuncios?: Prisma.AnuncioUncheckedUpdateManyWithoutSedeNestedInput;
 };
 export type SedeCreateWithoutInventariosInput = {
     codigoSede: string;
@@ -600,6 +631,7 @@ export type SedeCreateWithoutInventariosInput = {
     clientes?: Prisma.ClienteCreateNestedManyWithoutSedeOrigenInput;
     facturas?: Prisma.FacturaCreateNestedManyWithoutSedeInput;
     usuarios?: Prisma.UsuarioCreateNestedManyWithoutSedeInput;
+    anuncios?: Prisma.AnuncioCreateNestedManyWithoutSedeInput;
 };
 export type SedeUncheckedCreateWithoutInventariosInput = {
     id?: number;
@@ -613,6 +645,7 @@ export type SedeUncheckedCreateWithoutInventariosInput = {
     clientes?: Prisma.ClienteUncheckedCreateNestedManyWithoutSedeOrigenInput;
     facturas?: Prisma.FacturaUncheckedCreateNestedManyWithoutSedeInput;
     usuarios?: Prisma.UsuarioUncheckedCreateNestedManyWithoutSedeInput;
+    anuncios?: Prisma.AnuncioUncheckedCreateNestedManyWithoutSedeInput;
 };
 export type SedeCreateOrConnectWithoutInventariosInput = {
     where: Prisma.SedeWhereUniqueInput;
@@ -638,6 +671,7 @@ export type SedeUpdateWithoutInventariosInput = {
     clientes?: Prisma.ClienteUpdateManyWithoutSedeOrigenNestedInput;
     facturas?: Prisma.FacturaUpdateManyWithoutSedeNestedInput;
     usuarios?: Prisma.UsuarioUpdateManyWithoutSedeNestedInput;
+    anuncios?: Prisma.AnuncioUpdateManyWithoutSedeNestedInput;
 };
 export type SedeUncheckedUpdateWithoutInventariosInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -651,18 +685,88 @@ export type SedeUncheckedUpdateWithoutInventariosInput = {
     clientes?: Prisma.ClienteUncheckedUpdateManyWithoutSedeOrigenNestedInput;
     facturas?: Prisma.FacturaUncheckedUpdateManyWithoutSedeNestedInput;
     usuarios?: Prisma.UsuarioUncheckedUpdateManyWithoutSedeNestedInput;
+    anuncios?: Prisma.AnuncioUncheckedUpdateManyWithoutSedeNestedInput;
+};
+export type SedeCreateWithoutAnunciosInput = {
+    codigoSede: string;
+    nombre: string;
+    direccion?: string | null;
+    capacidadDiariaMax?: number;
+    activa?: boolean;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    clientes?: Prisma.ClienteCreateNestedManyWithoutSedeOrigenInput;
+    facturas?: Prisma.FacturaCreateNestedManyWithoutSedeInput;
+    inventarios?: Prisma.InventarioCreateNestedManyWithoutSedeInput;
+    usuarios?: Prisma.UsuarioCreateNestedManyWithoutSedeInput;
+};
+export type SedeUncheckedCreateWithoutAnunciosInput = {
+    id?: number;
+    codigoSede: string;
+    nombre: string;
+    direccion?: string | null;
+    capacidadDiariaMax?: number;
+    activa?: boolean;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    clientes?: Prisma.ClienteUncheckedCreateNestedManyWithoutSedeOrigenInput;
+    facturas?: Prisma.FacturaUncheckedCreateNestedManyWithoutSedeInput;
+    inventarios?: Prisma.InventarioUncheckedCreateNestedManyWithoutSedeInput;
+    usuarios?: Prisma.UsuarioUncheckedCreateNestedManyWithoutSedeInput;
+};
+export type SedeCreateOrConnectWithoutAnunciosInput = {
+    where: Prisma.SedeWhereUniqueInput;
+    create: Prisma.XOR<Prisma.SedeCreateWithoutAnunciosInput, Prisma.SedeUncheckedCreateWithoutAnunciosInput>;
+};
+export type SedeUpsertWithoutAnunciosInput = {
+    update: Prisma.XOR<Prisma.SedeUpdateWithoutAnunciosInput, Prisma.SedeUncheckedUpdateWithoutAnunciosInput>;
+    create: Prisma.XOR<Prisma.SedeCreateWithoutAnunciosInput, Prisma.SedeUncheckedCreateWithoutAnunciosInput>;
+    where?: Prisma.SedeWhereInput;
+};
+export type SedeUpdateToOneWithWhereWithoutAnunciosInput = {
+    where?: Prisma.SedeWhereInput;
+    data: Prisma.XOR<Prisma.SedeUpdateWithoutAnunciosInput, Prisma.SedeUncheckedUpdateWithoutAnunciosInput>;
+};
+export type SedeUpdateWithoutAnunciosInput = {
+    codigoSede?: Prisma.StringFieldUpdateOperationsInput | string;
+    nombre?: Prisma.StringFieldUpdateOperationsInput | string;
+    direccion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    capacidadDiariaMax?: Prisma.IntFieldUpdateOperationsInput | number;
+    activa?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    clientes?: Prisma.ClienteUpdateManyWithoutSedeOrigenNestedInput;
+    facturas?: Prisma.FacturaUpdateManyWithoutSedeNestedInput;
+    inventarios?: Prisma.InventarioUpdateManyWithoutSedeNestedInput;
+    usuarios?: Prisma.UsuarioUpdateManyWithoutSedeNestedInput;
+};
+export type SedeUncheckedUpdateWithoutAnunciosInput = {
+    id?: Prisma.IntFieldUpdateOperationsInput | number;
+    codigoSede?: Prisma.StringFieldUpdateOperationsInput | string;
+    nombre?: Prisma.StringFieldUpdateOperationsInput | string;
+    direccion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    capacidadDiariaMax?: Prisma.IntFieldUpdateOperationsInput | number;
+    activa?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    clientes?: Prisma.ClienteUncheckedUpdateManyWithoutSedeOrigenNestedInput;
+    facturas?: Prisma.FacturaUncheckedUpdateManyWithoutSedeNestedInput;
+    inventarios?: Prisma.InventarioUncheckedUpdateManyWithoutSedeNestedInput;
+    usuarios?: Prisma.UsuarioUncheckedUpdateManyWithoutSedeNestedInput;
 };
 export type SedeCountOutputType = {
     clientes: number;
     facturas: number;
     inventarios: number;
     usuarios: number;
+    anuncios: number;
 };
 export type SedeCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     clientes?: boolean | SedeCountOutputTypeCountClientesArgs;
     facturas?: boolean | SedeCountOutputTypeCountFacturasArgs;
     inventarios?: boolean | SedeCountOutputTypeCountInventariosArgs;
     usuarios?: boolean | SedeCountOutputTypeCountUsuariosArgs;
+    anuncios?: boolean | SedeCountOutputTypeCountAnunciosArgs;
 };
 export type SedeCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.SedeCountOutputTypeSelect<ExtArgs> | null;
@@ -679,6 +783,9 @@ export type SedeCountOutputTypeCountInventariosArgs<ExtArgs extends runtime.Type
 export type SedeCountOutputTypeCountUsuariosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.UsuarioWhereInput;
 };
+export type SedeCountOutputTypeCountAnunciosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.AnuncioWhereInput;
+};
 export type SedeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
     codigoSede?: boolean;
@@ -692,6 +799,7 @@ export type SedeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
     facturas?: boolean | Prisma.Sede$facturasArgs<ExtArgs>;
     inventarios?: boolean | Prisma.Sede$inventariosArgs<ExtArgs>;
     usuarios?: boolean | Prisma.Sede$usuariosArgs<ExtArgs>;
+    anuncios?: boolean | Prisma.Sede$anunciosArgs<ExtArgs>;
     _count?: boolean | Prisma.SedeCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["sede"]>;
 export type SedeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -730,6 +838,7 @@ export type SedeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     facturas?: boolean | Prisma.Sede$facturasArgs<ExtArgs>;
     inventarios?: boolean | Prisma.Sede$inventariosArgs<ExtArgs>;
     usuarios?: boolean | Prisma.Sede$usuariosArgs<ExtArgs>;
+    anuncios?: boolean | Prisma.Sede$anunciosArgs<ExtArgs>;
     _count?: boolean | Prisma.SedeCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type SedeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {};
@@ -741,6 +850,7 @@ export type $SedePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
         facturas: Prisma.$FacturaPayload<ExtArgs>[];
         inventarios: Prisma.$InventarioPayload<ExtArgs>[];
         usuarios: Prisma.$UsuarioPayload<ExtArgs>[];
+        anuncios: Prisma.$AnuncioPayload<ExtArgs>[];
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: number;
@@ -807,6 +917,7 @@ export interface Prisma__SedeClient<T, Null = never, ExtArgs extends runtime.Typ
     facturas<T extends Prisma.Sede$facturasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sede$facturasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FacturaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     inventarios<T extends Prisma.Sede$inventariosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sede$inventariosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventarioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     usuarios<T extends Prisma.Sede$usuariosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sede$usuariosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    anuncios<T extends Prisma.Sede$anunciosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sede$anunciosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AnuncioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): runtime.Types.Utils.JsPromise<TResult1 | TResult2>;
     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): runtime.Types.Utils.JsPromise<T | TResult>;
     finally(onfinally?: (() => void) | undefined | null): runtime.Types.Utils.JsPromise<T>;
@@ -962,6 +1073,17 @@ export type Sede$usuariosArgs<ExtArgs extends runtime.Types.Extensions.InternalA
     take?: number;
     skip?: number;
     distinct?: Prisma.UsuarioScalarFieldEnum | Prisma.UsuarioScalarFieldEnum[];
+};
+export type Sede$anunciosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.AnuncioSelect<ExtArgs> | null;
+    omit?: Prisma.AnuncioOmit<ExtArgs> | null;
+    include?: Prisma.AnuncioInclude<ExtArgs> | null;
+    where?: Prisma.AnuncioWhereInput;
+    orderBy?: Prisma.AnuncioOrderByWithRelationInput | Prisma.AnuncioOrderByWithRelationInput[];
+    cursor?: Prisma.AnuncioWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.AnuncioScalarFieldEnum | Prisma.AnuncioScalarFieldEnum[];
 };
 export type SedeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.SedeSelect<ExtArgs> | null;

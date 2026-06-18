@@ -171,6 +171,8 @@ export declare const ModelName: {
     readonly Inventario: "Inventario";
     readonly AuditLog: "AuditLog";
     readonly Configuracion: "Configuracion";
+    readonly Anuncio: "Anuncio";
+    readonly AnuncioRespuesta: "AnuncioRespuesta";
 };
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
 export interface TypeMapCb<GlobalOmitOptions = {}> extends runtime.Types.Utils.Fn<{
@@ -183,7 +185,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         omit: GlobalOmitOptions;
     };
     meta: {
-        modelProps: "sede" | "usuario" | "registroJornada" | "cliente" | "factura" | "abono" | "tipoPrenda" | "prenda" | "catalogoServicio" | "precioServicio" | "prendaServicio" | "inventario" | "auditLog" | "configuracion";
+        modelProps: "sede" | "usuario" | "registroJornada" | "cliente" | "factura" | "abono" | "tipoPrenda" | "prenda" | "catalogoServicio" | "precioServicio" | "prendaServicio" | "inventario" | "auditLog" | "configuracion" | "anuncio" | "anuncioRespuesta";
         txIsolationLevel: TransactionIsolationLevel;
     };
     model: {
@@ -1223,6 +1225,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
                 };
             };
         };
+        Anuncio: {
+            payload: Prisma.$AnuncioPayload<ExtArgs>;
+            fields: Prisma.AnuncioFieldRefs;
+            operations: {
+                findUnique: {
+                    args: Prisma.AnuncioFindUniqueArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioPayload> | null;
+                };
+                findUniqueOrThrow: {
+                    args: Prisma.AnuncioFindUniqueOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioPayload>;
+                };
+                findFirst: {
+                    args: Prisma.AnuncioFindFirstArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioPayload> | null;
+                };
+                findFirstOrThrow: {
+                    args: Prisma.AnuncioFindFirstOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioPayload>;
+                };
+                findMany: {
+                    args: Prisma.AnuncioFindManyArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioPayload>[];
+                };
+                create: {
+                    args: Prisma.AnuncioCreateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioPayload>;
+                };
+                createMany: {
+                    args: Prisma.AnuncioCreateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                createManyAndReturn: {
+                    args: Prisma.AnuncioCreateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioPayload>[];
+                };
+                delete: {
+                    args: Prisma.AnuncioDeleteArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioPayload>;
+                };
+                update: {
+                    args: Prisma.AnuncioUpdateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioPayload>;
+                };
+                deleteMany: {
+                    args: Prisma.AnuncioDeleteManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateMany: {
+                    args: Prisma.AnuncioUpdateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateManyAndReturn: {
+                    args: Prisma.AnuncioUpdateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioPayload>[];
+                };
+                upsert: {
+                    args: Prisma.AnuncioUpsertArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioPayload>;
+                };
+                aggregate: {
+                    args: Prisma.AnuncioAggregateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AggregateAnuncio>;
+                };
+                groupBy: {
+                    args: Prisma.AnuncioGroupByArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AnuncioGroupByOutputType>[];
+                };
+                count: {
+                    args: Prisma.AnuncioCountArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AnuncioCountAggregateOutputType> | number;
+                };
+            };
+        };
+        AnuncioRespuesta: {
+            payload: Prisma.$AnuncioRespuestaPayload<ExtArgs>;
+            fields: Prisma.AnuncioRespuestaFieldRefs;
+            operations: {
+                findUnique: {
+                    args: Prisma.AnuncioRespuestaFindUniqueArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioRespuestaPayload> | null;
+                };
+                findUniqueOrThrow: {
+                    args: Prisma.AnuncioRespuestaFindUniqueOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioRespuestaPayload>;
+                };
+                findFirst: {
+                    args: Prisma.AnuncioRespuestaFindFirstArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioRespuestaPayload> | null;
+                };
+                findFirstOrThrow: {
+                    args: Prisma.AnuncioRespuestaFindFirstOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioRespuestaPayload>;
+                };
+                findMany: {
+                    args: Prisma.AnuncioRespuestaFindManyArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioRespuestaPayload>[];
+                };
+                create: {
+                    args: Prisma.AnuncioRespuestaCreateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioRespuestaPayload>;
+                };
+                createMany: {
+                    args: Prisma.AnuncioRespuestaCreateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                createManyAndReturn: {
+                    args: Prisma.AnuncioRespuestaCreateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioRespuestaPayload>[];
+                };
+                delete: {
+                    args: Prisma.AnuncioRespuestaDeleteArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioRespuestaPayload>;
+                };
+                update: {
+                    args: Prisma.AnuncioRespuestaUpdateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioRespuestaPayload>;
+                };
+                deleteMany: {
+                    args: Prisma.AnuncioRespuestaDeleteManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateMany: {
+                    args: Prisma.AnuncioRespuestaUpdateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateManyAndReturn: {
+                    args: Prisma.AnuncioRespuestaUpdateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioRespuestaPayload>[];
+                };
+                upsert: {
+                    args: Prisma.AnuncioRespuestaUpsertArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AnuncioRespuestaPayload>;
+                };
+                aggregate: {
+                    args: Prisma.AnuncioRespuestaAggregateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AggregateAnuncioRespuesta>;
+                };
+                groupBy: {
+                    args: Prisma.AnuncioRespuestaGroupByArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AnuncioRespuestaGroupByOutputType>[];
+                };
+                count: {
+                    args: Prisma.AnuncioRespuestaCountArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AnuncioRespuestaCountAggregateOutputType> | number;
+                };
+            };
+        };
     };
 } & {
     other: {
@@ -1416,6 +1566,22 @@ export declare const ConfiguracionScalarFieldEnum: {
     readonly updatedAt: "updatedAt";
 };
 export type ConfiguracionScalarFieldEnum = (typeof ConfiguracionScalarFieldEnum)[keyof typeof ConfiguracionScalarFieldEnum];
+export declare const AnuncioScalarFieldEnum: {
+    readonly id: "id";
+    readonly sedeId: "sedeId";
+    readonly adminId: "adminId";
+    readonly mensaje: "mensaje";
+    readonly createdAt: "createdAt";
+};
+export type AnuncioScalarFieldEnum = (typeof AnuncioScalarFieldEnum)[keyof typeof AnuncioScalarFieldEnum];
+export declare const AnuncioRespuestaScalarFieldEnum: {
+    readonly id: "id";
+    readonly anuncioId: "anuncioId";
+    readonly usuarioId: "usuarioId";
+    readonly respuesta: "respuesta";
+    readonly leidoAt: "leidoAt";
+};
+export type AnuncioRespuestaScalarFieldEnum = (typeof AnuncioRespuestaScalarFieldEnum)[keyof typeof AnuncioRespuestaScalarFieldEnum];
 export declare const SortOrder: {
     readonly asc: "asc";
     readonly desc: "desc";
@@ -1508,6 +1674,8 @@ export type GlobalOmitConfig = {
     inventario?: Prisma.InventarioOmit;
     auditLog?: Prisma.AuditLogOmit;
     configuracion?: Prisma.ConfiguracionOmit;
+    anuncio?: Prisma.AnuncioOmit;
+    anuncioRespuesta?: Prisma.AnuncioRespuestaOmit;
 };
 export type LogLevel = 'info' | 'query' | 'warn' | 'error';
 export type LogDefinition = {
