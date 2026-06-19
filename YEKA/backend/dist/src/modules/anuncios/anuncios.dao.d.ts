@@ -4,47 +4,47 @@ export declare class AnunciosDao {
     constructor(prisma: PrismaService);
     createAnuncio(data: any): Promise<{
         sede: {
-            nombre: string;
             id: number;
-            createdAt: Date;
-            updatedAt: Date;
             codigoSede: string;
+            nombre: string;
             direccion: string | null;
             capacidadDiariaMax: number;
             activa: boolean;
-        };
-        admin: {
-            email: string;
-            password: string;
-            nombre: string;
-            rol: import("../../../generated/prisma/enums").Rol;
-            sedeId: number;
-            id: number;
-            dni: string | null;
-            telefono: string | null;
-            pinAcceso: string | null;
-            activo: boolean;
             createdAt: Date;
             updatedAt: Date;
         };
+        admin: {
+            id: number;
+            nombre: string;
+            createdAt: Date;
+            updatedAt: Date;
+            sedeId: number;
+            dni: string | null;
+            telefono: string | null;
+            email: string;
+            password: string;
+            pinAcceso: string | null;
+            rol: import("../../../generated/prisma/enums").Rol;
+            activo: boolean;
+        };
     } & {
-        sedeId: number;
         id: number;
         createdAt: Date;
-        mensaje: string;
+        sedeId: number;
         adminId: number;
+        mensaje: string;
     }>;
     getAnunciosBySede(sedeId: number): Promise<({
         admin: {
-            nombre: string;
             id: number;
+            nombre: string;
         };
     } & {
-        sedeId: number;
         id: number;
         createdAt: Date;
-        mensaje: string;
+        sedeId: number;
         adminId: number;
+        mensaje: string;
     })[]>;
     getAnuncioRespuesta(anuncioId: number, usuarioId: number): Promise<{
         id: number;
@@ -62,17 +62,17 @@ export declare class AnunciosDao {
     }>;
     getHistorial(search?: string): Promise<({
         sede: {
-            nombre: string;
             id: number;
+            nombre: string;
         };
         admin: {
-            nombre: string;
             id: number;
+            nombre: string;
         };
         respuestas: ({
             usuario: {
-                nombre: string;
                 id: number;
+                nombre: string;
             };
         } & {
             id: number;
@@ -82,10 +82,10 @@ export declare class AnunciosDao {
             leidoAt: Date;
         })[];
     } & {
-        sedeId: number;
         id: number;
         createdAt: Date;
-        mensaje: string;
+        sedeId: number;
         adminId: number;
+        mensaje: string;
     })[]>;
 }

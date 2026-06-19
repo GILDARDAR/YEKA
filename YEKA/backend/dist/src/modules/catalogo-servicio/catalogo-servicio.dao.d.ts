@@ -8,17 +8,17 @@ export declare class CatalogoServicioDAO {
             id: number;
             activo: boolean;
             tipoPrendaId: number;
+            catalogoServicioId: number;
             medidaBase: import("@prisma/client-runtime-utils").Decimal;
             precioBase: import("@prisma/client-runtime-utils").Decimal;
             medidaExtra: import("@prisma/client-runtime-utils").Decimal;
             precioExtra: import("@prisma/client-runtime-utils").Decimal;
-            catalogoServicioId: number;
         }[];
     } & {
         id: number;
-        activo: boolean;
         createdAt: Date;
         updatedAt: Date;
+        activo: boolean;
         categoria: string;
         tipoEspecifico: string;
         pesoPuntos: number;
@@ -28,17 +28,17 @@ export declare class CatalogoServicioDAO {
             id: number;
             activo: boolean;
             tipoPrendaId: number;
+            catalogoServicioId: number;
             medidaBase: import("@prisma/client-runtime-utils").Decimal;
             precioBase: import("@prisma/client-runtime-utils").Decimal;
             medidaExtra: import("@prisma/client-runtime-utils").Decimal;
             precioExtra: import("@prisma/client-runtime-utils").Decimal;
-            catalogoServicioId: number;
         }[];
     } & {
         id: number;
-        activo: boolean;
         createdAt: Date;
         updatedAt: Date;
+        activo: boolean;
         categoria: string;
         tipoEspecifico: string;
         pesoPuntos: number;
@@ -48,17 +48,17 @@ export declare class CatalogoServicioDAO {
             id: number;
             activo: boolean;
             tipoPrendaId: number;
+            catalogoServicioId: number;
             medidaBase: import("@prisma/client-runtime-utils").Decimal;
             precioBase: import("@prisma/client-runtime-utils").Decimal;
             medidaExtra: import("@prisma/client-runtime-utils").Decimal;
             precioExtra: import("@prisma/client-runtime-utils").Decimal;
-            catalogoServicioId: number;
         }[];
     } & {
         id: number;
-        activo: boolean;
         createdAt: Date;
         updatedAt: Date;
+        activo: boolean;
         categoria: string;
         tipoEspecifico: string;
         pesoPuntos: number;
@@ -68,17 +68,17 @@ export declare class CatalogoServicioDAO {
             id: number;
             activo: boolean;
             tipoPrendaId: number;
+            catalogoServicioId: number;
             medidaBase: import("@prisma/client-runtime-utils").Decimal;
             precioBase: import("@prisma/client-runtime-utils").Decimal;
             medidaExtra: import("@prisma/client-runtime-utils").Decimal;
             precioExtra: import("@prisma/client-runtime-utils").Decimal;
-            catalogoServicioId: number;
         }[];
     } & {
         id: number;
-        activo: boolean;
         createdAt: Date;
         updatedAt: Date;
+        activo: boolean;
         categoria: string;
         tipoEspecifico: string;
         pesoPuntos: number;
@@ -88,17 +88,17 @@ export declare class CatalogoServicioDAO {
             id: number;
             activo: boolean;
             tipoPrendaId: number;
+            catalogoServicioId: number;
             medidaBase: import("@prisma/client-runtime-utils").Decimal;
             precioBase: import("@prisma/client-runtime-utils").Decimal;
             medidaExtra: import("@prisma/client-runtime-utils").Decimal;
             precioExtra: import("@prisma/client-runtime-utils").Decimal;
-            catalogoServicioId: number;
         }[];
     } & {
         id: number;
-        activo: boolean;
         createdAt: Date;
         updatedAt: Date;
+        activo: boolean;
         categoria: string;
         tipoEspecifico: string;
         pesoPuntos: number;

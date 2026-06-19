@@ -6,47 +6,47 @@ export declare class AnunciosController {
     constructor(anunciosService: AnunciosService);
     createAnuncio(adminId: number, dto: CreateAnuncioDto): Promise<{
         sede: {
-            nombre: string;
             id: number;
-            createdAt: Date;
-            updatedAt: Date;
             codigoSede: string;
+            nombre: string;
             direccion: string | null;
             capacidadDiariaMax: number;
             activa: boolean;
-        };
-        admin: {
-            email: string;
-            password: string;
-            nombre: string;
-            rol: Rol;
-            sedeId: number;
-            id: number;
-            dni: string | null;
-            telefono: string | null;
-            pinAcceso: string | null;
-            activo: boolean;
             createdAt: Date;
             updatedAt: Date;
         };
+        admin: {
+            id: number;
+            nombre: string;
+            createdAt: Date;
+            updatedAt: Date;
+            sedeId: number;
+            dni: string | null;
+            telefono: string | null;
+            email: string;
+            password: string;
+            pinAcceso: string | null;
+            rol: Rol;
+            activo: boolean;
+        };
     } & {
-        sedeId: number;
         id: number;
         createdAt: Date;
-        mensaje: string;
+        sedeId: number;
         adminId: number;
+        mensaje: string;
     }>;
     getPendientes(usuarioId: number, sedeId: number): Promise<({
         admin: {
-            nombre: string;
             id: number;
+            nombre: string;
         };
     } & {
-        sedeId: number;
         id: number;
         createdAt: Date;
-        mensaje: string;
+        sedeId: number;
         adminId: number;
+        mensaje: string;
     })[]>;
     responderAnuncio(anuncioId: number, usuarioId: number, dto: ResponderAnuncioDto): Promise<{
         id: number;
@@ -57,17 +57,17 @@ export declare class AnunciosController {
     }>;
     getHistorial(search?: string): Promise<({
         sede: {
-            nombre: string;
             id: number;
+            nombre: string;
         };
         admin: {
-            nombre: string;
             id: number;
+            nombre: string;
         };
         respuestas: ({
             usuario: {
-                nombre: string;
                 id: number;
+                nombre: string;
             };
         } & {
             id: number;
@@ -77,10 +77,10 @@ export declare class AnunciosController {
             leidoAt: Date;
         })[];
     } & {
-        sedeId: number;
         id: number;
         createdAt: Date;
-        mensaje: string;
+        sedeId: number;
         adminId: number;
+        mensaje: string;
     })[]>;
 }

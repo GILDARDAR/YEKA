@@ -1,7 +1,13 @@
 import { PrismaClient } from '../generated/prisma/client';
 import * as bcrypt from 'bcrypt';
 
-const prisma = new PrismaClient();
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
+
+const connectionString = process.env.DATABASE_URL || 'postgresql://yeka_user:yeka_password@localhost:5432/yeka?schema=public';
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log('Iniciando el script de seed...');
