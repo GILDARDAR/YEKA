@@ -10,35 +10,43 @@ export type AggregateCatalogoServicio = {
 };
 export type CatalogoServicioAvgAggregateOutputType = {
     id: number | null;
-    pesoPuntos: number | null;
+    medidaBase: runtime.Decimal | null;
+    tiempoBase: number | null;
 };
 export type CatalogoServicioSumAggregateOutputType = {
     id: number | null;
-    pesoPuntos: number | null;
+    medidaBase: runtime.Decimal | null;
+    tiempoBase: number | null;
 };
 export type CatalogoServicioMinAggregateOutputType = {
     id: number | null;
+    nombre: string | null;
     categoria: string | null;
     tipoEspecifico: string | null;
-    pesoPuntos: number | null;
+    medidaBase: runtime.Decimal | null;
+    tiempoBase: number | null;
     activo: boolean | null;
     createdAt: Date | null;
     updatedAt: Date | null;
 };
 export type CatalogoServicioMaxAggregateOutputType = {
     id: number | null;
+    nombre: string | null;
     categoria: string | null;
     tipoEspecifico: string | null;
-    pesoPuntos: number | null;
+    medidaBase: runtime.Decimal | null;
+    tiempoBase: number | null;
     activo: boolean | null;
     createdAt: Date | null;
     updatedAt: Date | null;
 };
 export type CatalogoServicioCountAggregateOutputType = {
     id: number;
+    nombre: number;
     categoria: number;
     tipoEspecifico: number;
-    pesoPuntos: number;
+    medidaBase: number;
+    tiempoBase: number;
     activo: number;
     createdAt: number;
     updatedAt: number;
@@ -46,35 +54,43 @@ export type CatalogoServicioCountAggregateOutputType = {
 };
 export type CatalogoServicioAvgAggregateInputType = {
     id?: true;
-    pesoPuntos?: true;
+    medidaBase?: true;
+    tiempoBase?: true;
 };
 export type CatalogoServicioSumAggregateInputType = {
     id?: true;
-    pesoPuntos?: true;
+    medidaBase?: true;
+    tiempoBase?: true;
 };
 export type CatalogoServicioMinAggregateInputType = {
     id?: true;
+    nombre?: true;
     categoria?: true;
     tipoEspecifico?: true;
-    pesoPuntos?: true;
+    medidaBase?: true;
+    tiempoBase?: true;
     activo?: true;
     createdAt?: true;
     updatedAt?: true;
 };
 export type CatalogoServicioMaxAggregateInputType = {
     id?: true;
+    nombre?: true;
     categoria?: true;
     tipoEspecifico?: true;
-    pesoPuntos?: true;
+    medidaBase?: true;
+    tiempoBase?: true;
     activo?: true;
     createdAt?: true;
     updatedAt?: true;
 };
 export type CatalogoServicioCountAggregateInputType = {
     id?: true;
+    nombre?: true;
     categoria?: true;
     tipoEspecifico?: true;
-    pesoPuntos?: true;
+    medidaBase?: true;
+    tiempoBase?: true;
     activo?: true;
     createdAt?: true;
     updatedAt?: true;
@@ -110,9 +126,11 @@ export type CatalogoServicioGroupByArgs<ExtArgs extends runtime.Types.Extensions
 };
 export type CatalogoServicioGroupByOutputType = {
     id: number;
+    nombre: string;
     categoria: string;
     tipoEspecifico: string;
-    pesoPuntos: number;
+    medidaBase: runtime.Decimal;
+    tiempoBase: number;
     activo: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -130,24 +148,28 @@ export type CatalogoServicioWhereInput = {
     OR?: Prisma.CatalogoServicioWhereInput[];
     NOT?: Prisma.CatalogoServicioWhereInput | Prisma.CatalogoServicioWhereInput[];
     id?: Prisma.IntFilter<"CatalogoServicio"> | number;
+    nombre?: Prisma.StringFilter<"CatalogoServicio"> | string;
     categoria?: Prisma.StringFilter<"CatalogoServicio"> | string;
     tipoEspecifico?: Prisma.StringFilter<"CatalogoServicio"> | string;
-    pesoPuntos?: Prisma.IntFilter<"CatalogoServicio"> | number;
+    medidaBase?: Prisma.DecimalFilter<"CatalogoServicio"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: Prisma.IntFilter<"CatalogoServicio"> | number;
     activo?: Prisma.BoolFilter<"CatalogoServicio"> | boolean;
     createdAt?: Prisma.DateTimeFilter<"CatalogoServicio"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"CatalogoServicio"> | Date | string;
-    preciosServicios?: Prisma.PrecioServicioListRelationFilter;
+    categoriasFactores?: Prisma.CategoriaFactorCobroListRelationFilter;
     asignaciones?: Prisma.PrendaServicioListRelationFilter;
 };
 export type CatalogoServicioOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
+    nombre?: Prisma.SortOrder;
     categoria?: Prisma.SortOrder;
     tipoEspecifico?: Prisma.SortOrder;
-    pesoPuntos?: Prisma.SortOrder;
+    medidaBase?: Prisma.SortOrder;
+    tiempoBase?: Prisma.SortOrder;
     activo?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
-    preciosServicios?: Prisma.PrecioServicioOrderByRelationAggregateInput;
+    categoriasFactores?: Prisma.CategoriaFactorCobroOrderByRelationAggregateInput;
     asignaciones?: Prisma.PrendaServicioOrderByRelationAggregateInput;
 };
 export type CatalogoServicioWhereUniqueInput = Prisma.AtLeast<{
@@ -155,20 +177,24 @@ export type CatalogoServicioWhereUniqueInput = Prisma.AtLeast<{
     AND?: Prisma.CatalogoServicioWhereInput | Prisma.CatalogoServicioWhereInput[];
     OR?: Prisma.CatalogoServicioWhereInput[];
     NOT?: Prisma.CatalogoServicioWhereInput | Prisma.CatalogoServicioWhereInput[];
+    nombre?: Prisma.StringFilter<"CatalogoServicio"> | string;
     categoria?: Prisma.StringFilter<"CatalogoServicio"> | string;
     tipoEspecifico?: Prisma.StringFilter<"CatalogoServicio"> | string;
-    pesoPuntos?: Prisma.IntFilter<"CatalogoServicio"> | number;
+    medidaBase?: Prisma.DecimalFilter<"CatalogoServicio"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: Prisma.IntFilter<"CatalogoServicio"> | number;
     activo?: Prisma.BoolFilter<"CatalogoServicio"> | boolean;
     createdAt?: Prisma.DateTimeFilter<"CatalogoServicio"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"CatalogoServicio"> | Date | string;
-    preciosServicios?: Prisma.PrecioServicioListRelationFilter;
+    categoriasFactores?: Prisma.CategoriaFactorCobroListRelationFilter;
     asignaciones?: Prisma.PrendaServicioListRelationFilter;
 }, "id">;
 export type CatalogoServicioOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
+    nombre?: Prisma.SortOrder;
     categoria?: Prisma.SortOrder;
     tipoEspecifico?: Prisma.SortOrder;
-    pesoPuntos?: Prisma.SortOrder;
+    medidaBase?: Prisma.SortOrder;
+    tiempoBase?: Prisma.SortOrder;
     activo?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
@@ -183,131 +209,185 @@ export type CatalogoServicioScalarWhereWithAggregatesInput = {
     OR?: Prisma.CatalogoServicioScalarWhereWithAggregatesInput[];
     NOT?: Prisma.CatalogoServicioScalarWhereWithAggregatesInput | Prisma.CatalogoServicioScalarWhereWithAggregatesInput[];
     id?: Prisma.IntWithAggregatesFilter<"CatalogoServicio"> | number;
+    nombre?: Prisma.StringWithAggregatesFilter<"CatalogoServicio"> | string;
     categoria?: Prisma.StringWithAggregatesFilter<"CatalogoServicio"> | string;
     tipoEspecifico?: Prisma.StringWithAggregatesFilter<"CatalogoServicio"> | string;
-    pesoPuntos?: Prisma.IntWithAggregatesFilter<"CatalogoServicio"> | number;
+    medidaBase?: Prisma.DecimalWithAggregatesFilter<"CatalogoServicio"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: Prisma.IntWithAggregatesFilter<"CatalogoServicio"> | number;
     activo?: Prisma.BoolWithAggregatesFilter<"CatalogoServicio"> | boolean;
     createdAt?: Prisma.DateTimeWithAggregatesFilter<"CatalogoServicio"> | Date | string;
     updatedAt?: Prisma.DateTimeWithAggregatesFilter<"CatalogoServicio"> | Date | string;
 };
 export type CatalogoServicioCreateInput = {
+    nombre?: string;
     categoria: string;
     tipoEspecifico: string;
-    pesoPuntos?: number;
+    medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: number;
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    preciosServicios?: Prisma.PrecioServicioCreateNestedManyWithoutCatalogoServicioInput;
+    categoriasFactores?: Prisma.CategoriaFactorCobroCreateNestedManyWithoutServiciosInput;
     asignaciones?: Prisma.PrendaServicioCreateNestedManyWithoutServicioInput;
 };
 export type CatalogoServicioUncheckedCreateInput = {
     id?: number;
+    nombre?: string;
     categoria: string;
     tipoEspecifico: string;
-    pesoPuntos?: number;
+    medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: number;
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    preciosServicios?: Prisma.PrecioServicioUncheckedCreateNestedManyWithoutCatalogoServicioInput;
+    categoriasFactores?: Prisma.CategoriaFactorCobroUncheckedCreateNestedManyWithoutServiciosInput;
     asignaciones?: Prisma.PrendaServicioUncheckedCreateNestedManyWithoutServicioInput;
 };
 export type CatalogoServicioUpdateInput = {
+    nombre?: Prisma.StringFieldUpdateOperationsInput | string;
     categoria?: Prisma.StringFieldUpdateOperationsInput | string;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
-    pesoPuntos?: Prisma.IntFieldUpdateOperationsInput | number;
+    medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    preciosServicios?: Prisma.PrecioServicioUpdateManyWithoutCatalogoServicioNestedInput;
+    categoriasFactores?: Prisma.CategoriaFactorCobroUpdateManyWithoutServiciosNestedInput;
     asignaciones?: Prisma.PrendaServicioUpdateManyWithoutServicioNestedInput;
 };
 export type CatalogoServicioUncheckedUpdateInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
+    nombre?: Prisma.StringFieldUpdateOperationsInput | string;
     categoria?: Prisma.StringFieldUpdateOperationsInput | string;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
-    pesoPuntos?: Prisma.IntFieldUpdateOperationsInput | number;
+    medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    preciosServicios?: Prisma.PrecioServicioUncheckedUpdateManyWithoutCatalogoServicioNestedInput;
+    categoriasFactores?: Prisma.CategoriaFactorCobroUncheckedUpdateManyWithoutServiciosNestedInput;
     asignaciones?: Prisma.PrendaServicioUncheckedUpdateManyWithoutServicioNestedInput;
 };
 export type CatalogoServicioCreateManyInput = {
     id?: number;
+    nombre?: string;
     categoria: string;
     tipoEspecifico: string;
-    pesoPuntos?: number;
+    medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: number;
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
 };
 export type CatalogoServicioUpdateManyMutationInput = {
+    nombre?: Prisma.StringFieldUpdateOperationsInput | string;
     categoria?: Prisma.StringFieldUpdateOperationsInput | string;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
-    pesoPuntos?: Prisma.IntFieldUpdateOperationsInput | number;
+    medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 export type CatalogoServicioUncheckedUpdateManyInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
+    nombre?: Prisma.StringFieldUpdateOperationsInput | string;
     categoria?: Prisma.StringFieldUpdateOperationsInput | string;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
-    pesoPuntos?: Prisma.IntFieldUpdateOperationsInput | number;
+    medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 export type CatalogoServicioCountOrderByAggregateInput = {
     id?: Prisma.SortOrder;
+    nombre?: Prisma.SortOrder;
     categoria?: Prisma.SortOrder;
     tipoEspecifico?: Prisma.SortOrder;
-    pesoPuntos?: Prisma.SortOrder;
+    medidaBase?: Prisma.SortOrder;
+    tiempoBase?: Prisma.SortOrder;
     activo?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
 };
 export type CatalogoServicioAvgOrderByAggregateInput = {
     id?: Prisma.SortOrder;
-    pesoPuntos?: Prisma.SortOrder;
+    medidaBase?: Prisma.SortOrder;
+    tiempoBase?: Prisma.SortOrder;
 };
 export type CatalogoServicioMaxOrderByAggregateInput = {
     id?: Prisma.SortOrder;
+    nombre?: Prisma.SortOrder;
     categoria?: Prisma.SortOrder;
     tipoEspecifico?: Prisma.SortOrder;
-    pesoPuntos?: Prisma.SortOrder;
+    medidaBase?: Prisma.SortOrder;
+    tiempoBase?: Prisma.SortOrder;
     activo?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
 };
 export type CatalogoServicioMinOrderByAggregateInput = {
     id?: Prisma.SortOrder;
+    nombre?: Prisma.SortOrder;
     categoria?: Prisma.SortOrder;
     tipoEspecifico?: Prisma.SortOrder;
-    pesoPuntos?: Prisma.SortOrder;
+    medidaBase?: Prisma.SortOrder;
+    tiempoBase?: Prisma.SortOrder;
     activo?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
 };
 export type CatalogoServicioSumOrderByAggregateInput = {
     id?: Prisma.SortOrder;
-    pesoPuntos?: Prisma.SortOrder;
+    medidaBase?: Prisma.SortOrder;
+    tiempoBase?: Prisma.SortOrder;
+};
+export type CatalogoServicioListRelationFilter = {
+    every?: Prisma.CatalogoServicioWhereInput;
+    some?: Prisma.CatalogoServicioWhereInput;
+    none?: Prisma.CatalogoServicioWhereInput;
+};
+export type CatalogoServicioOrderByRelationAggregateInput = {
+    _count?: Prisma.SortOrder;
 };
 export type CatalogoServicioScalarRelationFilter = {
     is?: Prisma.CatalogoServicioWhereInput;
     isNot?: Prisma.CatalogoServicioWhereInput;
 };
-export type CatalogoServicioCreateNestedOneWithoutPreciosServiciosInput = {
-    create?: Prisma.XOR<Prisma.CatalogoServicioCreateWithoutPreciosServiciosInput, Prisma.CatalogoServicioUncheckedCreateWithoutPreciosServiciosInput>;
-    connectOrCreate?: Prisma.CatalogoServicioCreateOrConnectWithoutPreciosServiciosInput;
-    connect?: Prisma.CatalogoServicioWhereUniqueInput;
+export type CatalogoServicioCreateNestedManyWithoutCategoriasFactoresInput = {
+    create?: Prisma.XOR<Prisma.CatalogoServicioCreateWithoutCategoriasFactoresInput, Prisma.CatalogoServicioUncheckedCreateWithoutCategoriasFactoresInput> | Prisma.CatalogoServicioCreateWithoutCategoriasFactoresInput[] | Prisma.CatalogoServicioUncheckedCreateWithoutCategoriasFactoresInput[];
+    connectOrCreate?: Prisma.CatalogoServicioCreateOrConnectWithoutCategoriasFactoresInput | Prisma.CatalogoServicioCreateOrConnectWithoutCategoriasFactoresInput[];
+    connect?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
 };
-export type CatalogoServicioUpdateOneRequiredWithoutPreciosServiciosNestedInput = {
-    create?: Prisma.XOR<Prisma.CatalogoServicioCreateWithoutPreciosServiciosInput, Prisma.CatalogoServicioUncheckedCreateWithoutPreciosServiciosInput>;
-    connectOrCreate?: Prisma.CatalogoServicioCreateOrConnectWithoutPreciosServiciosInput;
-    upsert?: Prisma.CatalogoServicioUpsertWithoutPreciosServiciosInput;
-    connect?: Prisma.CatalogoServicioWhereUniqueInput;
-    update?: Prisma.XOR<Prisma.XOR<Prisma.CatalogoServicioUpdateToOneWithWhereWithoutPreciosServiciosInput, Prisma.CatalogoServicioUpdateWithoutPreciosServiciosInput>, Prisma.CatalogoServicioUncheckedUpdateWithoutPreciosServiciosInput>;
+export type CatalogoServicioUncheckedCreateNestedManyWithoutCategoriasFactoresInput = {
+    create?: Prisma.XOR<Prisma.CatalogoServicioCreateWithoutCategoriasFactoresInput, Prisma.CatalogoServicioUncheckedCreateWithoutCategoriasFactoresInput> | Prisma.CatalogoServicioCreateWithoutCategoriasFactoresInput[] | Prisma.CatalogoServicioUncheckedCreateWithoutCategoriasFactoresInput[];
+    connectOrCreate?: Prisma.CatalogoServicioCreateOrConnectWithoutCategoriasFactoresInput | Prisma.CatalogoServicioCreateOrConnectWithoutCategoriasFactoresInput[];
+    connect?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
+};
+export type CatalogoServicioUpdateManyWithoutCategoriasFactoresNestedInput = {
+    create?: Prisma.XOR<Prisma.CatalogoServicioCreateWithoutCategoriasFactoresInput, Prisma.CatalogoServicioUncheckedCreateWithoutCategoriasFactoresInput> | Prisma.CatalogoServicioCreateWithoutCategoriasFactoresInput[] | Prisma.CatalogoServicioUncheckedCreateWithoutCategoriasFactoresInput[];
+    connectOrCreate?: Prisma.CatalogoServicioCreateOrConnectWithoutCategoriasFactoresInput | Prisma.CatalogoServicioCreateOrConnectWithoutCategoriasFactoresInput[];
+    upsert?: Prisma.CatalogoServicioUpsertWithWhereUniqueWithoutCategoriasFactoresInput | Prisma.CatalogoServicioUpsertWithWhereUniqueWithoutCategoriasFactoresInput[];
+    set?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
+    disconnect?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
+    delete?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
+    connect?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
+    update?: Prisma.CatalogoServicioUpdateWithWhereUniqueWithoutCategoriasFactoresInput | Prisma.CatalogoServicioUpdateWithWhereUniqueWithoutCategoriasFactoresInput[];
+    updateMany?: Prisma.CatalogoServicioUpdateManyWithWhereWithoutCategoriasFactoresInput | Prisma.CatalogoServicioUpdateManyWithWhereWithoutCategoriasFactoresInput[];
+    deleteMany?: Prisma.CatalogoServicioScalarWhereInput | Prisma.CatalogoServicioScalarWhereInput[];
+};
+export type CatalogoServicioUncheckedUpdateManyWithoutCategoriasFactoresNestedInput = {
+    create?: Prisma.XOR<Prisma.CatalogoServicioCreateWithoutCategoriasFactoresInput, Prisma.CatalogoServicioUncheckedCreateWithoutCategoriasFactoresInput> | Prisma.CatalogoServicioCreateWithoutCategoriasFactoresInput[] | Prisma.CatalogoServicioUncheckedCreateWithoutCategoriasFactoresInput[];
+    connectOrCreate?: Prisma.CatalogoServicioCreateOrConnectWithoutCategoriasFactoresInput | Prisma.CatalogoServicioCreateOrConnectWithoutCategoriasFactoresInput[];
+    upsert?: Prisma.CatalogoServicioUpsertWithWhereUniqueWithoutCategoriasFactoresInput | Prisma.CatalogoServicioUpsertWithWhereUniqueWithoutCategoriasFactoresInput[];
+    set?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
+    disconnect?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
+    delete?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
+    connect?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
+    update?: Prisma.CatalogoServicioUpdateWithWhereUniqueWithoutCategoriasFactoresInput | Prisma.CatalogoServicioUpdateWithWhereUniqueWithoutCategoriasFactoresInput[];
+    updateMany?: Prisma.CatalogoServicioUpdateManyWithWhereWithoutCategoriasFactoresInput | Prisma.CatalogoServicioUpdateManyWithWhereWithoutCategoriasFactoresInput[];
+    deleteMany?: Prisma.CatalogoServicioScalarWhereInput | Prisma.CatalogoServicioScalarWhereInput[];
 };
 export type CatalogoServicioCreateNestedOneWithoutAsignacionesInput = {
     create?: Prisma.XOR<Prisma.CatalogoServicioCreateWithoutAsignacionesInput, Prisma.CatalogoServicioUncheckedCreateWithoutAsignacionesInput>;
@@ -321,75 +401,82 @@ export type CatalogoServicioUpdateOneRequiredWithoutAsignacionesNestedInput = {
     connect?: Prisma.CatalogoServicioWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.CatalogoServicioUpdateToOneWithWhereWithoutAsignacionesInput, Prisma.CatalogoServicioUpdateWithoutAsignacionesInput>, Prisma.CatalogoServicioUncheckedUpdateWithoutAsignacionesInput>;
 };
-export type CatalogoServicioCreateWithoutPreciosServiciosInput = {
+export type CatalogoServicioCreateWithoutCategoriasFactoresInput = {
+    nombre?: string;
     categoria: string;
     tipoEspecifico: string;
-    pesoPuntos?: number;
+    medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: number;
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
     asignaciones?: Prisma.PrendaServicioCreateNestedManyWithoutServicioInput;
 };
-export type CatalogoServicioUncheckedCreateWithoutPreciosServiciosInput = {
+export type CatalogoServicioUncheckedCreateWithoutCategoriasFactoresInput = {
     id?: number;
+    nombre?: string;
     categoria: string;
     tipoEspecifico: string;
-    pesoPuntos?: number;
+    medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: number;
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
     asignaciones?: Prisma.PrendaServicioUncheckedCreateNestedManyWithoutServicioInput;
 };
-export type CatalogoServicioCreateOrConnectWithoutPreciosServiciosInput = {
+export type CatalogoServicioCreateOrConnectWithoutCategoriasFactoresInput = {
     where: Prisma.CatalogoServicioWhereUniqueInput;
-    create: Prisma.XOR<Prisma.CatalogoServicioCreateWithoutPreciosServiciosInput, Prisma.CatalogoServicioUncheckedCreateWithoutPreciosServiciosInput>;
+    create: Prisma.XOR<Prisma.CatalogoServicioCreateWithoutCategoriasFactoresInput, Prisma.CatalogoServicioUncheckedCreateWithoutCategoriasFactoresInput>;
 };
-export type CatalogoServicioUpsertWithoutPreciosServiciosInput = {
-    update: Prisma.XOR<Prisma.CatalogoServicioUpdateWithoutPreciosServiciosInput, Prisma.CatalogoServicioUncheckedUpdateWithoutPreciosServiciosInput>;
-    create: Prisma.XOR<Prisma.CatalogoServicioCreateWithoutPreciosServiciosInput, Prisma.CatalogoServicioUncheckedCreateWithoutPreciosServiciosInput>;
-    where?: Prisma.CatalogoServicioWhereInput;
+export type CatalogoServicioUpsertWithWhereUniqueWithoutCategoriasFactoresInput = {
+    where: Prisma.CatalogoServicioWhereUniqueInput;
+    update: Prisma.XOR<Prisma.CatalogoServicioUpdateWithoutCategoriasFactoresInput, Prisma.CatalogoServicioUncheckedUpdateWithoutCategoriasFactoresInput>;
+    create: Prisma.XOR<Prisma.CatalogoServicioCreateWithoutCategoriasFactoresInput, Prisma.CatalogoServicioUncheckedCreateWithoutCategoriasFactoresInput>;
 };
-export type CatalogoServicioUpdateToOneWithWhereWithoutPreciosServiciosInput = {
-    where?: Prisma.CatalogoServicioWhereInput;
-    data: Prisma.XOR<Prisma.CatalogoServicioUpdateWithoutPreciosServiciosInput, Prisma.CatalogoServicioUncheckedUpdateWithoutPreciosServiciosInput>;
+export type CatalogoServicioUpdateWithWhereUniqueWithoutCategoriasFactoresInput = {
+    where: Prisma.CatalogoServicioWhereUniqueInput;
+    data: Prisma.XOR<Prisma.CatalogoServicioUpdateWithoutCategoriasFactoresInput, Prisma.CatalogoServicioUncheckedUpdateWithoutCategoriasFactoresInput>;
 };
-export type CatalogoServicioUpdateWithoutPreciosServiciosInput = {
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
-    tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
-    pesoPuntos?: Prisma.IntFieldUpdateOperationsInput | number;
-    activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    asignaciones?: Prisma.PrendaServicioUpdateManyWithoutServicioNestedInput;
+export type CatalogoServicioUpdateManyWithWhereWithoutCategoriasFactoresInput = {
+    where: Prisma.CatalogoServicioScalarWhereInput;
+    data: Prisma.XOR<Prisma.CatalogoServicioUpdateManyMutationInput, Prisma.CatalogoServicioUncheckedUpdateManyWithoutCategoriasFactoresInput>;
 };
-export type CatalogoServicioUncheckedUpdateWithoutPreciosServiciosInput = {
-    id?: Prisma.IntFieldUpdateOperationsInput | number;
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
-    tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
-    pesoPuntos?: Prisma.IntFieldUpdateOperationsInput | number;
-    activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    asignaciones?: Prisma.PrendaServicioUncheckedUpdateManyWithoutServicioNestedInput;
+export type CatalogoServicioScalarWhereInput = {
+    AND?: Prisma.CatalogoServicioScalarWhereInput | Prisma.CatalogoServicioScalarWhereInput[];
+    OR?: Prisma.CatalogoServicioScalarWhereInput[];
+    NOT?: Prisma.CatalogoServicioScalarWhereInput | Prisma.CatalogoServicioScalarWhereInput[];
+    id?: Prisma.IntFilter<"CatalogoServicio"> | number;
+    nombre?: Prisma.StringFilter<"CatalogoServicio"> | string;
+    categoria?: Prisma.StringFilter<"CatalogoServicio"> | string;
+    tipoEspecifico?: Prisma.StringFilter<"CatalogoServicio"> | string;
+    medidaBase?: Prisma.DecimalFilter<"CatalogoServicio"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: Prisma.IntFilter<"CatalogoServicio"> | number;
+    activo?: Prisma.BoolFilter<"CatalogoServicio"> | boolean;
+    createdAt?: Prisma.DateTimeFilter<"CatalogoServicio"> | Date | string;
+    updatedAt?: Prisma.DateTimeFilter<"CatalogoServicio"> | Date | string;
 };
 export type CatalogoServicioCreateWithoutAsignacionesInput = {
+    nombre?: string;
     categoria: string;
     tipoEspecifico: string;
-    pesoPuntos?: number;
+    medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: number;
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    preciosServicios?: Prisma.PrecioServicioCreateNestedManyWithoutCatalogoServicioInput;
+    categoriasFactores?: Prisma.CategoriaFactorCobroCreateNestedManyWithoutServiciosInput;
 };
 export type CatalogoServicioUncheckedCreateWithoutAsignacionesInput = {
     id?: number;
+    nombre?: string;
     categoria: string;
     tipoEspecifico: string;
-    pesoPuntos?: number;
+    medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: number;
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    preciosServicios?: Prisma.PrecioServicioUncheckedCreateNestedManyWithoutCatalogoServicioInput;
+    categoriasFactores?: Prisma.CategoriaFactorCobroUncheckedCreateNestedManyWithoutServiciosInput;
 };
 export type CatalogoServicioCreateOrConnectWithoutAsignacionesInput = {
     where: Prisma.CatalogoServicioWhereUniqueInput;
@@ -405,83 +492,129 @@ export type CatalogoServicioUpdateToOneWithWhereWithoutAsignacionesInput = {
     data: Prisma.XOR<Prisma.CatalogoServicioUpdateWithoutAsignacionesInput, Prisma.CatalogoServicioUncheckedUpdateWithoutAsignacionesInput>;
 };
 export type CatalogoServicioUpdateWithoutAsignacionesInput = {
+    nombre?: Prisma.StringFieldUpdateOperationsInput | string;
     categoria?: Prisma.StringFieldUpdateOperationsInput | string;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
-    pesoPuntos?: Prisma.IntFieldUpdateOperationsInput | number;
+    medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    preciosServicios?: Prisma.PrecioServicioUpdateManyWithoutCatalogoServicioNestedInput;
+    categoriasFactores?: Prisma.CategoriaFactorCobroUpdateManyWithoutServiciosNestedInput;
 };
 export type CatalogoServicioUncheckedUpdateWithoutAsignacionesInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
+    nombre?: Prisma.StringFieldUpdateOperationsInput | string;
     categoria?: Prisma.StringFieldUpdateOperationsInput | string;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
-    pesoPuntos?: Prisma.IntFieldUpdateOperationsInput | number;
+    medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    preciosServicios?: Prisma.PrecioServicioUncheckedUpdateManyWithoutCatalogoServicioNestedInput;
+    categoriasFactores?: Prisma.CategoriaFactorCobroUncheckedUpdateManyWithoutServiciosNestedInput;
+};
+export type CatalogoServicioUpdateWithoutCategoriasFactoresInput = {
+    nombre?: Prisma.StringFieldUpdateOperationsInput | string;
+    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
+    medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
+    activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    asignaciones?: Prisma.PrendaServicioUpdateManyWithoutServicioNestedInput;
+};
+export type CatalogoServicioUncheckedUpdateWithoutCategoriasFactoresInput = {
+    id?: Prisma.IntFieldUpdateOperationsInput | number;
+    nombre?: Prisma.StringFieldUpdateOperationsInput | string;
+    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
+    medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
+    activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    asignaciones?: Prisma.PrendaServicioUncheckedUpdateManyWithoutServicioNestedInput;
+};
+export type CatalogoServicioUncheckedUpdateManyWithoutCategoriasFactoresInput = {
+    id?: Prisma.IntFieldUpdateOperationsInput | number;
+    nombre?: Prisma.StringFieldUpdateOperationsInput | string;
+    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
+    medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
+    activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 export type CatalogoServicioCountOutputType = {
-    preciosServicios: number;
+    categoriasFactores: number;
     asignaciones: number;
 };
 export type CatalogoServicioCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    preciosServicios?: boolean | CatalogoServicioCountOutputTypeCountPreciosServiciosArgs;
+    categoriasFactores?: boolean | CatalogoServicioCountOutputTypeCountCategoriasFactoresArgs;
     asignaciones?: boolean | CatalogoServicioCountOutputTypeCountAsignacionesArgs;
 };
 export type CatalogoServicioCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.CatalogoServicioCountOutputTypeSelect<ExtArgs> | null;
 };
-export type CatalogoServicioCountOutputTypeCountPreciosServiciosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    where?: Prisma.PrecioServicioWhereInput;
+export type CatalogoServicioCountOutputTypeCountCategoriasFactoresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.CategoriaFactorCobroWhereInput;
 };
 export type CatalogoServicioCountOutputTypeCountAsignacionesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.PrendaServicioWhereInput;
 };
 export type CatalogoServicioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
+    nombre?: boolean;
     categoria?: boolean;
     tipoEspecifico?: boolean;
-    pesoPuntos?: boolean;
+    medidaBase?: boolean;
+    tiempoBase?: boolean;
     activo?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    preciosServicios?: boolean | Prisma.CatalogoServicio$preciosServiciosArgs<ExtArgs>;
+    categoriasFactores?: boolean | Prisma.CatalogoServicio$categoriasFactoresArgs<ExtArgs>;
     asignaciones?: boolean | Prisma.CatalogoServicio$asignacionesArgs<ExtArgs>;
     _count?: boolean | Prisma.CatalogoServicioCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["catalogoServicio"]>;
 export type CatalogoServicioSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
+    nombre?: boolean;
     categoria?: boolean;
     tipoEspecifico?: boolean;
-    pesoPuntos?: boolean;
+    medidaBase?: boolean;
+    tiempoBase?: boolean;
     activo?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
 }, ExtArgs["result"]["catalogoServicio"]>;
 export type CatalogoServicioSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
+    nombre?: boolean;
     categoria?: boolean;
     tipoEspecifico?: boolean;
-    pesoPuntos?: boolean;
+    medidaBase?: boolean;
+    tiempoBase?: boolean;
     activo?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
 }, ExtArgs["result"]["catalogoServicio"]>;
 export type CatalogoServicioSelectScalar = {
     id?: boolean;
+    nombre?: boolean;
     categoria?: boolean;
     tipoEspecifico?: boolean;
-    pesoPuntos?: boolean;
+    medidaBase?: boolean;
+    tiempoBase?: boolean;
     activo?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
 };
-export type CatalogoServicioOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "categoria" | "tipoEspecifico" | "pesoPuntos" | "activo" | "createdAt" | "updatedAt", ExtArgs["result"]["catalogoServicio"]>;
+export type CatalogoServicioOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nombre" | "categoria" | "tipoEspecifico" | "medidaBase" | "tiempoBase" | "activo" | "createdAt" | "updatedAt", ExtArgs["result"]["catalogoServicio"]>;
 export type CatalogoServicioInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    preciosServicios?: boolean | Prisma.CatalogoServicio$preciosServiciosArgs<ExtArgs>;
+    categoriasFactores?: boolean | Prisma.CatalogoServicio$categoriasFactoresArgs<ExtArgs>;
     asignaciones?: boolean | Prisma.CatalogoServicio$asignacionesArgs<ExtArgs>;
     _count?: boolean | Prisma.CatalogoServicioCountOutputTypeDefaultArgs<ExtArgs>;
 };
@@ -490,14 +623,16 @@ export type CatalogoServicioIncludeUpdateManyAndReturn<ExtArgs extends runtime.T
 export type $CatalogoServicioPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     name: "CatalogoServicio";
     objects: {
-        preciosServicios: Prisma.$PrecioServicioPayload<ExtArgs>[];
+        categoriasFactores: Prisma.$CategoriaFactorCobroPayload<ExtArgs>[];
         asignaciones: Prisma.$PrendaServicioPayload<ExtArgs>[];
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: number;
+        nombre: string;
         categoria: string;
         tipoEspecifico: string;
-        pesoPuntos: number;
+        medidaBase: runtime.Decimal;
+        tiempoBase: number;
         activo: boolean;
         createdAt: Date;
         updatedAt: Date;
@@ -553,7 +688,7 @@ export interface CatalogoServicioDelegate<ExtArgs extends runtime.Types.Extensio
 }
 export interface Prisma__CatalogoServicioClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise";
-    preciosServicios<T extends Prisma.CatalogoServicio$preciosServiciosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CatalogoServicio$preciosServiciosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrecioServicioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    categoriasFactores<T extends Prisma.CatalogoServicio$categoriasFactoresArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CatalogoServicio$categoriasFactoresArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CategoriaFactorCobroPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     asignaciones<T extends Prisma.CatalogoServicio$asignacionesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CatalogoServicio$asignacionesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrendaServicioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): runtime.Types.Utils.JsPromise<TResult1 | TResult2>;
     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): runtime.Types.Utils.JsPromise<T | TResult>;
@@ -561,9 +696,11 @@ export interface Prisma__CatalogoServicioClient<T, Null = never, ExtArgs extends
 }
 export interface CatalogoServicioFieldRefs {
     readonly id: Prisma.FieldRef<"CatalogoServicio", 'Int'>;
+    readonly nombre: Prisma.FieldRef<"CatalogoServicio", 'String'>;
     readonly categoria: Prisma.FieldRef<"CatalogoServicio", 'String'>;
     readonly tipoEspecifico: Prisma.FieldRef<"CatalogoServicio", 'String'>;
-    readonly pesoPuntos: Prisma.FieldRef<"CatalogoServicio", 'Int'>;
+    readonly medidaBase: Prisma.FieldRef<"CatalogoServicio", 'Decimal'>;
+    readonly tiempoBase: Prisma.FieldRef<"CatalogoServicio", 'Int'>;
     readonly activo: Prisma.FieldRef<"CatalogoServicio", 'Boolean'>;
     readonly createdAt: Prisma.FieldRef<"CatalogoServicio", 'DateTime'>;
     readonly updatedAt: Prisma.FieldRef<"CatalogoServicio", 'DateTime'>;
@@ -666,16 +803,16 @@ export type CatalogoServicioDeleteManyArgs<ExtArgs extends runtime.Types.Extensi
     where?: Prisma.CatalogoServicioWhereInput;
     limit?: number;
 };
-export type CatalogoServicio$preciosServiciosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    select?: Prisma.PrecioServicioSelect<ExtArgs> | null;
-    omit?: Prisma.PrecioServicioOmit<ExtArgs> | null;
-    include?: Prisma.PrecioServicioInclude<ExtArgs> | null;
-    where?: Prisma.PrecioServicioWhereInput;
-    orderBy?: Prisma.PrecioServicioOrderByWithRelationInput | Prisma.PrecioServicioOrderByWithRelationInput[];
-    cursor?: Prisma.PrecioServicioWhereUniqueInput;
+export type CatalogoServicio$categoriasFactoresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.CategoriaFactorCobroSelect<ExtArgs> | null;
+    omit?: Prisma.CategoriaFactorCobroOmit<ExtArgs> | null;
+    include?: Prisma.CategoriaFactorCobroInclude<ExtArgs> | null;
+    where?: Prisma.CategoriaFactorCobroWhereInput;
+    orderBy?: Prisma.CategoriaFactorCobroOrderByWithRelationInput | Prisma.CategoriaFactorCobroOrderByWithRelationInput[];
+    cursor?: Prisma.CategoriaFactorCobroWhereUniqueInput;
     take?: number;
     skip?: number;
-    distinct?: Prisma.PrecioServicioScalarFieldEnum | Prisma.PrecioServicioScalarFieldEnum[];
+    distinct?: Prisma.CategoriaFactorCobroScalarFieldEnum | Prisma.CategoriaFactorCobroScalarFieldEnum[];
 };
 export type CatalogoServicio$asignacionesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.PrendaServicioSelect<ExtArgs> | null;

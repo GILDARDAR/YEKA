@@ -4,103 +4,98 @@ export declare class CatalogoServicioDAO {
     private readonly prisma;
     constructor(prisma: PrismaService);
     findAll(categoria?: string): Promise<({
-        preciosServicios: {
+        categoriasFactores: {
             id: number;
-            activo: boolean;
-            tipoPrendaId: number;
-            medidaBase: import("@prisma/client-runtime-utils").Decimal;
-            precioBase: import("@prisma/client-runtime-utils").Decimal;
-            medidaExtra: import("@prisma/client-runtime-utils").Decimal;
-            precioExtra: import("@prisma/client-runtime-utils").Decimal;
-            catalogoServicioId: number;
+            nombre: string;
+            activa: boolean;
+            createdAt: Date;
+            updatedAt: Date;
         }[];
     } & {
         id: number;
+        nombre: string;
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
         categoria: string;
         tipoEspecifico: string;
-        pesoPuntos: number;
+        medidaBase: import("@prisma/client-runtime-utils").Decimal;
+        tiempoBase: number;
     })[]>;
     findById(id: number): Promise<({
-        preciosServicios: {
+        categoriasFactores: {
             id: number;
-            activo: boolean;
-            tipoPrendaId: number;
-            medidaBase: import("@prisma/client-runtime-utils").Decimal;
-            precioBase: import("@prisma/client-runtime-utils").Decimal;
-            medidaExtra: import("@prisma/client-runtime-utils").Decimal;
-            precioExtra: import("@prisma/client-runtime-utils").Decimal;
-            catalogoServicioId: number;
+            nombre: string;
+            activa: boolean;
+            createdAt: Date;
+            updatedAt: Date;
         }[];
     } & {
         id: number;
+        nombre: string;
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
         categoria: string;
         tipoEspecifico: string;
-        pesoPuntos: number;
+        medidaBase: import("@prisma/client-runtime-utils").Decimal;
+        tiempoBase: number;
     }) | null>;
     create(data: CreateCatalogoServicioDto): Promise<{
-        preciosServicios: {
+        categoriasFactores: {
             id: number;
-            activo: boolean;
-            tipoPrendaId: number;
-            medidaBase: import("@prisma/client-runtime-utils").Decimal;
-            precioBase: import("@prisma/client-runtime-utils").Decimal;
-            medidaExtra: import("@prisma/client-runtime-utils").Decimal;
-            precioExtra: import("@prisma/client-runtime-utils").Decimal;
-            catalogoServicioId: number;
+            nombre: string;
+            activa: boolean;
+            createdAt: Date;
+            updatedAt: Date;
         }[];
     } & {
         id: number;
+        nombre: string;
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
         categoria: string;
         tipoEspecifico: string;
-        pesoPuntos: number;
+        medidaBase: import("@prisma/client-runtime-utils").Decimal;
+        tiempoBase: number;
     }>;
     update(id: number, data: UpdateCatalogoServicioDto): Promise<{
-        preciosServicios: {
+        categoriasFactores: {
             id: number;
-            activo: boolean;
-            tipoPrendaId: number;
-            medidaBase: import("@prisma/client-runtime-utils").Decimal;
-            precioBase: import("@prisma/client-runtime-utils").Decimal;
-            medidaExtra: import("@prisma/client-runtime-utils").Decimal;
-            precioExtra: import("@prisma/client-runtime-utils").Decimal;
-            catalogoServicioId: number;
+            nombre: string;
+            activa: boolean;
+            createdAt: Date;
+            updatedAt: Date;
         }[];
     } & {
         id: number;
+        nombre: string;
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
         categoria: string;
         tipoEspecifico: string;
-        pesoPuntos: number;
+        medidaBase: import("@prisma/client-runtime-utils").Decimal;
+        tiempoBase: number;
     }>;
     softDelete(id: number): Promise<{
-        preciosServicios: {
+        categoriasFactores: {
             id: number;
-            activo: boolean;
-            tipoPrendaId: number;
-            medidaBase: import("@prisma/client-runtime-utils").Decimal;
-            precioBase: import("@prisma/client-runtime-utils").Decimal;
-            medidaExtra: import("@prisma/client-runtime-utils").Decimal;
-            precioExtra: import("@prisma/client-runtime-utils").Decimal;
-            catalogoServicioId: number;
+            nombre: string;
+            activa: boolean;
+            createdAt: Date;
+            updatedAt: Date;
         }[];
     } & {
         id: number;
+        nombre: string;
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
         categoria: string;
         tipoEspecifico: string;
-        pesoPuntos: number;
+        medidaBase: import("@prisma/client-runtime-utils").Decimal;
+        tiempoBase: number;
     }>;
 }

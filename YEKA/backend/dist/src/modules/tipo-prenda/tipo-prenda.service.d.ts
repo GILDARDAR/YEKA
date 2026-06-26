@@ -10,6 +10,7 @@ export declare class TipoPrendaService {
         updatedAt: Date;
         activo: boolean;
         descripcion: string | null;
+        porcentajeDificultad: import("@prisma/client-runtime-utils").Decimal;
     }>;
     findAll(): Promise<{
         id: number;
@@ -18,6 +19,7 @@ export declare class TipoPrendaService {
         updatedAt: Date;
         activo: boolean;
         descripcion: string | null;
+        porcentajeDificultad: import("@prisma/client-runtime-utils").Decimal;
     }[]>;
     findOne(id: number): Promise<{
         id: number;
@@ -26,6 +28,7 @@ export declare class TipoPrendaService {
         updatedAt: Date;
         activo: boolean;
         descripcion: string | null;
+        porcentajeDificultad: import("@prisma/client-runtime-utils").Decimal;
     }>;
     update(id: number, dto: UpdateTipoPrendaDto): Promise<{
         id: number;
@@ -34,6 +37,7 @@ export declare class TipoPrendaService {
         updatedAt: Date;
         activo: boolean;
         descripcion: string | null;
+        porcentajeDificultad: import("@prisma/client-runtime-utils").Decimal;
     }>;
     remove(id: number): Promise<{
         id: number;
@@ -42,5 +46,6 @@ export declare class TipoPrendaService {
         updatedAt: Date;
         activo: boolean;
         descripcion: string | null;
+        porcentajeDificultad: import("@prisma/client-runtime-utils").Decimal;
     }>;
 }

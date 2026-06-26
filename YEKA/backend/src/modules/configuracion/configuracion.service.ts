@@ -4,11 +4,17 @@ import { PrismaService } from '../../prisma/prisma.service';
 export interface AppConfig {
   EXPRESS_24H_MULTIPLIER: string;
   EXPRESS_48H_MULTIPLIER: string;
+  VALOR_HORA_PUNTOS: string;
+  MINUTOS_PRODUCTIVOS_MES: string;
+  MARGEN_UTILIDAD_GLOBAL: string;
 }
 
 const DEFAULT_CONFIG: AppConfig = {
   EXPRESS_24H_MULTIPLIER: '1.50',
   EXPRESS_48H_MULTIPLIER: '1.30',
+  VALOR_HORA_PUNTOS: '60.00',
+  MINUTOS_PRODUCTIVOS_MES: '21120',
+  MARGEN_UTILIDAD_GLOBAL: '30.00',
 };
 
 @Injectable()

@@ -15,6 +15,7 @@ const TipoPrendaPage: React.FC = () => {
   const [formData, setFormData] = useState({
     nombre: '',
     descripcion: '',
+    porcentajeDificultad: 0,
     activo: true,
   });
 
@@ -40,6 +41,7 @@ const TipoPrendaPage: React.FC = () => {
       setFormData({
         nombre: tipo.nombre,
         descripcion: tipo.descripcion || '',
+        porcentajeDificultad: Number(tipo.porcentajeDificultad) || 0,
         activo: tipo.activo,
       });
     } else {
@@ -47,6 +49,7 @@ const TipoPrendaPage: React.FC = () => {
       setFormData({
         nombre: '',
         descripcion: '',
+        porcentajeDificultad: 0,
         activo: true,
       });
     }
@@ -63,6 +66,8 @@ const TipoPrendaPage: React.FC = () => {
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
       setFormData((prev) => ({ ...prev, [name]: checked }));
+    } else if (type === 'number') {
+      setFormData((prev) => ({ ...prev, [name]: Number(value) }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
@@ -79,7 +84,8 @@ const TipoPrendaPage: React.FC = () => {
       fetchTipos();
       handleCloseModal();
     } catch (err: any) {
-      alert(err.message);
+      const backendError = err.response?.data?.message || err.message;
+      alert(Array.isArray(backendError) ? backendError.join(', ') : backendError);
     }
   };
 
@@ -116,6 +122,7 @@ const TipoPrendaPage: React.FC = () => {
               <tr>
                 <th>Nombre</th>
                 <th>Descripción</th>
+                <th>Dificultad</th>
                 <th>Estado</th>
                 <th style={{ textAlign: 'right' }}>Acciones</th>
               </tr>
@@ -125,6 +132,7 @@ const TipoPrendaPage: React.FC = () => {
                 <tr key={tipo.id}>
                   <td style={{ fontWeight: 'var(--font-medium)' }}>{tipo.nombre}</td>
                   <td style={{ color: 'var(--color-text-light)' }}>{tipo.descripcion || '-'}</td>
+                  <td>{Number(tipo.porcentajeDificultad) * 100}%</td>
                   <td>
                     <span className={`badge ${tipo.activo ? 'badge-success' : 'badge-danger'}`}>
                       {tipo.activo ? 'Activo' : 'Inactivo'}
@@ -181,6 +189,20 @@ const TipoPrendaPage: React.FC = () => {
                   className="form-input"
                   style={{ minHeight: '80px', resize: 'vertical' }}
                   placeholder="Opcional..."
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">% Dificultad</label>
+                <input
+                  type="number"
+                  name="porcentajeDificultad"
+                  value={formData.porcentajeDificultad}
+                  onChange={handleChange}
+                  className="form-input"
+                  min="0"
+                  step="0.01"
+                  placeholder="Ej. 0.15 para 15%"
                 />
               </div>
 

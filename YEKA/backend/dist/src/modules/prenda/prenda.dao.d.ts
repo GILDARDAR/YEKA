@@ -1,5 +1,5 @@
 import { PrismaService } from '../../prisma/prisma.service';
-import { Prenda, PrendaServicio, EstadoPrenda, TipoExpress, Prisma } from '../../../generated/prisma/client';
+import { Prenda, PrendaServicio, EstadoPrenda, Prisma } from '../../../generated/prisma/client';
 export declare class PrendaDAO {
     private readonly prisma;
     constructor(prisma: PrismaService);
@@ -23,6 +23,8 @@ export declare class PrendaDAO {
         esLujo?: boolean;
         notas?: string;
         codigoQR: string;
+        tipoUrgenciaId?: number;
+        porcentajeAtencionAplicado?: Prisma.Decimal | number;
     }): Promise<Prenda>;
     update(id: number, data: Partial<Prenda>): Promise<Prenda>;
     delete(id: number): Promise<Prenda>;
@@ -30,9 +32,13 @@ export declare class PrendaDAO {
         prendaId: number;
         servicioId: number;
         medidaEntregada?: number;
-        tipoExpress: TipoExpress;
+        tiempoCalculado?: number;
+        valorPorTiempo?: Prisma.Decimal | number;
+        valorFactoresCobro?: Prisma.Decimal | number;
+        precioBruto?: Prisma.Decimal | number;
         precioFinal: Prisma.Decimal | number;
         observaciones?: string;
+        detallesCalculo?: any;
     }): Promise<PrendaServicio>;
     getServiciosByPrenda(prendaId: number): Promise<PrendaServicio[]>;
     deletePrendaServicio(id: number): Promise<PrendaServicio>;

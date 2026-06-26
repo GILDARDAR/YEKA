@@ -14,6 +14,7 @@ const navItems = [
   { to: '/prendas', icon: Shirt, label: 'Prendas', roles: ['ADMIN', 'RECEPCION', 'TALLER'] },
   { to: '/catalogo', icon: Tag, label: 'Catálogo', roles: ['ADMIN', 'RECEPCION', 'TALLER'] },
   { to: '/tipos-prenda', icon: Layers, label: 'Tipos Prenda', roles: ['ADMIN'] },
+  { to: '/parametros', icon: Settings, label: 'Parámetros Cobro', roles: ['ADMIN'] },
   { to: '/usuarios', icon: UserCog, label: 'Usuarios', roles: ['ADMIN'] },
   { to: '/sedes', icon: Building2, label: 'Sedes', roles: ['ADMIN'] },
   { to: '/admin/anuncios', icon: Megaphone, label: 'Anuncios', roles: ['ADMIN'] },

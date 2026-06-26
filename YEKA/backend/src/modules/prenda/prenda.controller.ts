@@ -87,14 +87,6 @@ export class PrendaController {
     return this.prendaService.cambiarEstado(id, dto, usuarioId);
   }
 
-  @Patch(':id/express')
-  async cambiarTipoExpress(
-    @Param('id', ParseIntPipe) id: number,
-    @Body('tipoExpress') tipoExpress: any,
-    @CurrentUser('id') usuarioId: number,
-  ): Promise<PrendaResponseDto> {
-    return this.prendaService.cambiarTipoExpress(id, tipoExpress, usuarioId);
-  }
 
   @Patch(':id/foto')
   async subirFoto(

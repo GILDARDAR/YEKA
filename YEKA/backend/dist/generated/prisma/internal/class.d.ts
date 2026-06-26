@@ -51,13 +51,19 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
     get tipoPrenda(): Prisma.TipoPrendaDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
+    get tipoUrgencia(): Prisma.TipoUrgenciaDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
     get prenda(): Prisma.PrendaDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
     get catalogoServicio(): Prisma.CatalogoServicioDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
-    get precioServicio(): Prisma.PrecioServicioDelegate<ExtArgs, {
+    get categoriaFactorCobro(): Prisma.CategoriaFactorCobroDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    get factorCobro(): Prisma.FactorCobroDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
     get prendaServicio(): Prisma.PrendaServicioDelegate<ExtArgs, {

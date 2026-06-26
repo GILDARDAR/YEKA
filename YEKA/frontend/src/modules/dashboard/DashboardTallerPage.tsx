@@ -69,10 +69,9 @@ export function DashboardTallerPage() {
     notas: ''
   });
 
-  // Catalog Data
   const [tiposPrenda, setTiposPrenda] = useState<TipoPrenda[]>([]);
   const [catalogoServicios, setCatalogoServicios] = useState<CatalogoServicio[]>([]);
-  const [config, setConfig] = useState<any>({});
+  const [tiposUrgencia, setTiposUrgencia] = useState<any[]>([]);
 
 
 
@@ -80,19 +79,19 @@ export function DashboardTallerPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [cls, facs, prs, tps, cats, confRes] = await Promise.all([
+        const [cls, facs, prs, tps, cats, urgsRes] = await Promise.all([
           clientesService.getAll(),
           facturasService.getAll(),
           prendasService.getAll(),
           tipoPrendaService.getTiposPrenda(),
           catalogoService.getAll(),
-          api.get('/configuracion'),
+          api.get('/tipo-urgencia'),
         ]);
 
         setClientes(cls);
         setTiposPrenda(tps.filter(t => t.activo));
         setCatalogoServicios(cats.filter(c => c.activo));
-        setConfig(confRes.data);
+        setTiposUrgencia(urgsRes.data);
 
         // Compute Stats based on user's sede (Taller) or all if admin
         const filterSedeId = user?.rol !== 'ADMIN' ? user?.sedeId : null;
@@ -263,12 +262,12 @@ export function DashboardTallerPage() {
     }
   };
 
-  const handleCambiarExpress = async (prendaId: number, tipoExpress: string) => {
+  const handleCambiarUrgencia = async (prendaId: number, tipoUrgenciaId: number | null) => {
     try {
-      await prendasService.cambiarTipoExpress(prendaId, tipoExpress);
+      await prendasService.update(prendaId, { tipoUrgenciaId });
       await refreshDraftInvoice();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Error al cambiar tipo express');
+      alert(err.response?.data?.message || 'Error al cambiar tipo urgencia');
     }
   };
 
@@ -490,7 +489,14 @@ export function DashboardTallerPage() {
                         return (
                           <tr key={p.id}>
                             <td style={{ fontWeight: 'var(--font-medium)', textTransform: 'uppercase' }}>
-                              {tipo}
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <span>{tipo}</span>
+                                {tiposUrgencia.find(tu => tu.id === p.tipoUrgenciaId) && (
+                                  <span className="badge badge-warning" style={{ fontSize: '9px', padding: '1px 4px', textTransform: 'none' }}>
+                                    {tiposUrgencia.find(tu => tu.id === p.tipoUrgenciaId)?.nombre}
+                                  </span>
+                                )}
+                              </div>
                               <div style={{ fontSize: '10px', color: 'var(--color-text-muted)', fontWeight: 'normal' }}>{p.codigoQR}</div>
                             </td>
                             <td style={{ fontSize: 'var(--text-sm)' }}>
@@ -503,12 +509,13 @@ export function DashboardTallerPage() {
                               <select 
                                 className="form-select"
                                 style={{ fontSize: '12px', padding: '2px 24px 2px 8px', height: 'auto', minHeight: '26px' }}
-                                value={p.tipoExpress || 'NORMAL'}
-                                onChange={e => handleCambiarExpress(p.id, e.target.value)}
+                                value={p.tipoUrgenciaId != null ? p.tipoUrgenciaId.toString() : ''}
+                                onChange={e => handleCambiarUrgencia(p.id, e.target.value ? Number(e.target.value) : null)}
                               >
-                                <option value="NORMAL">Normal</option>
-                                <option value="EXPRESS_48H">24h</option>
-                                <option value="EXPRESS_24H">48h</option>
+                                <option value="">Normal</option>
+                                {tiposUrgencia.map(tu => (
+                                  <option key={tu.id} value={tu.id.toString()}>{tu.nombre}</option>
+                                ))}
                               </select>
                             </td>
                             <td style={{ textAlign: 'right', fontWeight: 'bold' }}>
@@ -848,7 +855,6 @@ export function DashboardTallerPage() {
           prendaToEdit={prendaToEdit}
           tiposPrenda={tiposPrenda}
           catalogoServicios={catalogoServicios}
-          config={config}
           onClose={() => setIsPrendaModalOpen(false)}
           onSaved={refreshDraftInvoice}
         />
@@ -931,7 +937,6 @@ export function DashboardTallerPage() {
           prendaToEdit={searchPrendaToEdit}
           tiposPrenda={tiposPrenda}
           catalogoServicios={catalogoServicios}
-          config={config}
           onClose={() => setShowSearchPrendaModal(false)}
           onSaved={() => {
             setShowSearchPrendaModal(false);

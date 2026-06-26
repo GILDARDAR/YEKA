@@ -48,7 +48,6 @@ export function DashboardPage() {
   
   const [tiposPrenda, setTiposPrenda] = useState<TipoPrenda[]>([]);
   const [catalogoServicios, setCatalogoServicios] = useState<CatalogoServicio[]>([]);
-  const [config, setConfig] = useState<any>({});
   
   const [showPrendaModal, setShowPrendaModal] = useState(false);
   const [prendaToEdit, setPrendaToEdit] = useState<any>(null);
@@ -90,18 +89,16 @@ export function DashboardPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [clientes, facturas, prendas, tps, cats, confRes] = await Promise.all([
+        const [clientes, facturas, prendas, tps, cats] = await Promise.all([
           clientesService.getAll(),
           facturasService.getAll(),
           prendasService.getAll(),
           tipoPrendaService.getTiposPrenda(),
-          catalogoService.getAll(),
-          api.get('/configuracion'),
+          catalogoService.getAll()
         ]);
 
         setTiposPrenda(tps.filter((t: TipoPrenda) => t.activo));
         setCatalogoServicios(cats.filter((c: CatalogoServicio) => c.activo));
-        setConfig(confRes.data);
 
         const filterSedeId = selectedSedeId ? parseInt(selectedSedeId, 10) : null;
 
@@ -855,7 +852,6 @@ export function DashboardPage() {
           }}
           tiposPrenda={tiposPrenda}
           catalogoServicios={catalogoServicios}
-          config={config}
           prendaToEdit={prendaToEdit}
         />
       )}

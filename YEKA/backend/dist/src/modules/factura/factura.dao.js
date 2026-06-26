@@ -37,6 +37,7 @@ let FacturaDAO = class FacturaDAO {
                 prendas: {
                     include: {
                         tipoPrenda: true,
+                        tipoUrgencia: true,
                         servicios: {
                             include: {
                                 servicio: true,

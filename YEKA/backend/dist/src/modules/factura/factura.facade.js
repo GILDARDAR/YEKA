@@ -48,6 +48,9 @@ function toResponseDto(factura) {
             facturaId: p.facturaId,
             codigoQR: p.codigoQR,
             tipoPrendaId: p.tipoPrendaId,
+            tipoUrgenciaId: p.tipoUrgenciaId,
+            tipoUrgencia: p.tipoUrgencia,
+            porcentajeAtencionAplicado: p.porcentajeAtencionAplicado ? p.porcentajeAtencionAplicado.toString() : null,
             talla: p.talla || '',
             color: p.color || '',
             marca: p.marca || null,
@@ -68,6 +71,7 @@ function toResponseDto(factura) {
                 tipoExpress: s.tipoExpress,
                 precioFinal: s.precioFinal?.toString() ?? '0',
                 observaciones: s.observaciones || null,
+                detallesCalculo: s.detallesCalculo || null,
                 createdAt: s.createdAt,
             })),
         })),
@@ -377,10 +381,11 @@ let FacturaFacade = class FacturaFacade {
                 ]
             ];
             prenda.servicios?.forEach((s) => {
+                const prioridadText = prenda.tipoUrgencia?.nombre || 'Normal';
                 servicesRows.push([
                     { text: `${s.servicio?.categoria || 'Servicio'} — ${s.servicio?.tipoEspecifico || ''}`, style: 'tableBody' },
                     { text: s.medidaEntregada ? `${s.medidaEntregada.toString()} cm` : 'N/A', style: 'tableBody' },
-                    { text: s.tipoExpress, style: 'tableBody' },
+                    { text: prioridadText, style: 'tableBody' },
                     { text: `€${Number(s.precioFinal).toFixed(2)}`, style: 'tableBody', alignment: 'right' }
                 ]);
             });
@@ -394,7 +399,7 @@ let FacturaFacade = class FacturaFacade {
                             {
                                 text: [
                                     { text: `Prenda ${index + 1}: ${tipo.toUpperCase()}\n`, style: 'prendaTitle' },
-                                    { text: `Color: ${prenda.color} | Talla: ${prenda.talla}${prenda.marca ? ` | Marca: ${prenda.marca}` : ''}\n`, style: 'prendaDetails' },
+                                    { text: `Color: ${prenda.color} | Talla: ${prenda.talla}${prenda.marca ? ` | Marca: ${prenda.marca}` : ''}${prenda.tipoUrgencia ? ` | Atención: ${prenda.tipoUrgencia.nombre}` : ''}\n`, style: 'prendaDetails' },
                                     { text: `QR: ${prenda.codigoQR} | F. Estimada: ${fechaCompromisoStr}`, style: 'prendaDetails' },
                                 ]
                             },

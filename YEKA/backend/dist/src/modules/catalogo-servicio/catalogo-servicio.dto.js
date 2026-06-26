@@ -9,48 +9,22 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CatalogoServicioResponseDto = exports.UpdateCatalogoServicioDto = exports.CreateCatalogoServicioDto = exports.PrecioServicioDto = void 0;
+exports.CatalogoServicioResponseDto = exports.UpdateCatalogoServicioDto = exports.CreateCatalogoServicioDto = void 0;
 const class_validator_1 = require("class-validator");
-const class_transformer_1 = require("class-transformer");
-class PrecioServicioDto {
-    tipoPrendaId;
-    medidaBase;
-    precioBase;
-    medidaExtra;
-    precioExtra;
-}
-exports.PrecioServicioDto = PrecioServicioDto;
-__decorate([
-    (0, class_validator_1.IsInt)(),
-    __metadata("design:type", Number)
-], PrecioServicioDto.prototype, "tipoPrendaId", void 0);
-__decorate([
-    (0, class_validator_1.IsNumber)({ maxDecimalPlaces: 2 }),
-    (0, class_validator_1.Min)(0),
-    __metadata("design:type", Number)
-], PrecioServicioDto.prototype, "medidaBase", void 0);
-__decorate([
-    (0, class_validator_1.IsNumber)({ maxDecimalPlaces: 2 }),
-    (0, class_validator_1.Min)(0),
-    __metadata("design:type", Number)
-], PrecioServicioDto.prototype, "precioBase", void 0);
-__decorate([
-    (0, class_validator_1.IsNumber)({ maxDecimalPlaces: 2 }),
-    (0, class_validator_1.Min)(0),
-    __metadata("design:type", Number)
-], PrecioServicioDto.prototype, "medidaExtra", void 0);
-__decorate([
-    (0, class_validator_1.IsNumber)({ maxDecimalPlaces: 2 }),
-    (0, class_validator_1.Min)(0),
-    __metadata("design:type", Number)
-], PrecioServicioDto.prototype, "precioExtra", void 0);
 class CreateCatalogoServicioDto {
+    nombre;
     categoria;
     tipoEspecifico;
-    pesoPuntos;
-    preciosPorPrenda;
+    medidaBase;
+    tiempoBase;
+    categoriasFactoresIds;
 }
 exports.CreateCatalogoServicioDto = CreateCatalogoServicioDto;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateCatalogoServicioDto.prototype, "nombre", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
@@ -62,24 +36,36 @@ __decorate([
     __metadata("design:type", String)
 ], CreateCatalogoServicioDto.prototype, "tipoEspecifico", void 0);
 __decorate([
+    (0, class_validator_1.IsNumber)({ maxDecimalPlaces: 2 }),
+    (0, class_validator_1.Min)(0),
+    __metadata("design:type", Number)
+], CreateCatalogoServicioDto.prototype, "medidaBase", void 0);
+__decorate([
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(1),
     __metadata("design:type", Number)
-], CreateCatalogoServicioDto.prototype, "pesoPuntos", void 0);
+], CreateCatalogoServicioDto.prototype, "tiempoBase", void 0);
 __decorate([
     (0, class_validator_1.IsArray)(),
-    (0, class_validator_1.ValidateNested)({ each: true }),
-    (0, class_transformer_1.Type)(() => PrecioServicioDto),
+    (0, class_validator_1.IsInt)({ each: true }),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Array)
-], CreateCatalogoServicioDto.prototype, "preciosPorPrenda", void 0);
+], CreateCatalogoServicioDto.prototype, "categoriasFactoresIds", void 0);
 class UpdateCatalogoServicioDto {
+    nombre;
     categoria;
     tipoEspecifico;
-    pesoPuntos;
+    medidaBase;
+    tiempoBase;
     activo;
-    preciosPorPrenda;
+    categoriasFactoresIds;
 }
 exports.UpdateCatalogoServicioDto = UpdateCatalogoServicioDto;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateCatalogoServicioDto.prototype, "nombre", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
@@ -91,11 +77,17 @@ __decorate([
     __metadata("design:type", String)
 ], UpdateCatalogoServicioDto.prototype, "tipoEspecifico", void 0);
 __decorate([
+    (0, class_validator_1.IsNumber)({ maxDecimalPlaces: 2 }),
+    (0, class_validator_1.Min)(0),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], UpdateCatalogoServicioDto.prototype, "medidaBase", void 0);
+__decorate([
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(1),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
-], UpdateCatalogoServicioDto.prototype, "pesoPuntos", void 0);
+], UpdateCatalogoServicioDto.prototype, "tiempoBase", void 0);
 __decorate([
     (0, class_validator_1.IsBoolean)(),
     (0, class_validator_1.IsOptional)(),
@@ -103,18 +95,19 @@ __decorate([
 ], UpdateCatalogoServicioDto.prototype, "activo", void 0);
 __decorate([
     (0, class_validator_1.IsArray)(),
-    (0, class_validator_1.ValidateNested)({ each: true }),
-    (0, class_transformer_1.Type)(() => PrecioServicioDto),
+    (0, class_validator_1.IsInt)({ each: true }),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Array)
-], UpdateCatalogoServicioDto.prototype, "preciosPorPrenda", void 0);
+], UpdateCatalogoServicioDto.prototype, "categoriasFactoresIds", void 0);
 class CatalogoServicioResponseDto {
     id;
+    nombre;
     categoria;
     tipoEspecifico;
-    pesoPuntos;
+    medidaBase;
+    tiempoBase;
     activo;
-    preciosPorPrenda;
+    categoriasFactores;
     createdAt;
     updatedAt;
 }

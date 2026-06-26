@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import api from '../../shared/api';
 import { facturasService } from './facturas.service';
 import { prendasService } from '../prendas/prendas.service';
 import tipoPrendaService from '../../services/tipo-prenda.service';
 import { catalogoService } from '../catalogo/catalogo.service';
-import type { Factura, Prenda, TipoPrenda, CatalogoServicio } from '../../shared/types';
-import { FileText, Edit2, Trash2, ChevronLeft, CreditCard, Plus, Printer, Tag } from 'lucide-react';
-import { PrendaModal } from '../prendas/PrendaModal';
+import type { Factura, Prenda, TipoPrenda, CatalogoServicio, PrendaServicio } from '../../shared/types';
+import api from '../../shared/api';
+import { ChevronLeft, FileText, Plus, Check, Trash2, Tag, Calendar, Euro, Edit2, CreditCard } from 'lucide-react';
+
+const toTitleCase = (str: string) => {
+  if (!str) return '';
+  return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+};
 
 export function FacturaDetail() {
   const { id } = useParams<{ id: string }>();
@@ -17,31 +21,44 @@ export function FacturaDetail() {
   // Catalog Data
   const [tiposPrenda, setTiposPrenda] = useState<TipoPrenda[]>([]);
   const [catalogoServicios, setCatalogoServicios] = useState<CatalogoServicio[]>([]);
-  const [config, setConfig] = useState<any>({});
+  const [tiposUrgencia, setTiposUrgencia] = useState<any[]>([]);
 
   // Modal State
-  const [isPrendaModalOpen, setIsPrendaModalOpen] = useState(false);
-  const [prendaToEdit, setPrendaToEdit] = useState<Prenda | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [prendaForm, setPrendaForm] = useState({
+    tipoPrendaId: '',
+    tipoUrgenciaId: '',
+    talla: '',
+    color: '',
+    esLujo: false,
+    marca: '',
+    notas: '',
+  });
+  
+  // The Prenda being created/edited in the modal
+  const [activePrenda, setActivePrenda] = useState<Prenda | null>(null);
+
+  // Service Row State
+  const [servicioSeleccionado, setServicioSeleccionado] = useState('');
+  const [medidaEntregada, setMedidaEntregada] = useState<number | ''>('');
+  const [observacionesServicio, setObservacionesServicio] = useState('');
+  const [isCalculando, setIsCalculando] = useState(false);
+  const [busquedaServicio, setBusquedaServicio] = useState('');
+  
+  // Edit mode
+  const [isEditingPrenda, setIsEditingPrenda] = useState(false);
+
+  // Expand Prenda Card
+  const [expandedPrendaId, setExpandedPrendaId] = useState<number | null>(null);
 
   // Abono Modal
   const [isAbonoModalOpen, setIsAbonoModalOpen] = useState(false);
-  const [abonoToEdit, setAbonoToEdit] = useState<any | null>(null);
   const [abonoForm, setAbonoForm] = useState({
     monto: '',
     metodoPago: 'EFECTIVO',
     notas: ''
   });
   const [savingAbono, setSavingAbono] = useState(false);
-
-  const [isTicketFormat, setIsTicketFormat] = useState(() => {
-    return localStorage.getItem('facturaPrintFormat') !== 'a4';
-  });
-
-  const handleFormatChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const isTicket = e.target.checked;
-    setIsTicketFormat(isTicket);
-    localStorage.setItem('facturaPrintFormat', isTicket ? 'ticket' : 'a4');
-  };
 
   const fetchFactura = async () => {
     if (!id) return;
@@ -59,17 +76,133 @@ export function FacturaDetail() {
     fetchFactura();
     tipoPrendaService.getTiposPrenda().then(res => setTiposPrenda(res.filter(t => t.activo)));
     catalogoService.getAll().then(res => setCatalogoServicios(res.filter(s => s.activo)));
-    api.get('/configuracion').then(res => setConfig(res.data)).catch(console.error);
+    api.get('/tipo-urgencia').then(res => setTiposUrgencia(res.data)).catch(console.error);
   }, [id]);
 
-  const handleOpenAddPrenda = () => {
-    setPrendaToEdit(null);
-    setIsPrendaModalOpen(true);
+  const handleOpenModal = (prendaToEdit?: Prenda) => {
+    if (prendaToEdit) {
+      setPrendaForm({
+        tipoPrendaId: prendaToEdit.tipoPrendaId != null ? prendaToEdit.tipoPrendaId.toString() : '',
+        tipoUrgenciaId: prendaToEdit.tipoUrgenciaId != null ? prendaToEdit.tipoUrgenciaId.toString() : '',
+        talla: prendaToEdit.talla,
+        color: prendaToEdit.color,
+        esLujo: prendaToEdit.esLujo,
+        marca: prendaToEdit.marca || '',
+        notas: prendaToEdit.notas || '',
+      });
+      setActivePrenda(prendaToEdit);
+      setIsEditingPrenda(true);
+    } else {
+      setPrendaForm({
+        tipoPrendaId: '',
+        tipoUrgenciaId: '',
+        talla: '',
+        color: '',
+        esLujo: false,
+        marca: '',
+        notas: '',
+      });
+      setActivePrenda(null);
+      setIsEditingPrenda(false);
+    }
+    
+    setServicioSeleccionado('');
+    setMedidaEntregada('');
+    setObservacionesServicio('');
+    setBusquedaServicio('');
+    setIsModalOpen(true);
   };
 
-  const handleEditPrenda = (prenda: Prenda) => {
-    setPrendaToEdit(prenda);
-    setIsPrendaModalOpen(true);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setIsEditingPrenda(false);
+    fetchFactura(); // Refresh factura to show new prendas
+  };
+
+  const handleSavePrenda = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const dto = {
+        facturaId: Number(id),
+        tipoPrendaId: Number(prendaForm.tipoPrendaId),
+        tipoUrgenciaId: prendaForm.tipoUrgenciaId ? Number(prendaForm.tipoUrgenciaId) : null,
+        talla: prendaForm.talla,
+        color: prendaForm.color,
+        esLujo: prendaForm.esLujo,
+        marca: prendaForm.marca || null,
+        notas: prendaForm.notas || null,
+      };
+
+      if (isEditingPrenda && activePrenda) {
+        await prendasService.update(activePrenda.id, dto);
+        setIsEditingPrenda(false);
+      } else {
+        const created = await prendasService.create(dto);
+        // Fetch full prenda to get relations correctly
+        const fullPrenda = await prendasService.getById(created.id);
+        setActivePrenda(fullPrenda);
+      }
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Error al guardar prenda');
+    }
+  };
+
+  const handleAddServicio = async () => {
+    if (!servicioSeleccionado || !activePrenda) return;
+    try {
+      setIsCalculando(true);
+
+      // Add service
+      await prendasService.asignarServicio(activePrenda.id, {
+        servicioId: Number(servicioSeleccionado),
+        medidaEntregada: medidaEntregada !== '' ? Number(medidaEntregada) : undefined,
+        observaciones: observacionesServicio ? observacionesServicio : undefined,
+      });
+      
+      // Refresh active prenda to show the new service
+      const updated = await prendasService.getById(activePrenda.id);
+      setActivePrenda(updated);
+      setServicioSeleccionado('');
+      setMedidaEntregada('');
+      setObservacionesServicio('');
+      
+      // Update the invoice in the background to show real-time totals
+      await fetchFactura();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Error al añadir servicio');
+    } finally {
+      setIsCalculando(false);
+    }
+  };
+
+  const handleRemoveServicioAsignado = async (prendaServicioId: number) => {
+    if (!activePrenda || !window.confirm('¿Seguro que deseas eliminar este servicio asignado?')) return;
+    try {
+      await prendasService.eliminarServicio(activePrenda.id, prendaServicioId);
+      const updated = await prendasService.getById(activePrenda.id);
+      setActivePrenda(updated);
+      await fetchFactura();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Error al eliminar el servicio asignado');
+    }
+  };
+
+  const handleEditServicioAsignado = async (s: PrendaServicio) => {
+    if (!activePrenda) return;
+    if (!window.confirm('Para modificar, se quitará el servicio actual y podrás ajustarlo y agregarlo de nuevo en la sección de disponibles. ¿Continuar?')) return;
+    
+    try {
+      await prendasService.eliminarServicio(activePrenda.id, s.id);
+      const updated = await prendasService.getById(activePrenda.id);
+      setActivePrenda(updated);
+      
+      setServicioSeleccionado(s.servicioId.toString());
+      setMedidaEntregada(s.medidaEntregada !== null && s.medidaEntregada !== undefined ? Number(s.medidaEntregada) : '');
+      setObservacionesServicio(s.observaciones || '');
+      await fetchFactura();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Error al preparar la modificación');
+    }
   };
 
   const handleRemovePrenda = async (prendaId: number) => {
@@ -82,12 +215,12 @@ export function FacturaDetail() {
     }
   };
 
-  const handleCambiarExpress = async (prendaId: number, tipoExpress: string) => {
+  const handleCambiarUrgencia = async (prendaId: number, tipoUrgenciaId: number | null) => {
     try {
-      await prendasService.cambiarTipoExpress(prendaId, tipoExpress);
+      await prendasService.update(prendaId, { tipoUrgenciaId });
       await fetchFactura();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Error al cambiar tipo express');
+      alert(err.response?.data?.message || 'Error al cambiar tipo urgencia');
     }
   };
 
@@ -96,66 +229,19 @@ export function FacturaDetail() {
     if (!factura) return;
     try {
       setSavingAbono(true);
-      if (abonoToEdit) {
-        await facturasService.updateAbono(abonoToEdit.id, {
-          monto: Number(abonoForm.monto),
-          metodoPago: abonoForm.metodoPago as any,
-          notas: abonoForm.notas || undefined
-        });
-      } else {
-        await facturasService.addAbono(factura.id, {
-          monto: Number(abonoForm.monto),
-          metodoPago: abonoForm.metodoPago as any,
-          notas: abonoForm.notas || undefined
-        });
-      }
+      await facturasService.addAbono(factura.id, {
+        monto: Number(abonoForm.monto),
+        metodoPago: abonoForm.metodoPago as any,
+        notas: abonoForm.notas || undefined
+      });
       setIsAbonoModalOpen(false);
-      setAbonoToEdit(null);
       setAbonoForm({ monto: '', metodoPago: 'EFECTIVO', notas: '' });
       await fetchFactura();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Error al guardar abono');
+      alert(err.response?.data?.message || 'Error al registrar abono');
     } finally {
       setSavingAbono(false);
     }
-  };
-
-  const handleOpenEditAbono = (a: any) => {
-    setAbonoToEdit(a);
-    setAbonoForm({
-      monto: a.monto.toString(),
-      metodoPago: a.metodoPago,
-      notas: a.notas || ''
-    });
-    setIsAbonoModalOpen(true);
-  };
-
-  const handleDeleteAbono = async (abonoId: number) => {
-    if (!window.confirm('¿Seguro que deseas eliminar este abono?')) return;
-    try {
-      await facturasService.deleteAbono(abonoId);
-      await fetchFactura();
-    } catch (err: any) {
-      alert(err.response?.data?.message || 'Error al eliminar abono');
-    }
-  };
-
-  const handlePrintFactura = () => {
-    document.body.classList.remove('print-prendas-mode');
-    document.body.classList.add('print-factura-mode');
-    window.print();
-    setTimeout(() => {
-      document.body.classList.remove('print-factura-mode');
-    }, 1000);
-  };
-
-  const handlePrintPrendas = () => {
-    document.body.classList.add('print-prendas-mode');
-    window.print();
-    // After print dialog is closed
-    setTimeout(() => {
-      document.body.classList.remove('print-prendas-mode');
-    }, 1000);
   };
 
   if (loading) {
@@ -174,26 +260,11 @@ export function FacturaDetail() {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-6)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-          <Link to="/facturas" className="btn btn-ghost btn-sm btn-icon">
-            <ChevronLeft size={18} />
-          </Link>
-          <h1 className="page-title">Factura {factura.numero}</h1>
-        </div>
-        <div style={{ display: 'flex', gap: 'var(--space-4)', alignItems: 'center' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)' }}>
-            <input 
-              type="checkbox" 
-              checked={isTicketFormat} 
-              onChange={handleFormatChange}
-            />
-            Formato Ticket (80mm)
-          </label>
-          <button className="btn btn-outline btn-sm" onClick={handlePrintFactura} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Printer size={16} /> Imprimir Factura
-          </button>
-        </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-6)' }}>
+        <Link to="/facturas" className="btn btn-ghost btn-sm btn-icon">
+          <ChevronLeft size={18} />
+        </Link>
+        <h1 className="page-title">Factura {factura.numero}</h1>
       </div>
 
       <div className="card" style={{ marginBottom: 'var(--space-6)' }}>
@@ -256,11 +327,7 @@ export function FacturaDetail() {
           <div style={{ marginLeft: 'var(--space-6)' }}>
             <button 
               className="btn btn-primary" 
-              onClick={() => {
-                setAbonoToEdit(null);
-                setAbonoForm({ monto: '', metodoPago: 'EFECTIVO', notas: '' });
-                setIsAbonoModalOpen(true);
-              }}
+              onClick={() => setIsAbonoModalOpen(true)}
               disabled={factura.estadoPago === 'PAGADO' || factura.estadoPago === 'ANULADO'}
             >
               <CreditCard size={16} /> Abonar
@@ -270,156 +337,502 @@ export function FacturaDetail() {
       </div>
 
       {/* Prendas List */}
-      <div style={{ marginTop: 'var(--space-4)', flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--bg-card)', padding: 'var(--space-4)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
-          <h3 style={{ fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)', margin: 0 }}>
-            Prendas de la Factura
-          </h3>
-          <button className="btn btn-outline btn-sm" onClick={handlePrintPrendas} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Tag size={16} /> Imprimir Prendas
-          </button>
-        </div>
-        
-        <div className="table-wrapper" style={{ maxHeight: '400px', overflowY: 'auto', marginBottom: 'var(--space-4)' }}>
-          <table className="table">
-            <thead style={{ position: 'sticky', top: 0, background: 'var(--bg-card)', zIndex: 1 }}>
-              <tr>
-                <th>Tipo Prenda</th>
-                <th>Servicios</th>
-                <th>Atención</th>
-                <th style={{ textAlign: 'right' }}>Valor</th>
-                <th style={{ textAlign: 'center' }}>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(!factura.prendas || factura.prendas.length === 0) ? (
-                <tr>
-                  <td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: 'var(--color-text-muted)' }}>
-                    No hay prendas agregadas a esta factura.
-                  </td>
-                </tr>
-              ) : (
-                factura.prendas.map(p => {
-                  const tipo = tiposPrenda.find(t => t.id === p.tipoPrendaId)?.nombre || 'Desconocido';
-                  const val = p.servicios?.reduce((acc, s) => acc + Number(s.precioFinal), 0) || 0;
-                  const srvResumen = p.servicios?.map((s: any) => {
-                    const c = catalogoServicios.find((cs: any) => cs.id === s.servicioId);
-                    const name = c ? c.tipoEspecifico : 'Servicio';
-                    return s.observaciones ? `${name} (Obs: ${s.observaciones})` : name;
-                  }).join(', ') || 'Sin servicios';
-
-                  return (
-                    <tr key={p.id}>
-                      <td style={{ fontWeight: 'var(--font-medium)', textTransform: 'uppercase' }}>
-                        {tipo}
-                        <div style={{ fontSize: '10px', color: 'var(--color-text-muted)', fontWeight: 'normal' }}>{p.codigoQR}</div>
-                      </td>
-                      <td style={{ fontSize: 'var(--text-sm)' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                          <span>{p.servicios?.length || 0} asignados</span>
-                          <span style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{srvResumen}</span>
-                        </div>
-                      </td>
-                      <td>
-                        <select 
-                          className="form-select"
-                          style={{ fontSize: '12px', padding: '2px 24px 2px 8px', height: 'auto', minHeight: '26px' }}
-                          value={p.tipoExpress || 'NORMAL'}
-                          onChange={e => handleCambiarExpress(p.id, e.target.value)}
-                        >
-                          <option value="NORMAL">Normal</option>
-                          <option value="EXPRESS_48H">24h</option>
-                          <option value="EXPRESS_24H">48h</option>
-                        </select>
-                      </td>
-                      <td style={{ textAlign: 'right', fontWeight: 'bold' }}>
-                        €{val.toFixed(2)}
-                      </td>
-                      <td>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '4px' }}>
-                          <button className="btn btn-ghost btn-sm btn-icon" onClick={() => handleEditPrenda(p)} style={{ color: 'var(--color-primary)' }} title="Editar prenda">
-                            <Edit2 size={16} />
-                          </button>
-                          <button className="btn btn-ghost btn-sm btn-icon" onClick={() => handleRemovePrenda(p.id)} style={{ color: 'var(--color-danger)' }} title="Eliminar prenda">
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        <button 
-          type="button" 
-          className="btn btn-outline" 
-          style={{ width: 'max-content', borderStyle: 'dashed' }}
-          onClick={handleOpenAddPrenda}
-        >
-          <Plus size={16} /> 
-          Agregar Prenda
-        </button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
+        <h3 className="card-title">Prendas de la Factura</h3>
       </div>
 
-      {/* Resumen de Abonos */}
-      {factura.abonos && factura.abonos.length > 0 && (
-        <div style={{ marginTop: 'var(--space-4)', display: 'flex', flexDirection: 'column', background: 'var(--bg-card)', padding: 'var(--space-4)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
-          <h3 style={{ fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-3)' }}>
-            Abonos Registrados
-          </h3>
-          <div className="table-wrapper" style={{ overflowY: 'auto' }}>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Método de Pago</th>
-                  <th>Notas</th>
-                  <th style={{ textAlign: 'right' }}>Monto</th>
-                  <th style={{ textAlign: 'center' }}>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {factura.abonos.map(abono => (
-                  <tr key={abono.id}>
-                    <td>{new Date(abono.fecha).toLocaleString()}</td>
-                    <td>{abono.metodoPago}</td>
-                    <td>{abono.notas || '-'}</td>
-                    <td style={{ textAlign: 'right', fontWeight: 'bold', color: 'var(--color-success)' }}>
-                      €{Number(abono.monto).toFixed(2)}
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', justifyContent: 'center', gap: '4px' }}>
-                        <button className="btn btn-ghost btn-sm btn-icon" onClick={() => handleOpenEditAbono(abono)} style={{ color: 'var(--color-primary)' }} title="Editar abono" disabled={factura.estadoPago === 'ANULADO'}>
-                          <Edit2 size={16} />
-                        </button>
-                        <button className="btn btn-ghost btn-sm btn-icon" onClick={() => handleDeleteAbono(abono.id)} style={{ color: 'var(--color-danger)' }} title="Eliminar abono" disabled={factura.estadoPago === 'ANULADO'}>
-                          <Trash2 size={16} />
-                        </button>
+      <div className="grid-4">
+        {/* Add Prenda Card */}
+        <div 
+          className="card" 
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)', cursor: 'pointer', border: '2px dashed var(--color-border)', backgroundColor: 'transparent', minHeight: '150px' }}
+          onClick={() => handleOpenModal()}
+        >
+          <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Plus size={24} />
+          </div>
+          <p style={{ fontWeight: 'var(--font-medium)', color: 'var(--color-primary)' }}>Agregar Prenda</p>
+        </div>
+
+        {/* Existing Prendas */}
+        {factura.prendas?.map((prenda) => {
+          const tipo = tiposPrenda.find(t => t.id === prenda.tipoPrendaId)?.nombre || 'Desconocido';
+          const totalPrenda = prenda.servicios?.reduce((acc, s) => acc + Number(s.precioFinal), 0) || 0;
+          const isExpanded = expandedPrendaId === prenda.id;
+          const urg = prenda.tipoUrgencia || tiposUrgencia.find(u => Number(u.id) === Number(prenda.tipoUrgenciaId));
+
+          return (
+            <div 
+              key={prenda.id} 
+              className="card" 
+              style={{ cursor: 'pointer', position: 'relative', border: isExpanded ? '2px solid var(--color-primary)' : undefined }}
+              onClick={() => setExpandedPrendaId(isExpanded ? null : prenda.id)}
+            >
+              <div style={{ position: 'absolute', top: 'var(--space-4)', right: 'var(--space-4)', display: 'flex', gap: '4px' }}>
+                <button 
+                  className="btn btn-ghost btn-sm btn-icon" 
+                  onClick={(e) => { e.stopPropagation(); handleOpenModal(prenda); }}
+                  style={{ color: 'var(--color-primary)' }}
+                >
+                  <Edit2 size={16} />
+                </button>
+                <button 
+                  className="btn btn-ghost btn-sm btn-icon" 
+                  onClick={(e) => { e.stopPropagation(); handleRemovePrenda(prenda.id); }}
+                  style={{ color: 'var(--color-danger)' }}
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-3)' }}>
+                <div style={{ width: '2.5rem', height: '2.5rem', borderRadius: 'var(--radius-md)', background: 'var(--bg-hover)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text)' }}>
+                  <Tag size={20} />
+                </div>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                    <p style={{ fontFamily: 'var(--font-heading)', fontWeight: 'var(--font-semibold)', textTransform: 'uppercase' }}>{tipo}</p>
+                    {urg && (
+                      <span className="badge badge-warning" style={{ fontSize: '10px', padding: '2px 6px', fontWeight: 'bold' }}>
+                        {urg.nombre}
+                      </span>
+                    )}
+                  </div>
+                  <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>{prenda.codigoQR}</p>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', fontSize: 'var(--text-sm)', marginBottom: 'var(--space-2)' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-2)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--color-text-light)' }}>
+                    <span style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: prenda.color.toLowerCase() }}></span>
+                    {toTitleCase(prenda.color)}
+                  </div>
+                  {prenda.marca && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--color-text-light)' }}>
+                      <Tag size={14} /> {toTitleCase(prenda.marca)}
+                    </div>
+                  )}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--color-text-light)' }}>
+                  <Calendar size={14} /> {prenda.fechaCompromiso ? new Date(prenda.fechaCompromiso).toLocaleDateString() : 'Sin fecha de compromiso'}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+                  <label style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>Atención:</label>
+                  <select 
+                    value={prenda.tipoUrgenciaId != null ? prenda.tipoUrgenciaId.toString() : ''}
+                    onChange={(e) => handleCambiarUrgencia(prenda.id, e.target.value ? Number(e.target.value) : null)}
+                    onClick={e => e.stopPropagation()}
+                    style={{ 
+                      fontSize: 'var(--text-xs)', 
+                      padding: '2px 4px', 
+                      borderRadius: '4px', 
+                      border: '1px solid var(--color-border)',
+                      backgroundColor: 'var(--bg-card)'
+                    }}
+                  >
+                    <option value="">Normal (0%)</option>
+                    {tiposUrgencia.map(tu => (
+                      <option key={tu.id} value={tu.id.toString()}>
+                        {tu.nombre} ({Number(tu.porcentajeRecargo) > 0 ? '+' : ''}{Number(tu.porcentajeRecargo)}%)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-3)', marginTop: 'var(--space-3)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)' }}>{prenda.servicios?.length || 0} servicios</span>
+                <span style={{ display: 'flex', alignItems: 'center', fontWeight: 'bold', color: 'var(--color-primary)' }}>
+                  <Euro size={14} style={{ marginRight: '2px' }} /> {totalPrenda.toFixed(2)}
+                </span>
+              </div>
+
+              {/* Expanded Details */}
+              {isExpanded && (
+                <div style={{ marginTop: 'var(--space-4)', borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-4)' }}>
+                  <p style={{ fontSize: 'var(--text-xs)', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: 'var(--space-2)' }}>Detalle de Servicios</p>
+                  {prenda.servicios?.length === 0 ? (
+                    <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-light)' }}>Sin servicios asignados.</p>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                      {prenda.servicios?.map(s => {
+                        const srvName = catalogoServicios.find(c => c.id === s.servicioId)?.tipoEspecifico || 'Servicio';
+                        return (
+                          <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--text-sm)', background: 'var(--bg-hover)', padding: '6px 8px', borderRadius: '4px' }}>
+                            <div>
+                              <span>{srvName} {s.medidaEntregada ? `(${s.medidaEntregada}cm)` : ''}</span>
+                              {s.observaciones && (
+                                <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)', fontStyle: 'italic', marginTop: '2px' }}>
+                                  Obs: {s.observaciones}
+                                </p>
+                              )}
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                              <span style={{ fontWeight: 'var(--font-medium)' }}>€{Number(s.precioFinal).toFixed(2)}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Agregar Prenda Modal */}
+      {isModalOpen && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 1000, 
+          display: 'flex', alignItems: 'center', justifyContent: 'center', 
+          backgroundColor: 'rgba(0,0,0,0.7)', padding: 'var(--space-4)'
+        }}>
+          <div className="card" style={{ width: '100%', maxWidth: '800px', padding: 'var(--space-6)', maxHeight: '90vh', overflowY: 'auto' }}>
+            <h2 style={{ fontSize: 'var(--text-xl)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-4)' }}>
+              Agregar Prenda
+            </h2>
+            
+            {/* Prenda Form */}
+            <form onSubmit={handleSavePrenda} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+                <div className="form-group">
+                  <label className="form-label">Tipo de Prenda</label>
+                  <select 
+                    required 
+                    className="form-select" 
+                    value={prendaForm.tipoPrendaId}
+                    onChange={e => setPrendaForm(p => ({ ...p, tipoPrendaId: e.target.value }))}
+                    disabled={!!activePrenda && !isEditingPrenda}
+                  >
+                    <option value="">Seleccione...</option>
+                    {tiposPrenda.map(t => <option key={t.id} value={t.id}>{t.nombre.toUpperCase()}</option>)}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Tipo de Urgencia</label>
+                  <select 
+                    className="form-select" 
+                    value={prendaForm.tipoUrgenciaId}
+                    onChange={e => setPrendaForm(p => ({ ...p, tipoUrgenciaId: e.target.value }))}
+                    disabled={!!activePrenda && !isEditingPrenda}
+                  >
+                    <option value="">Normal (0%)</option>
+                    {tiposUrgencia.map(tu => (
+                      <option key={tu.id} value={tu.id.toString()}>
+                        {tu.nombre} ({Number(tu.porcentajeRecargo) > 0 ? '+' : ''}{Number(tu.porcentajeRecargo)}%)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+                <div className="form-group">
+                  <label className="form-label">Talla</label>
+                  <input type="text" required className="form-input" value={prendaForm.talla} onChange={e => setPrendaForm(p => ({ ...p, talla: e.target.value }))} placeholder="Ej. L, 42..." disabled={!!activePrenda && !isEditingPrenda} />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Color</label>
+                  <input type="text" required className="form-input" value={prendaForm.color} onChange={e => setPrendaForm(p => ({ ...p, color: e.target.value }))} placeholder="Ej. Azul marino..." disabled={!!activePrenda && !isEditingPrenda} />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+                <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '28px' }}>
+                  <input type="checkbox" id="esLujo" checked={prendaForm.esLujo} onChange={e => setPrendaForm(p => ({ ...p, esLujo: e.target.checked }))} disabled={!!activePrenda && !isEditingPrenda} />
+                  <label htmlFor="esLujo" className="form-label" style={{ margin: 0 }}>Prenda Costosa / Alta Costura</label>
+                </div>
+              </div>
+
+              {prendaForm.esLujo && (
+                <div className="form-group">
+                  <label className="form-label">Marca (Requerido para prendas de lujo)</label>
+                  <input type="text" required className="form-input" value={prendaForm.marca} onChange={e => setPrendaForm(p => ({ ...p, marca: e.target.value }))} placeholder="Ej. Gucci, Prada..." disabled={!!activePrenda && !isEditingPrenda} />
+                </div>
+              )}
+
+              <div className="form-group">
+                <label className="form-label">Observaciones (Opcional)</label>
+                <textarea 
+                  className="form-input" 
+                  value={prendaForm.notas} 
+                  onChange={e => setPrendaForm(p => ({ ...p, notas: e.target.value }))} 
+                  placeholder="Añade observaciones para la prenda..." 
+                  disabled={!!activePrenda && !isEditingPrenda} 
+                  rows={2}
+                />
+              </div>
+
+              {(!activePrenda || isEditingPrenda) && (
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 'var(--space-2)' }}>
+                  <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
+                    {isEditingPrenda ? 'Actualizar Prenda' : 'Guardar Prenda'}
+                  </button>
+                </div>
+              )}
+            </form>
+      
+            <hr style={{ margin: 'var(--space-6) 0', border: 'none', borderTop: '1px solid var(--color-border)' }} />
+
+            <h3 style={{ fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-4)', color: activePrenda ? 'var(--color-text)' : 'var(--color-text-muted)' }}>
+              Servicios a Realizar
+            </h3>
+            
+            {!activePrenda ? (
+              <div className="empty-state" style={{ padding: 'var(--space-4)' }}>
+                <p className="empty-state-title" style={{ fontSize: 'var(--text-base)' }}>Primero debes guardar la prenda</p>
+                <p className="empty-state-desc">Usa el botón "Guardar Prenda" para habilitar esta sección.</p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+
+                {/* Servicios ya asignados */}
+                {activePrenda.servicios && activePrenda.servicios.length > 0 && (
+                  <div>
+                    <p style={{ fontSize: 'var(--text-xs)', textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.06em', marginBottom: 'var(--space-2)' }}>
+                      Servicios asignados
+                    </p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                      {activePrenda.servicios.map(s => {
+                        const srv = catalogoServicios.find(c => c.id === s.servicioId);
+                        return (
+                          <div key={s.id} style={{
+                            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                            padding: 'var(--space-3) var(--space-4)',
+                            background: 'var(--color-success-soft, #f0fdf4)',
+                            border: '1px solid var(--color-success)',
+                            borderRadius: 'var(--radius-md)',
+                          }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                              <Check size={16} style={{ color: 'var(--color-success)' }} />
+                              <div>
+                                <p style={{ fontWeight: 'var(--font-medium)', fontSize: 'var(--text-sm)' }}>
+                                  {srv?.categoria} — {srv?.tipoEspecifico ?? 'Servicio'}
+                                </p>
+                                {s.medidaEntregada && (
+                                  <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>
+                                    Medida: {s.medidaEntregada} cm
+                                  </p>
+                                )}
+                                {s.observaciones && (
+                                  <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)', fontStyle: 'italic', marginTop: '2px' }}>
+                                    Obs: {s.observaciones}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
+                              <span style={{ fontWeight: 'bold', color: 'var(--color-success)', fontFamily: 'var(--font-heading)' }}>
+                                €{Number(s.precioFinal).toFixed(2)}
+                              </span>
+                              <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                                <button 
+                                  type="button" 
+                                  className="btn btn-icon" 
+                                  style={{ padding: '4px', color: 'var(--color-text-light)' }} 
+                                  onClick={() => handleEditServicioAsignado(s)}
+                                  title="Modificar servicio"
+                                >
+                                  <Edit2 size={16} />
+                                </button>
+                                <button 
+                                  type="button" 
+                                  className="btn btn-icon" 
+                                  style={{ padding: '4px', color: 'var(--color-danger)' }} 
+                                  onClick={() => handleRemoveServicioAsignado(s.id)}
+                                  title="Eliminar servicio"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Buscador de Servicios y Botones de acción */}
+                <div style={{ marginBottom: 'var(--space-4)', display: 'flex', gap: 'var(--space-4)', alignItems: 'center' }}>
+                  <input
+                    type="text"
+                    className="form-input"
+                    style={{ flex: 1 }}
+                    placeholder="Buscar servicio disponible (ej. dobladillo, bajo, cremallera)..."
+                    value={busquedaServicio}
+                    onChange={e => setBusquedaServicio(e.target.value)}
+                  />
+                  <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                    <button type="button" className="btn btn-ghost" onClick={handleCloseModal}>
+                      Cancelar
+                    </button>
+                    <button type="button" className="btn btn-primary" onClick={handleCloseModal}>
+                      Guardar
+                    </button>
+                  </div>
+                </div>
+
+                {/* Servicios disponibles (All services since restrictions were removed in schema) */}
+                {(() => {
+                  const disponibles = catalogoServicios;
+                  const yaAsignados = new Set((activePrenda.servicios ?? []).map(s => s.servicioId));
+                  
+                  const normalizeText = (t: string) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                  const term = normalizeText(busquedaServicio);
+
+                  const sinAsignar = disponibles.filter(s => {
+                    if (yaAsignados.has(s.id)) return false;
+                    if (!term) return true;
+                    return normalizeText(s.categoria).includes(term) || normalizeText(s.tipoEspecifico).includes(term);
+                  });
+                  const categorias = [...new Set(sinAsignar.map(s => s.categoria))].sort();
+
+                  if (disponibles.length === 0) {
+                    return (
+                      <div style={{
+                        padding: 'var(--space-4)', textAlign: 'center',
+                        background: '#fff8e1', border: '1px solid #f59e0b',
+                        borderRadius: 'var(--radius-md)', fontSize: 'var(--text-sm)',
+                        color: '#92400e'
+                      }}>
+                        ⚠️ No hay servicios configurados para este tipo de prenda. Ve al <strong>Catálogo</strong> y añade reglas de precio.
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    );
+                  }
+
+                  if (sinAsignar.length === 0) {
+                    return (
+                      <div style={{
+                        padding: 'var(--space-3)', textAlign: 'center',
+                        background: 'var(--color-success-soft, #f0fdf4)', border: '1px solid var(--color-success)',
+                        borderRadius: 'var(--radius-md)', fontSize: 'var(--text-sm)',
+                        color: 'var(--color-success)'
+                      }}>
+                        ✅ Todos los servicios disponibles ya están asignados a esta prenda.
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div>
+                      <p style={{ fontSize: 'var(--text-xs)', textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.06em', marginBottom: 'var(--space-3)' }}>
+                        Servicios disponibles para este tipo de prenda
+                      </p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+                        {categorias.map(cat => (
+                          <div key={cat}>
+                            <p style={{ fontSize: 'var(--text-xs)', fontWeight: 'var(--font-semibold)', color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)' }}>
+                              {cat}
+                            </p>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                              {sinAsignar.filter(s => s.categoria === cat).map(srv => {
+                                const isSelected = servicioSeleccionado === String(srv.id);
+                                return (
+                                  <div key={srv.id} style={{
+                                    border: `2px solid ${isSelected ? 'var(--color-primary)' : 'var(--color-border)'}`,
+                                    borderRadius: 'var(--radius-md)',
+                                    background: isSelected ? 'var(--color-primary-soft)' : 'var(--bg)',
+                                    overflow: 'hidden',
+                                    transition: 'all 0.15s',
+                                  }}>
+                                    {/* Cabecera del servicio — clickeable para seleccionar */}
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const isNowSelected = isSelected ? '' : String(srv.id);
+                                        setServicioSeleccionado(isNowSelected);
+                                        if (!isSelected) {
+                                          setMedidaEntregada('');
+                                          setObservacionesServicio('');
+                                        }
+                                      }}
+                                      style={{
+                                        width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                        padding: 'var(--space-3) var(--space-4)',
+                                        background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left',
+                                      }}
+                                    >
+                                      <div>
+                                        <p style={{ fontWeight: 'var(--font-medium)', fontSize: 'var(--text-sm)' }}>{srv.tipoEspecifico}</p>
+                                        <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)', marginTop: '2px' }}>
+                                          Base: {Number(srv.medidaBase ?? 0)} cm · Tiempo estimado: {Number(srv.tiempoBase ?? 0)} min
+                                        </p>
+                                      </div>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                                        <span className={`badge ${isSelected ? 'badge-primary' : 'badge-neutral'}`}>
+                                          {isSelected ? '✓ Seleccionado' : 'Seleccionar'}
+                                        </span>
+                                      </div>
+                                    </button>
+
+                                    {/* Panel de ajuste cuando está seleccionado */}
+                                    {isSelected && (
+                                      <div style={{
+                                        borderTop: '1px solid var(--color-primary)',
+                                        padding: 'var(--space-3) var(--space-4)',
+                                        display: 'flex', alignItems: 'center', gap: 'var(--space-4)',
+                                        background: 'var(--bg)',
+                                      }}>
+                                        <div style={{ flex: 1 }}>
+                                          <label style={{ fontSize: '11px', color: 'var(--color-text-muted)', display: 'block', marginBottom: '4px' }}>
+                                            Longitud entregada (cm) — opcional
+                                          </label>
+                                          <input
+                                            type="number" min="0"
+                                            className="form-input"
+                                            style={{ padding: '6px 10px', fontSize: '13px', maxWidth: '160px' }}
+                                            value={medidaEntregada}
+                                            onChange={e => setMedidaEntregada(e.target.value ? Number(e.target.value) : '')}
+                                            placeholder="Sin medida"
+                                          />
+                                        </div>
+                                        <div style={{ flex: 2 }}>
+                                          <label style={{ fontSize: '11px', color: 'var(--color-text-muted)', display: 'block', marginBottom: '4px' }}>
+                                            Observaciones (máx 500 palabras)
+                                          </label>
+                                          <textarea
+                                            className="form-input"
+                                            style={{ padding: '6px 10px', fontSize: '13px', width: '100%', resize: 'vertical' }}
+                                            rows={2}
+                                            value={observacionesServicio}
+                                            onChange={e => setObservacionesServicio(e.target.value)}
+                                            placeholder="Escribe observaciones para el servicio..."
+                                          />
+                                        </div>
+                                        <div style={{ textAlign: 'right', minWidth: '100px' }}>
+                                          <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Precio calculado al guardar</p>
+                                        </div>
+                                        <button
+                                          type="button"
+                                          className="btn btn-primary"
+                                          disabled={isCalculando}
+                                          onClick={handleAddServicio}
+                                          style={{ alignSelf: 'flex-end' }}
+                                        >
+                                          {isCalculando ? 'Agregando...' : <><Check size={15} /> Agregar</>}
+                                        </button>
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+
           </div>
         </div>
       )}
-
-      {isPrendaModalOpen && (
-        <PrendaModal
-          facturaId={factura.id}
-          prendaToEdit={prendaToEdit}
-          tiposPrenda={tiposPrenda}
-          catalogoServicios={catalogoServicios}
-          config={config}
-          onClose={() => setIsPrendaModalOpen(false)}
-          onSaved={fetchFactura}
-        />
-      )}
-
       {/* Agregar Abono Modal */}
       {isAbonoModalOpen && (
         <div style={{
@@ -429,7 +842,7 @@ export function FacturaDetail() {
         }}>
           <div className="card" style={{ width: '100%', maxWidth: '400px', padding: 'var(--space-6)' }}>
             <h2 style={{ fontSize: 'var(--text-xl)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-4)' }}>
-              {abonoToEdit ? 'Editar Abono' : 'Registrar Abono'}
+              Registrar Abono
             </h2>
             
             <form onSubmit={handleAbonar} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
@@ -439,11 +852,7 @@ export function FacturaDetail() {
                   type="number" 
                   step="0.01"
                   min="0.01"
-                  max={
-                    abonoToEdit
-                      ? Math.min(1000, Math.max(0, Number(factura.total) - (factura.abonos?.reduce((sum, a) => sum + Number(a.monto), 0) || 0)) + Number(abonoToEdit.monto)).toFixed(2)
-                      : Math.min(1000, Math.max(0, Number(factura.total) - (factura.abonos?.reduce((sum, a) => sum + Number(a.monto), 0) || 0))).toFixed(2)
-                  }
+                  max={Math.max(0, Number(factura.total) - (factura.abonos?.reduce((sum, a) => sum + Number(a.monto), 0) || 0)).toFixed(2)}
                   required 
                   className="form-input" 
                   value={abonoForm.monto} 
@@ -476,119 +885,17 @@ export function FacturaDetail() {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 'var(--space-2)', gap: 'var(--space-2)' }}>
-                <button type="button" className="btn btn-ghost" onClick={() => {
-                  setIsAbonoModalOpen(false);
-                  setAbonoToEdit(null);
-                }}>
+                <button type="button" className="btn btn-ghost" onClick={() => setIsAbonoModalOpen(false)}>
                   Cancelar
                 </button>
                 <button type="submit" className="btn btn-primary" disabled={savingAbono}>
-                  {savingAbono ? 'Guardando...' : (abonoToEdit ? 'Actualizar' : 'Registrar')}
+                  {savingAbono ? 'Guardando...' : 'Registrar'}
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
-      {/* Container Oculto para impresión de Prendas */}
-      <div className="print-prendas-container">
-        {factura.prendas?.map((p: any) => (
-          <div key={p.id} className="prenda-ticket">
-            <h4>Factura #{factura.numero} - Prenda #{p.id}</h4>
-            <p><strong>Tipo:</strong> {tiposPrenda.find(t => t.id === p.tipoPrendaId)?.nombre || 'Desconocido'}</p>
-            {p.color && <p><strong>Color:</strong> {p.color}</p>}
-            {p.notas && <p style={{ fontStyle: 'italic', fontSize: '9px', marginTop: '2px' }}>Notas: {p.notas}</p>}
-            <div className="services-list">
-              {p.servicios?.map((s: any, idx: number) => {
-                const c = catalogoServicios.find(cs => cs.id === s.servicioId);
-                return (
-                  <div key={idx}>
-                    - {c ? c.tipoEspecifico : 'Servicio'}{s.observaciones ? ` - Obs: ${s.observaciones}` : ''}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Container Oculto para impresión de Factura */}
-      <div className={`print-factura-container ${isTicketFormat ? 'ticket-80mm' : 'a4-format'}`}>
-        <div className="factura-header">
-          <h2 className="factura-logo">YEKA</h2>
-          <p className="factura-sede">Sede Principal</p>
-        </div>
-        
-        <div className="factura-info">
-          <p><strong>Cliente:</strong> {factura.cliente?.nombre || 'Consumidor Final'} {factura.cliente?.celular ? `- ${factura.cliente.celular}` : ''}</p>
-          <p><strong>Fecha Recibido:</strong> {new Date(factura.createdAt).toLocaleString()}</p>
-          {factura.prendas?.some(p => p.fechaCompromiso) && (
-            <p><strong>Fecha Estimada:</strong> {new Date(Math.max(...(factura.prendas.map(p => p.fechaCompromiso ? new Date(p.fechaCompromiso).getTime() : 0)))).toLocaleDateString()}</p>
-          )}
-        </div>
-
-        <div className="factura-prendas">
-          <h4 className="section-title">Prendas</h4>
-          {factura.prendas?.map((p: any) => {
-            const tipo = tiposPrenda.find(t => t.id === p.tipoPrendaId)?.nombre || 'Desconocido';
-            const val = p.servicios?.reduce((acc: number, s: any) => acc + Number(s.precioFinal), 0) || 0;
-            return (
-              <div key={p.id} className="factura-row" style={{ flexDirection: 'column', marginBottom: '8px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <strong>#{p.id} - {tipo} {p.color ? `(${p.color})` : ''}</strong>
-                  <span>€{val.toFixed(2)}</span>
-                </div>
-                {p.notas && <div style={{ fontSize: '0.9em', fontStyle: 'italic' }}>Obs: {p.notas}</div>}
-                {p.servicios?.map((s: any, idx: number) => {
-                  const c = catalogoServicios.find(cs => cs.id === s.servicioId);
-                  return (
-                    <div key={idx} style={{ fontSize: '0.9em', marginLeft: '8px', display: 'flex', justifyContent: 'space-between' }}>
-                      <span>- {c ? c.tipoEspecifico : 'Servicio'}{s.observaciones ? ` - Obs: ${s.observaciones}` : ''}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
-
-        {(factura.abonos && factura.abonos.length > 0) && (
-          <div className="factura-abonos">
-            <h4 className="section-title">Abonos</h4>
-            {factura.abonos.map((a: any) => (
-              <div key={a.id} className="factura-row">
-                <span>{new Date(a.fecha).toLocaleDateString()} ({a.metodoPago})</span>
-                <span>€{Number(a.monto).toFixed(2)}</span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div className="factura-totales">
-          <div className="factura-row">
-            <span>Subtotal:</span>
-            <span>€{Number(factura.subtotal).toFixed(2)}</span>
-          </div>
-          {factura.impuestosJson && (
-            <div className="factura-row">
-              <span>IVA ({factura.impuestosJson.iva}%):</span>
-              <span>€{Number(factura.impuestosJson.monto).toFixed(2)}</span>
-            </div>
-          )}
-          <div className="factura-row" style={{ borderBottom: '1px solid #000', paddingBottom: '4px', marginBottom: '4px' }}>
-            <strong>Total:</strong>
-            <strong>€{Number(factura.total).toFixed(2)}</strong>
-          </div>
-          <div className="factura-row">
-            <span>Abonado:</span>
-            <span>€{factura.abonos?.reduce((sum: number, a: any) => sum + Number(a.monto), 0).toFixed(2) || '0.00'}</span>
-          </div>
-          <div className="factura-row-total">
-            <span>Pendiente:</span>
-            <span>€{Math.max(0, Number(factura.total) - (factura.abonos?.reduce((sum: number, a: any) => sum + Number(a.monto), 0) || 0)).toFixed(2)}</span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

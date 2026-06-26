@@ -41,9 +41,10 @@ export declare const MetodoPago: {
     readonly BIZUM: "BIZUM";
 };
 export type MetodoPago = (typeof MetodoPago)[keyof typeof MetodoPago];
-export declare const TipoExpress: {
-    readonly NORMAL: "NORMAL";
-    readonly EXPRESS_48H: "EXPRESS_48H";
-    readonly EXPRESS_24H: "EXPRESS_24H";
+export declare const TipoFactor: {
+    readonly MENSUAL: "MENSUAL";
+    readonly ANUAL: "ANUAL";
+    readonly DIARIO: "DIARIO";
+    readonly FIJO_POR_SERVICIO: "FIJO_POR_SERVICIO";
 };
-export type TipoExpress = (typeof TipoExpress)[keyof typeof TipoExpress];
+export type TipoFactor = (typeof TipoFactor)[keyof typeof TipoFactor];

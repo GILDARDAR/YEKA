@@ -3,6 +3,9 @@ import { PrismaService } from '../../prisma/prisma.service';
 export interface AppConfig {
     EXPRESS_24H_MULTIPLIER: string;
     EXPRESS_48H_MULTIPLIER: string;
+    VALOR_HORA_PUNTOS: string;
+    MINUTOS_PRODUCTIVOS_MES: string;
+    MARGEN_UTILIDAD_GLOBAL: string;
 }
 export declare class ConfiguracionService implements OnModuleInit {
     private readonly prisma;

@@ -59,6 +59,8 @@ let PrendaDAO = class PrendaDAO {
                 esLujo: data.esLujo ?? false,
                 notas: data.notas || null,
                 codigoQR: data.codigoQR,
+                tipoUrgenciaId: data.tipoUrgenciaId || null,
+                porcentajeAtencionAplicado: data.porcentajeAtencionAplicado !== undefined ? new client_1.Prisma.Decimal(data.porcentajeAtencionAplicado) : null,
             },
         });
     }
@@ -79,9 +81,13 @@ let PrendaDAO = class PrendaDAO {
                 prendaId: data.prendaId,
                 servicioId: data.servicioId,
                 medidaEntregada: data.medidaEntregada !== undefined ? new client_1.Prisma.Decimal(data.medidaEntregada) : null,
-                tipoExpress: data.tipoExpress,
+                tiempoCalculado: data.tiempoCalculado !== undefined ? data.tiempoCalculado : null,
+                valorPorTiempo: data.valorPorTiempo !== undefined ? new client_1.Prisma.Decimal(data.valorPorTiempo) : null,
+                valorFactoresCobro: data.valorFactoresCobro !== undefined ? new client_1.Prisma.Decimal(data.valorFactoresCobro) : null,
+                precioBruto: data.precioBruto !== undefined ? new client_1.Prisma.Decimal(data.precioBruto) : null,
                 precioFinal: new client_1.Prisma.Decimal(data.precioFinal),
                 observaciones: data.observaciones || null,
+                detallesCalculo: data.detallesCalculo ? data.detallesCalculo : client_1.Prisma.JsonNull,
             },
         });
     }

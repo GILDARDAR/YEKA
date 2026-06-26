@@ -15,17 +15,15 @@ const catalogo_servicio_dao_1 = require("./catalogo-servicio.dao");
 function toResponseDto(item) {
     return {
         id: item.id,
+        nombre: item.nombre,
         categoria: item.categoria,
         tipoEspecifico: item.tipoEspecifico,
-        pesoPuntos: item.pesoPuntos,
+        medidaBase: item.medidaBase?.toNumber() ?? 0,
+        tiempoBase: item.tiempoBase,
         activo: item.activo,
-        preciosPorPrenda: item.preciosServicios?.map((p) => ({
-            id: p.id,
-            tipoPrendaId: p.tipoPrendaId,
-            medidaBase: p.medidaBase.toString(),
-            precioBase: p.precioBase.toString(),
-            medidaExtra: p.medidaExtra.toString(),
-            precioExtra: p.precioExtra.toString(),
+        categoriasFactores: item.categoriasFactores?.map((c) => ({
+            id: c.id,
+            nombre: c.nombre,
         })) || [],
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,

@@ -20,6 +20,7 @@ class CreatePrendaDto {
     esLujo;
     marca;
     notas;
+    tipoUrgenciaId;
 }
 exports.CreatePrendaDto = CreatePrendaDto;
 __decorate([
@@ -55,6 +56,11 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreatePrendaDto.prototype, "notas", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsInt)(),
+    __metadata("design:type", Number)
+], CreatePrendaDto.prototype, "tipoUrgenciaId", void 0);
 class UpdatePrendaDto {
     tipoPrendaId;
     talla;
@@ -62,6 +68,7 @@ class UpdatePrendaDto {
     esLujo;
     marca;
     notas;
+    tipoUrgenciaId;
 }
 exports.UpdatePrendaDto = UpdatePrendaDto;
 __decorate([
@@ -94,10 +101,14 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdatePrendaDto.prototype, "notas", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsInt)(),
+    __metadata("design:type", Number)
+], UpdatePrendaDto.prototype, "tipoUrgenciaId", void 0);
 class AsignarServicioDto {
     servicioId;
     medidaEntregada;
-    tipoExpress;
     observaciones;
 }
 exports.AsignarServicioDto = AsignarServicioDto;
@@ -112,11 +123,6 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], AsignarServicioDto.prototype, "medidaEntregada", void 0);
-__decorate([
-    (0, class_validator_1.IsEnum)(client_1.TipoExpress),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], AsignarServicioDto.prototype, "tipoExpress", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
@@ -164,7 +170,9 @@ class PrendaResponseDto {
     notas;
     createdAt;
     updatedAt;
-    tipoExpress;
+    tipoUrgenciaId;
+    tipoUrgencia;
+    porcentajeAtencionAplicado;
     factura;
 }
 exports.PrendaResponseDto = PrendaResponseDto;
@@ -173,9 +181,13 @@ class PrendaServicioResponseDto {
     prendaId;
     servicioId;
     medidaEntregada;
-    tipoExpress;
+    tiempoCalculado;
+    valorPorTiempo;
+    valorFactoresCobro;
+    precioBruto;
     precioFinal;
     observaciones;
+    detallesCalculo;
     createdAt;
 }
 exports.PrendaServicioResponseDto = PrendaServicioResponseDto;

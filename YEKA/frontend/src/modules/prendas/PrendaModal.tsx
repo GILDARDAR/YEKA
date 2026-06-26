@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { prendasService } from './prendas.service';
 import type { Prenda, TipoPrenda, CatalogoServicio, PrendaServicio, EstadoPrenda } from '../../shared/types';
 import { Check, Trash2, Edit2, X } from 'lucide-react';
@@ -8,7 +8,6 @@ interface PrendaModalProps {
   prendaToEdit: Prenda | null;
   tiposPrenda: TipoPrenda[];
   catalogoServicios: CatalogoServicio[];
-  config: any;
   onClose: () => void;
   onSaved: () => void; // Called when any change happens so parent can refresh
 }
@@ -33,7 +32,6 @@ export function PrendaModal({
   prendaToEdit,
   tiposPrenda,
   catalogoServicios,
-  config,
   onClose,
   onSaved
 }: PrendaModalProps) {
@@ -42,6 +40,7 @@ export function PrendaModal({
   
   const [prendaForm, setPrendaForm] = useState({
     tipoPrendaId: prendaToEdit?.tipoPrendaId?.toString() || '',
+    tipoUrgenciaId: prendaToEdit?.tipoUrgenciaId?.toString() || '',
     talla: prendaToEdit?.talla || '',
     color: prendaToEdit?.color || '',
     esLujo: prendaToEdit?.esLujo || false,
@@ -65,6 +64,13 @@ export function PrendaModal({
   const [observacionesServicio, setObservacionesServicio] = useState('');
   const [isCalculando, setIsCalculando] = useState(false);
   const [busquedaServicio, setBusquedaServicio] = useState('');
+  const [tiposUrgencia, setTiposUrgencia] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    import('../../shared/api').then(({ default: api }) => {
+      api.get('/tipo-urgencia').then(res => setTiposUrgencia(res.data)).catch(console.error);
+    });
+  }, []);
 
   // Handle ESC key
   React.useEffect(() => {
@@ -83,6 +89,7 @@ export function PrendaModal({
       const dto = {
         facturaId: Number(facturaId),
         tipoPrendaId: Number(prendaForm.tipoPrendaId),
+        tipoUrgenciaId: prendaForm.tipoUrgenciaId ? Number(prendaForm.tipoUrgenciaId) : null,
         talla: prendaForm.talla,
         color: prendaForm.color,
         esLujo: prendaForm.esLujo,
@@ -106,39 +113,6 @@ export function PrendaModal({
     }
   };
 
-  const precioCalculado = useMemo(() => {
-    const tPrendaId = activePrenda ? activePrenda.tipoPrendaId : Number(prendaForm.tipoPrendaId);
-    if (!tPrendaId || !servicioSeleccionado) return 0;
-    
-    const srv = catalogoServicios.find(s => s.id === Number(servicioSeleccionado));
-    if (!srv) return 0;
-
-    const regla = srv.preciosPorPrenda.find(p => p.tipoPrendaId === tPrendaId);
-    if (!regla) return 0;
-
-    let basePrice = Number(regla.precioBase);
-    const medidaBase = Number(regla.medidaBase);
-    const medidaExtra = Number(regla.medidaExtra);
-    const precioExtra = Number(regla.precioExtra);
-    const mEntregada = Number(medidaEntregada);
-
-    if (mEntregada > medidaBase && medidaExtra > 0) {
-      const exceso = mEntregada - medidaBase;
-      const unidadesExtra = Math.ceil(exceso / medidaExtra);
-      basePrice = basePrice + (unidadesExtra * precioExtra);
-    }
-
-    let multiplier = 1.0;
-    const expressType = activePrenda?.tipoExpress || 'NORMAL';
-    if (expressType === 'EXPRESS_48H') {
-      multiplier = parseFloat(config.EXPRESS_48H_MULTIPLIER || '1.30');
-    } else if (expressType === 'EXPRESS_24H') {
-      multiplier = parseFloat(config.EXPRESS_24H_MULTIPLIER || '1.50');
-    }
-
-    return basePrice * multiplier;
-  }, [servicioSeleccionado, medidaEntregada, activePrenda, prendaForm.tipoPrendaId, catalogoServicios, config]);
-
   const handleAddServicio = async () => {
     if (!servicioSeleccionado || !activePrenda) return;
     try {
@@ -146,7 +120,6 @@ export function PrendaModal({
       await prendasService.asignarServicio(activePrenda.id, {
         servicioId: Number(servicioSeleccionado),
         medidaEntregada: medidaEntregada !== '' ? Number(medidaEntregada) : undefined,
-        tipoExpress: activePrenda.tipoExpress || 'NORMAL',
         observaciones: observacionesServicio ? observacionesServicio : undefined,
       });
       
@@ -258,6 +231,18 @@ export function PrendaModal({
               <label className="form-label">Talla</label>
               <input type="text" required className="form-input" value={prendaForm.talla} onChange={e => setPrendaForm(p => ({ ...p, talla: e.target.value }))} placeholder="Ej. L, 42..." disabled={!!activePrenda && !isEditingPrenda} />
             </div>
+            <div className="form-group">
+              <label className="form-label">Tipo de Urgencia</label>
+              <select 
+                className="form-select" 
+                value={prendaForm.tipoUrgenciaId}
+                onChange={e => setPrendaForm(p => ({ ...p, tipoUrgenciaId: e.target.value }))}
+                disabled={!!activePrenda && !isEditingPrenda}
+              >
+                <option value="">Normal</option>
+                {tiposUrgencia.map(tu => <option key={tu.id} value={tu.id.toString()}>{tu.nombre}</option>)}
+              </select>
+            </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-4)' }}>
@@ -346,7 +331,7 @@ export function PrendaModal({
                           </div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
-                          <span style={{ fontWeight: 'bold', color: 'var(--color-success)', fontFamily: 'var(--font-heading)' }}>
+                          <span style={{ fontWeight: 'bold', color: 'var(--color-primary)', fontFamily: 'var(--font-heading)' }}>
                             €{Number(s.precioFinal).toFixed(2)}
                           </span>
                           <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
@@ -396,9 +381,7 @@ export function PrendaModal({
 
             {/* Servicios disponibles agrupados por categoría */}
             {(() => {
-              const disponibles = catalogoServicios.filter(s =>
-                s.preciosPorPrenda.some(p => Number(p.tipoPrendaId) === Number(activePrenda.tipoPrendaId))
-              );
+              const disponibles = catalogoServicios;
               const yaAsignados = new Set((activePrenda.servicios ?? []).map(s => s.servicioId));
               
               const normalizeText = (t: string) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -450,7 +433,6 @@ export function PrendaModal({
                         </p>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
                           {sinAsignar.filter(s => s.categoria === cat).map(srv => {
-                            const regla = srv.preciosPorPrenda.find(p => Number(p.tipoPrendaId) === Number(activePrenda.tipoPrendaId));
                             const isSelected = servicioSeleccionado === String(srv.id);
                             return (
                               <div key={srv.id} style={{
@@ -480,13 +462,10 @@ export function PrendaModal({
                                   <div>
                                     <p style={{ fontWeight: 'var(--font-medium)', fontSize: 'var(--text-sm)' }}>{srv.tipoEspecifico}</p>
                                     <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)', marginTop: '2px' }}>
-                                      Hasta {Number(regla?.medidaBase ?? 0)} cm · +€{Number(regla?.precioExtra ?? 0).toFixed(2)} / {Number(regla?.medidaExtra ?? 1)} cm adicional
+                                      Base: {Number(srv.medidaBase ?? 0)} cm · Tiempo estimado: {Number(srv.tiempoBase ?? 0)} min
                                     </p>
                                   </div>
                                   <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-                                    <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 'bold', color: 'var(--color-primary)', fontSize: 'var(--text-lg)' }}>
-                                      €{Number(regla?.precioBase ?? 0).toFixed(2)}
-                                    </span>
                                     <span className={`badge ${isSelected ? 'badge-primary' : 'badge-neutral'}`}>
                                       {isSelected ? '✓ Seleccionado' : 'Seleccionar'}
                                     </span>
@@ -528,10 +507,7 @@ export function PrendaModal({
                                       />
                                     </div>
                                     <div style={{ textAlign: 'right', minWidth: '100px' }}>
-                                      <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Precio calculado</p>
-                                      <p style={{ fontFamily: 'var(--font-heading)', fontWeight: 'bold', fontSize: 'var(--text-xl)', color: 'var(--color-primary)' }}>
-                                        €{precioCalculado.toFixed(2)}
-                                      </p>
+                                      <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Precio calculado al guardar</p>
                                     </div>
                                     <button
                                       type="button"

@@ -164,9 +164,11 @@ export declare const ModelName: {
     readonly Factura: "Factura";
     readonly Abono: "Abono";
     readonly TipoPrenda: "TipoPrenda";
+    readonly TipoUrgencia: "TipoUrgencia";
     readonly Prenda: "Prenda";
     readonly CatalogoServicio: "CatalogoServicio";
-    readonly PrecioServicio: "PrecioServicio";
+    readonly CategoriaFactorCobro: "CategoriaFactorCobro";
+    readonly FactorCobro: "FactorCobro";
     readonly PrendaServicio: "PrendaServicio";
     readonly Inventario: "Inventario";
     readonly AuditLog: "AuditLog";
@@ -185,7 +187,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         omit: GlobalOmitOptions;
     };
     meta: {
-        modelProps: "sede" | "usuario" | "registroJornada" | "cliente" | "factura" | "abono" | "tipoPrenda" | "prenda" | "catalogoServicio" | "precioServicio" | "prendaServicio" | "inventario" | "auditLog" | "configuracion" | "anuncio" | "anuncioRespuesta";
+        modelProps: "sede" | "usuario" | "registroJornada" | "cliente" | "factura" | "abono" | "tipoPrenda" | "tipoUrgencia" | "prenda" | "catalogoServicio" | "categoriaFactorCobro" | "factorCobro" | "prendaServicio" | "inventario" | "auditLog" | "configuracion" | "anuncio" | "anuncioRespuesta";
         txIsolationLevel: TransactionIsolationLevel;
     };
     model: {
@@ -707,6 +709,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
                 };
             };
         };
+        TipoUrgencia: {
+            payload: Prisma.$TipoUrgenciaPayload<ExtArgs>;
+            fields: Prisma.TipoUrgenciaFieldRefs;
+            operations: {
+                findUnique: {
+                    args: Prisma.TipoUrgenciaFindUniqueArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$TipoUrgenciaPayload> | null;
+                };
+                findUniqueOrThrow: {
+                    args: Prisma.TipoUrgenciaFindUniqueOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$TipoUrgenciaPayload>;
+                };
+                findFirst: {
+                    args: Prisma.TipoUrgenciaFindFirstArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$TipoUrgenciaPayload> | null;
+                };
+                findFirstOrThrow: {
+                    args: Prisma.TipoUrgenciaFindFirstOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$TipoUrgenciaPayload>;
+                };
+                findMany: {
+                    args: Prisma.TipoUrgenciaFindManyArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$TipoUrgenciaPayload>[];
+                };
+                create: {
+                    args: Prisma.TipoUrgenciaCreateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$TipoUrgenciaPayload>;
+                };
+                createMany: {
+                    args: Prisma.TipoUrgenciaCreateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                createManyAndReturn: {
+                    args: Prisma.TipoUrgenciaCreateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$TipoUrgenciaPayload>[];
+                };
+                delete: {
+                    args: Prisma.TipoUrgenciaDeleteArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$TipoUrgenciaPayload>;
+                };
+                update: {
+                    args: Prisma.TipoUrgenciaUpdateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$TipoUrgenciaPayload>;
+                };
+                deleteMany: {
+                    args: Prisma.TipoUrgenciaDeleteManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateMany: {
+                    args: Prisma.TipoUrgenciaUpdateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateManyAndReturn: {
+                    args: Prisma.TipoUrgenciaUpdateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$TipoUrgenciaPayload>[];
+                };
+                upsert: {
+                    args: Prisma.TipoUrgenciaUpsertArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$TipoUrgenciaPayload>;
+                };
+                aggregate: {
+                    args: Prisma.TipoUrgenciaAggregateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AggregateTipoUrgencia>;
+                };
+                groupBy: {
+                    args: Prisma.TipoUrgenciaGroupByArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.TipoUrgenciaGroupByOutputType>[];
+                };
+                count: {
+                    args: Prisma.TipoUrgenciaCountArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.TipoUrgenciaCountAggregateOutputType> | number;
+                };
+            };
+        };
         Prenda: {
             payload: Prisma.$PrendaPayload<ExtArgs>;
             fields: Prisma.PrendaFieldRefs;
@@ -855,77 +931,151 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
                 };
             };
         };
-        PrecioServicio: {
-            payload: Prisma.$PrecioServicioPayload<ExtArgs>;
-            fields: Prisma.PrecioServicioFieldRefs;
+        CategoriaFactorCobro: {
+            payload: Prisma.$CategoriaFactorCobroPayload<ExtArgs>;
+            fields: Prisma.CategoriaFactorCobroFieldRefs;
             operations: {
                 findUnique: {
-                    args: Prisma.PrecioServicioFindUniqueArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$PrecioServicioPayload> | null;
+                    args: Prisma.CategoriaFactorCobroFindUniqueArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoriaFactorCobroPayload> | null;
                 };
                 findUniqueOrThrow: {
-                    args: Prisma.PrecioServicioFindUniqueOrThrowArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$PrecioServicioPayload>;
+                    args: Prisma.CategoriaFactorCobroFindUniqueOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoriaFactorCobroPayload>;
                 };
                 findFirst: {
-                    args: Prisma.PrecioServicioFindFirstArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$PrecioServicioPayload> | null;
+                    args: Prisma.CategoriaFactorCobroFindFirstArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoriaFactorCobroPayload> | null;
                 };
                 findFirstOrThrow: {
-                    args: Prisma.PrecioServicioFindFirstOrThrowArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$PrecioServicioPayload>;
+                    args: Prisma.CategoriaFactorCobroFindFirstOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoriaFactorCobroPayload>;
                 };
                 findMany: {
-                    args: Prisma.PrecioServicioFindManyArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$PrecioServicioPayload>[];
+                    args: Prisma.CategoriaFactorCobroFindManyArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoriaFactorCobroPayload>[];
                 };
                 create: {
-                    args: Prisma.PrecioServicioCreateArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$PrecioServicioPayload>;
+                    args: Prisma.CategoriaFactorCobroCreateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoriaFactorCobroPayload>;
                 };
                 createMany: {
-                    args: Prisma.PrecioServicioCreateManyArgs<ExtArgs>;
+                    args: Prisma.CategoriaFactorCobroCreateManyArgs<ExtArgs>;
                     result: BatchPayload;
                 };
                 createManyAndReturn: {
-                    args: Prisma.PrecioServicioCreateManyAndReturnArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$PrecioServicioPayload>[];
+                    args: Prisma.CategoriaFactorCobroCreateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoriaFactorCobroPayload>[];
                 };
                 delete: {
-                    args: Prisma.PrecioServicioDeleteArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$PrecioServicioPayload>;
+                    args: Prisma.CategoriaFactorCobroDeleteArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoriaFactorCobroPayload>;
                 };
                 update: {
-                    args: Prisma.PrecioServicioUpdateArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$PrecioServicioPayload>;
+                    args: Prisma.CategoriaFactorCobroUpdateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoriaFactorCobroPayload>;
                 };
                 deleteMany: {
-                    args: Prisma.PrecioServicioDeleteManyArgs<ExtArgs>;
+                    args: Prisma.CategoriaFactorCobroDeleteManyArgs<ExtArgs>;
                     result: BatchPayload;
                 };
                 updateMany: {
-                    args: Prisma.PrecioServicioUpdateManyArgs<ExtArgs>;
+                    args: Prisma.CategoriaFactorCobroUpdateManyArgs<ExtArgs>;
                     result: BatchPayload;
                 };
                 updateManyAndReturn: {
-                    args: Prisma.PrecioServicioUpdateManyAndReturnArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$PrecioServicioPayload>[];
+                    args: Prisma.CategoriaFactorCobroUpdateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoriaFactorCobroPayload>[];
                 };
                 upsert: {
-                    args: Prisma.PrecioServicioUpsertArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$PrecioServicioPayload>;
+                    args: Prisma.CategoriaFactorCobroUpsertArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoriaFactorCobroPayload>;
                 };
                 aggregate: {
-                    args: Prisma.PrecioServicioAggregateArgs<ExtArgs>;
-                    result: runtime.Types.Utils.Optional<Prisma.AggregatePrecioServicio>;
+                    args: Prisma.CategoriaFactorCobroAggregateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AggregateCategoriaFactorCobro>;
                 };
                 groupBy: {
-                    args: Prisma.PrecioServicioGroupByArgs<ExtArgs>;
-                    result: runtime.Types.Utils.Optional<Prisma.PrecioServicioGroupByOutputType>[];
+                    args: Prisma.CategoriaFactorCobroGroupByArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.CategoriaFactorCobroGroupByOutputType>[];
                 };
                 count: {
-                    args: Prisma.PrecioServicioCountArgs<ExtArgs>;
-                    result: runtime.Types.Utils.Optional<Prisma.PrecioServicioCountAggregateOutputType> | number;
+                    args: Prisma.CategoriaFactorCobroCountArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.CategoriaFactorCobroCountAggregateOutputType> | number;
+                };
+            };
+        };
+        FactorCobro: {
+            payload: Prisma.$FactorCobroPayload<ExtArgs>;
+            fields: Prisma.FactorCobroFieldRefs;
+            operations: {
+                findUnique: {
+                    args: Prisma.FactorCobroFindUniqueArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$FactorCobroPayload> | null;
+                };
+                findUniqueOrThrow: {
+                    args: Prisma.FactorCobroFindUniqueOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$FactorCobroPayload>;
+                };
+                findFirst: {
+                    args: Prisma.FactorCobroFindFirstArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$FactorCobroPayload> | null;
+                };
+                findFirstOrThrow: {
+                    args: Prisma.FactorCobroFindFirstOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$FactorCobroPayload>;
+                };
+                findMany: {
+                    args: Prisma.FactorCobroFindManyArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$FactorCobroPayload>[];
+                };
+                create: {
+                    args: Prisma.FactorCobroCreateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$FactorCobroPayload>;
+                };
+                createMany: {
+                    args: Prisma.FactorCobroCreateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                createManyAndReturn: {
+                    args: Prisma.FactorCobroCreateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$FactorCobroPayload>[];
+                };
+                delete: {
+                    args: Prisma.FactorCobroDeleteArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$FactorCobroPayload>;
+                };
+                update: {
+                    args: Prisma.FactorCobroUpdateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$FactorCobroPayload>;
+                };
+                deleteMany: {
+                    args: Prisma.FactorCobroDeleteManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateMany: {
+                    args: Prisma.FactorCobroUpdateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateManyAndReturn: {
+                    args: Prisma.FactorCobroUpdateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$FactorCobroPayload>[];
+                };
+                upsert: {
+                    args: Prisma.FactorCobroUpsertArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$FactorCobroPayload>;
+                };
+                aggregate: {
+                    args: Prisma.FactorCobroAggregateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AggregateFactorCobro>;
+                };
+                groupBy: {
+                    args: Prisma.FactorCobroGroupByArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.FactorCobroGroupByOutputType>[];
+                };
+                count: {
+                    args: Prisma.FactorCobroCountArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.FactorCobroCountAggregateOutputType> | number;
                 };
             };
         };
@@ -1480,11 +1630,21 @@ export declare const TipoPrendaScalarFieldEnum: {
     readonly id: "id";
     readonly nombre: "nombre";
     readonly descripcion: "descripcion";
+    readonly porcentajeDificultad: "porcentajeDificultad";
     readonly activo: "activo";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
 };
 export type TipoPrendaScalarFieldEnum = (typeof TipoPrendaScalarFieldEnum)[keyof typeof TipoPrendaScalarFieldEnum];
+export declare const TipoUrgenciaScalarFieldEnum: {
+    readonly id: "id";
+    readonly nombre: "nombre";
+    readonly porcentajeRecargo: "porcentajeRecargo";
+    readonly activo: "activo";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type TipoUrgenciaScalarFieldEnum = (typeof TipoUrgenciaScalarFieldEnum)[keyof typeof TipoUrgenciaScalarFieldEnum];
 export declare const PrendaScalarFieldEnum: {
     readonly id: "id";
     readonly facturaId: "facturaId";
@@ -1502,39 +1662,56 @@ export declare const PrendaScalarFieldEnum: {
     readonly color: "color";
     readonly marca: "marca";
     readonly talla: "talla";
-    readonly tipoExpress: "tipoExpress";
+    readonly tipoUrgenciaId: "tipoUrgenciaId";
+    readonly porcentajeAtencionAplicado: "porcentajeAtencionAplicado";
 };
 export type PrendaScalarFieldEnum = (typeof PrendaScalarFieldEnum)[keyof typeof PrendaScalarFieldEnum];
 export declare const CatalogoServicioScalarFieldEnum: {
     readonly id: "id";
+    readonly nombre: "nombre";
     readonly categoria: "categoria";
     readonly tipoEspecifico: "tipoEspecifico";
-    readonly pesoPuntos: "pesoPuntos";
+    readonly medidaBase: "medidaBase";
+    readonly tiempoBase: "tiempoBase";
     readonly activo: "activo";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
 };
 export type CatalogoServicioScalarFieldEnum = (typeof CatalogoServicioScalarFieldEnum)[keyof typeof CatalogoServicioScalarFieldEnum];
-export declare const PrecioServicioScalarFieldEnum: {
+export declare const CategoriaFactorCobroScalarFieldEnum: {
     readonly id: "id";
-    readonly catalogoServicioId: "catalogoServicioId";
-    readonly tipoPrendaId: "tipoPrendaId";
-    readonly medidaBase: "medidaBase";
-    readonly precioBase: "precioBase";
-    readonly medidaExtra: "medidaExtra";
-    readonly precioExtra: "precioExtra";
-    readonly activo: "activo";
+    readonly nombre: "nombre";
+    readonly activa: "activa";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
 };
-export type PrecioServicioScalarFieldEnum = (typeof PrecioServicioScalarFieldEnum)[keyof typeof PrecioServicioScalarFieldEnum];
+export type CategoriaFactorCobroScalarFieldEnum = (typeof CategoriaFactorCobroScalarFieldEnum)[keyof typeof CategoriaFactorCobroScalarFieldEnum];
+export declare const FactorCobroScalarFieldEnum: {
+    readonly id: "id";
+    readonly categoriaId: "categoriaId";
+    readonly nombre: "nombre";
+    readonly valor: "valor";
+    readonly tipo: "tipo";
+    readonly fechaInicio: "fechaInicio";
+    readonly fechaFin: "fechaFin";
+    readonly activo: "activo";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type FactorCobroScalarFieldEnum = (typeof FactorCobroScalarFieldEnum)[keyof typeof FactorCobroScalarFieldEnum];
 export declare const PrendaServicioScalarFieldEnum: {
     readonly id: "id";
     readonly prendaId: "prendaId";
     readonly servicioId: "servicioId";
-    readonly tipoExpress: "tipoExpress";
-    readonly precioFinal: "precioFinal";
-    readonly createdAt: "createdAt";
     readonly medidaEntregada: "medidaEntregada";
+    readonly tiempoCalculado: "tiempoCalculado";
+    readonly valorPorTiempo: "valorPorTiempo";
+    readonly valorFactoresCobro: "valorFactoresCobro";
+    readonly precioBruto: "precioBruto";
+    readonly precioFinal: "precioFinal";
     readonly observaciones: "observaciones";
+    readonly detallesCalculo: "detallesCalculo";
+    readonly createdAt: "createdAt";
 };
 export type PrendaServicioScalarFieldEnum = (typeof PrendaServicioScalarFieldEnum)[keyof typeof PrendaServicioScalarFieldEnum];
 export declare const InventarioScalarFieldEnum: {
@@ -1629,8 +1806,8 @@ export type EnumMetodoPagoFieldRefInput<$PrismaModel> = FieldRefInputType<$Prism
 export type ListEnumMetodoPagoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MetodoPago[]'>;
 export type EnumEstadoPrendaFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EstadoPrenda'>;
 export type ListEnumEstadoPrendaFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EstadoPrenda[]'>;
-export type EnumTipoExpressFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TipoExpress'>;
-export type ListEnumTipoExpressFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TipoExpress[]'>;
+export type EnumTipoFactorFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TipoFactor'>;
+export type ListEnumTipoFactorFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TipoFactor[]'>;
 export type EnumAccionAuditoriaFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccionAuditoria'>;
 export type ListEnumAccionAuditoriaFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccionAuditoria[]'>;
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>;
@@ -1667,9 +1844,11 @@ export type GlobalOmitConfig = {
     factura?: Prisma.FacturaOmit;
     abono?: Prisma.AbonoOmit;
     tipoPrenda?: Prisma.TipoPrendaOmit;
+    tipoUrgencia?: Prisma.TipoUrgenciaOmit;
     prenda?: Prisma.PrendaOmit;
     catalogoServicio?: Prisma.CatalogoServicioOmit;
-    precioServicio?: Prisma.PrecioServicioOmit;
+    categoriaFactorCobro?: Prisma.CategoriaFactorCobroOmit;
+    factorCobro?: Prisma.FactorCobroOmit;
     prendaServicio?: Prisma.PrendaServicioOmit;
     inventario?: Prisma.InventarioOmit;
     auditLog?: Prisma.AuditLogOmit;

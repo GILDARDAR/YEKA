@@ -3,9 +3,9 @@
 export type Rol = 'ADMIN' | 'RECEPCION' | 'TALLER';
 export type EstadoPago = 'PENDIENTE' | 'PARCIAL' | 'PAGADO' | 'ANULADO';
 export type EstadoPrenda = 'RECIBIDA' | 'PENDIENTE_VALORACION' | 'EN_PRODUCCION' | 'ESPERANDO_PRUEBA' | 'PENDIENTE_RECOGIDA' | 'ENTREGADA' | 'PROPIEDAD_TALLER';
-export type TipoExpress = 'NORMAL' | 'EXPRESS_48H' | 'EXPRESS_24H';
 export type MetodoPago = 'EFECTIVO' | 'TARJETA' | 'TRANSFERENCIA' | 'BIZUM';
 export type TipoJornada = 'ENTRADA' | 'SALIDA';
+export type TipoFactor = 'PORCENTAJE_SOBRE_PRECIO' | 'FIJO_POR_SERVICIO' | 'MENSUAL' | 'ANUAL' | 'DIARIO';
 
 // ─── Auth ──────────────────────────────────────────────────────────
 export interface AuthUser {
@@ -138,6 +138,7 @@ export interface TipoPrenda {
   id: number;
   nombre: string;
   descripcion: string | null;
+  porcentajeDificultad: number;
   activo: boolean;
   createdAt: string;
   updatedAt: string;
@@ -146,62 +147,75 @@ export interface TipoPrenda {
 export interface CreateTipoPrendaDto {
   nombre: string;
   descripcion?: string;
+  porcentajeDificultad?: number;
   activo?: boolean;
 }
 
 export interface UpdateTipoPrendaDto {
   nombre?: string;
   descripcion?: string;
+  porcentajeDificultad?: number;
   activo?: boolean;
 }
 
-// ─── Precio Servicio ────────────────────────────────────────────────
-export interface PrecioServicio {
-  id?: number;
-  tipoPrendaId: number;
-  medidaBase: string;
-  precioBase: string;
-  medidaExtra: string;
-  precioExtra: string;
+// ─── Tipo Urgencia ──────────────────────────────────────────────────
+export interface TipoUrgencia {
+  id: number;
+  nombre: string;
+  porcentajeRecargo: string;
+  activo: boolean;
+}
+
+// ─── Factores Cobro ─────────────────────────────────────────────────
+export interface FactorCobro {
+  id: number;
+  categoriaId: number;
+  nombre: string;
+  valor: string;
+  tipo: TipoFactor;
+  activo: boolean;
+  createdAt: string;
+}
+
+export interface CategoriaFactorCobro {
+  id: number;
+  nombre: string;
+  activa: boolean;
+  createdAt: string;
+  factores?: FactorCobro[];
 }
 
 // ─── Catálogo Servicio ──────────────────────────────────────────────
 export interface CatalogoServicio {
   id: number;
+  nombre: string;
   categoria: string;
   tipoEspecifico: string;
-  pesoPuntos: number;
+  medidaBase: number;
+  tiempoBase: number;
   activo: boolean;
-  preciosPorPrenda: PrecioServicio[];
+  categoriasFactores: { id: number; nombre: string }[];
   createdAt: string;
   updatedAt: string;
 }
 
 export interface CreateCatalogoServicioDto {
+  nombre: string;
   categoria: string;
   tipoEspecifico: string;
-  pesoPuntos: number;
-  preciosPorPrenda: {
-    tipoPrendaId: number;
-    medidaBase: number;
-    precioBase: number;
-    medidaExtra: number;
-    precioExtra: number;
-  }[];
+  medidaBase?: number;
+  tiempoBase?: number;
+  categoriasFactoresIds?: number[];
 }
 
 export interface UpdateCatalogoServicioDto {
+  nombre?: string;
   categoria?: string;
   tipoEspecifico?: string;
-  pesoPuntos?: number;
+  medidaBase?: number;
+  tiempoBase?: number;
   activo?: boolean;
-  preciosPorPrenda?: {
-    tipoPrendaId: number;
-    medidaBase: number;
-    precioBase: number;
-    medidaExtra: number;
-    precioExtra: number;
-  }[];
+  categoriasFactoresIds?: number[];
 }
 
 // ─── Abono ──────────────────────────────────────────────────────────
@@ -232,7 +246,9 @@ export interface Prenda {
   notas: string | null;
   createdAt: string;
   updatedAt: string;
-  tipoExpress: TipoExpress;
+  tipoUrgenciaId: number | null;
+  tipoUrgencia?: TipoUrgencia | null;
+  porcentajeAtencionAplicado?: string | null;
 
   servicios?: PrendaServicio[];
   factura?: Factura;
@@ -243,9 +259,13 @@ export interface PrendaServicio {
   prendaId: number;
   servicioId: number;
   medidaEntregada: string | null;
-  tipoExpress: TipoExpress;
+  tiempoCalculado: number | null;
+  valorPorTiempo: string | null;
+  valorFactoresCobro: string | null;
+  precioBruto: string | null;
   precioFinal: string;
-  observaciones?: string | null;
+  observaciones: string | null;
+  detallesCalculo?: any;
   createdAt: string;
 
   servicio?: CatalogoServicio;
@@ -254,8 +274,19 @@ export interface PrendaServicio {
 export interface CreatePrendaDto {
   facturaId: number;
   tipoPrendaId: number;
+  tipoUrgenciaId?: number | null;
   talla: string;
   color: string;
+  marca?: string;
+  esLujo?: boolean;
+  notas?: string;
+}
+
+export interface UpdatePrendaDto {
+  tipoPrendaId?: number;
+  tipoUrgenciaId?: number | null;
+  talla?: string;
+  color?: string;
   marca?: string;
   esLujo?: boolean;
   notas?: string;
@@ -264,7 +295,6 @@ export interface CreatePrendaDto {
 export interface AsignarServicioDto {
   servicioId: number;
   medidaEntregada?: number;
-  tipoExpress: TipoExpress;
   observaciones?: string;
 }
 

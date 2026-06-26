@@ -19,10 +19,10 @@ export declare class AnunciosService {
             nombre: string;
             createdAt: Date;
             updatedAt: Date;
-            dni: string | null;
-            email: string;
             sedeId: number;
+            dni: string | null;
             telefono: string | null;
+            email: string;
             password: string;
             pinAcceso: string | null;
             rol: import("../../../generated/prisma/enums").Rol;
@@ -32,8 +32,8 @@ export declare class AnunciosService {
         id: number;
         createdAt: Date;
         sedeId: number;
-        mensaje: string;
         adminId: number;
+        mensaje: string;
     }>;
     getPendientes(sedeId: number, usuarioId: number): Promise<({
         admin: {
@@ -44,8 +44,8 @@ export declare class AnunciosService {
         id: number;
         createdAt: Date;
         sedeId: number;
-        mensaje: string;
         adminId: number;
+        mensaje: string;
     })[]>;
     responderAnuncio(anuncioId: number, usuarioId: number, dto: ResponderAnuncioDto): Promise<{
         id: number;
@@ -79,7 +79,7 @@ export declare class AnunciosService {
         id: number;
         createdAt: Date;
         sedeId: number;
-        mensaje: string;
         adminId: number;
+        mensaje: string;
     })[]>;
 }

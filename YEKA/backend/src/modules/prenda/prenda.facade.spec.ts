@@ -60,8 +60,9 @@ import { PrendaDAO } from './prenda.dao';
 import { PrismaService } from '../../prisma/prisma.service';
 import { FacturaFacade } from '../factura/factura.facade';
 import { ConfigService } from '@nestjs/config';
+import { ConfiguracionService } from '../configuracion/configuracion.service';
 import { NotFoundException } from '@nestjs/common';
-import { TipoExpress, Prisma } from '../../../generated/prisma/client';
+import { Prisma } from '../../../generated/prisma/client';
 
 describe('PrendaFacade', () => {
   let facade: PrendaFacade;
@@ -69,6 +70,7 @@ describe('PrendaFacade', () => {
   let prismaService: jest.Mocked<any>;
   let facturaFacade: jest.Mocked<any>;
   let configService: jest.Mocked<any>;
+  let configuracionService: jest.Mocked<any>;
 
   beforeEach(async () => {
     prendaDAO = {
@@ -96,6 +98,15 @@ describe('PrendaFacade', () => {
       auditLog: {
         create: jest.fn(),
       },
+      configuracion: {
+        findUnique: jest.fn(),
+      },
+      categoriaFactorCobro: {
+        findMany: jest.fn(),
+      },
+      tipoPrenda: {
+        findUnique: jest.fn(),
+      },
     };
 
     facturaFacade = {
@@ -106,6 +117,12 @@ describe('PrendaFacade', () => {
       get: jest.fn(),
     };
 
+    configuracionService = {
+      get: jest.fn(),
+      getAll: jest.fn(),
+      update: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PrendaFacade,
@@ -113,6 +130,7 @@ describe('PrendaFacade', () => {
         { provide: PrismaService, useValue: prismaService },
         { provide: FacturaFacade, useValue: facturaFacade },
         { provide: ConfigService, useValue: configService },
+        { provide: ConfiguracionService, useValue: configuracionService },
       ],
     }).compile();
 
@@ -134,25 +152,28 @@ describe('PrendaFacade', () => {
       };
       const mockUpdatedPrenda = {
         ...mockCreatedPrenda,
-        codigoQR: 'MAL-2026-00015',
+        codigoQR: 'PR-MAL-2026-00015',
       };
 
       prismaService.factura.findUnique.mockResolvedValue(mockFactura);
       prismaService.sede.findUnique.mockResolvedValue(mockSede);
+      prismaService.tipoPrenda.findUnique.mockResolvedValue({ id: 1, nombre: 'Camisa', activo: true });
       prendaDAO.create.mockResolvedValue(mockCreatedPrenda);
       prendaDAO.update.mockResolvedValue(mockUpdatedPrenda);
 
       const result = await facade.createPrenda({
         facturaId: 10,
         tipoPrendaId: 1,
+        talla: 'M',
+        color: 'Azul',
         esLujo: false,
       });
 
       expect(prismaService.factura.findUnique).toHaveBeenCalledWith({ where: { id: 10 } });
       expect(prismaService.sede.findUnique).toHaveBeenCalledWith({ where: { id: 2 } });
       expect(prendaDAO.create).toHaveBeenCalled();
-      expect(prendaDAO.update).toHaveBeenCalledWith(15, { codigoQR: 'MAL-2026-00015' });
-      expect(result.codigoQR).toBe('MAL-2026-00015');
+      expect(prendaDAO.update).toHaveBeenCalledWith(15, { codigoQR: 'PR-MAL-2026-00015' });
+      expect(result.codigoQR).toBe('PR-MAL-2026-00015');
     });
 
     it('should throw NotFoundException if invoice does not exist', async () => {
@@ -162,52 +183,108 @@ describe('PrendaFacade', () => {
         facade.createPrenda({
           facturaId: 99,
           tipoPrendaId: 1,
+          talla: 'M',
+          color: 'Azul',
         }),
       ).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('asignarServicio', () => {
-    it('should calculate final price with express multipliers and recalulate invoice', async () => {
-      const mockPrenda = { id: 5, facturaId: 10 };
+    it('should calculate final price and assign service', async () => {
+      const mockPrenda = {
+        id: 5,
+        facturaId: 10,
+        tipoPrenda: { porcentajeDificultad: new Prisma.Decimal(10.0) },
+        porcentajeAtencionAplicado: new Prisma.Decimal(20.0),
+        tipoUrgencia: null,
+      };
+      
       const mockServicio = {
         id: 3,
         activo: true,
-        precioBase: new Prisma.Decimal(20.0),
+        medidaBase: new Prisma.Decimal(10.0),
+        tiempoBase: 60,
+        tipoEspecifico: 'Ruedo',
+        categoriasFactores: [],
       };
+
       const mockPrendaServicio = {
         id: 1,
         prendaId: 5,
         servicioId: 3,
-        tipoExpress: TipoExpress.EXPRESS_24H,
-        precioFinal: new Prisma.Decimal(30.0),
+        medidaEntregada: new Prisma.Decimal(10.0),
+        tiempoCalculado: 66,
+        valorPorTiempo: new Prisma.Decimal(1.32),
+        valorFactoresCobro: new Prisma.Decimal(0.0),
+        precioBruto: new Prisma.Decimal(1.32),
+        precioFinal: new Prisma.Decimal(2.0592),
+        observaciones: 'Test observations',
+        detallesCalculo: {},
         createdAt: new Date(),
       };
 
-      prendaDAO.findById.mockResolvedValue(mockPrenda);
+      prismaService.prenda = { findUnique: jest.fn().mockResolvedValue(mockPrenda) };
       prismaService.catalogoServicio.findUnique.mockResolvedValue(mockServicio);
-      configService.get.mockReturnValue('1.50'); // 24H multiplier is 1.50
+      
+      prismaService.configuracion.findUnique.mockImplementation(({ where }: any) => {
+        if (where.clave === 'MINUTOS_PRODUCTIVOS_MES') {
+          return Promise.resolve({ valor: '21120' });
+        }
+        if (where.clave === 'MARGEN_UTILIDAD_GLOBAL') {
+          return Promise.resolve({ valor: '30' });
+        }
+        return Promise.resolve(null);
+      });
+      
+      prismaService.categoriaFactorCobro.findMany.mockResolvedValue([
+        {
+          id: 1,
+          nombre: 'Gastos Fijos',
+          activa: true,
+          factores: [
+            {
+              id: 1,
+              nombre: 'Alquiler',
+              valor: new Prisma.Decimal(422.40),
+              tipo: 'MENSUAL',
+              activo: true,
+            }
+          ]
+        }
+      ]);
+
       prendaDAO.asignarServicio.mockResolvedValue(mockPrendaServicio);
 
       const result = await facade.asignarServicio(
         5,
         {
           servicioId: 3,
-          tipoExpress: TipoExpress.EXPRESS_24H,
+          medidaEntregada: 10,
+          observaciones: 'Test observations',
         },
-        1, // logged in userId
+        1,
       );
 
-      expect(configService.get).toHaveBeenCalledWith('EXPRESS_24H_MULTIPLIER');
+      expect(prismaService.prenda.findUnique).toHaveBeenCalledWith({
+        where: { id: 5 },
+        include: { tipoPrenda: true, tipoUrgencia: true },
+      });
       expect(prendaDAO.asignarServicio).toHaveBeenCalledWith({
         prendaId: 5,
         servicioId: 3,
-        tipoExpress: TipoExpress.EXPRESS_24H,
-        precioFinal: new Prisma.Decimal(30.0),
+        medidaEntregada: 10,
+        tiempoCalculado: 66,
+        valorPorTiempo: 1.32,
+        valorFactoresCobro: 0,
+        precioBruto: 1.32,
+        precioFinal: 2.0592,
+        observaciones: 'Test observations',
+        detallesCalculo: expect.any(Object),
       });
       expect(facturaFacade.recalcularFactura).toHaveBeenCalledWith(10);
       expect(prismaService.auditLog.create).toHaveBeenCalled();
-      expect(result.precioFinal).toBe('30');
+      expect(result.precioFinal).toBe('2.0592');
     });
   });
 });

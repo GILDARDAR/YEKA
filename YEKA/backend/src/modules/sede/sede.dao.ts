@@ -51,7 +51,7 @@ export class SedeDAO {
   }
 
   /**
-   * Returns the sum of pesoPuntos for all PrendaServicio records linked to Prendas
+   * Returns the sum of tiempoCalculado for all PrendaServicio records linked to Prendas
    * that belong to Facturas created on `fecha` for a given Sede.
    */
   async getUsadoEnFecha(
@@ -71,10 +71,7 @@ export class SedeDAO {
           },
         },
       },
-      include: {
-        servicio: true,
-      },
     });
-    return result.reduce((sum, item) => sum + (item.servicio?.pesoPuntos ?? 0), 0);
+    return result.reduce((sum, item) => sum + (item.tiempoCalculado ?? 0), 0);
   }
 }

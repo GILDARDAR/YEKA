@@ -58,13 +58,6 @@ export class PrendaService {
     return this.prendaFacade.cambiarEstado(id, dto, usuarioId);
   }
 
-  async cambiarTipoExpress(
-    id: number,
-    tipoExpress: any,
-    usuarioId: number,
-  ): Promise<PrendaResponseDto> {
-    return this.prendaFacade.cambiarTipoExpress(id, tipoExpress, usuarioId);
-  }
 
   async subirFoto(
     id: number,

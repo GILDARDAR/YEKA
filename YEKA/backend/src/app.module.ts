@@ -13,6 +13,8 @@ import { PrendaModule } from './modules/prenda/prenda.module';
 import { TipoPrendaModule } from './modules/tipo-prenda/tipo-prenda.module';
 import { ConfiguracionModule } from './modules/configuracion/configuracion.module';
 import { AnunciosModule } from './modules/anuncios/anuncios.module';
+import { TipoUrgenciaModule } from './modules/tipo-urgencia/tipo-urgencia.module';
+import { FactorCobroModule } from './modules/factor-cobro/factor-cobro.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { AnunciosModule } from './modules/anuncios/anuncios.module';
     TipoPrendaModule,
     ConfiguracionModule,
     AnunciosModule,
+    TipoUrgenciaModule,
+    FactorCobroModule,
   ],
   controllers: [AppController],
   providers: [AppService],

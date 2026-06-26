@@ -1,4 +1,4 @@
-import { EstadoPrenda, TipoExpress } from '../../../generated/prisma/client';
+import { EstadoPrenda } from '../../../generated/prisma/client';
 export declare class CreatePrendaDto {
     facturaId: number;
     tipoPrendaId: number;
@@ -7,6 +7,7 @@ export declare class CreatePrendaDto {
     esLujo?: boolean;
     marca?: string;
     notas?: string;
+    tipoUrgenciaId?: number;
 }
 export declare class UpdatePrendaDto {
     tipoPrendaId?: number;
@@ -15,11 +16,11 @@ export declare class UpdatePrendaDto {
     esLujo?: boolean;
     marca?: string;
     notas?: string;
+    tipoUrgenciaId?: number;
 }
 export declare class AsignarServicioDto {
     servicioId: number;
     medidaEntregada?: number;
-    tipoExpress: TipoExpress;
     observaciones?: string;
 }
 export declare class CambiarEstadoDto {
@@ -46,7 +47,9 @@ export declare class PrendaResponseDto {
     notas: string | null;
     createdAt: Date;
     updatedAt: Date;
-    tipoExpress: TipoExpress;
+    tipoUrgenciaId: number | null;
+    tipoUrgencia?: any;
+    porcentajeAtencionAplicado?: string | null;
     factura?: any;
 }
 export declare class PrendaServicioResponseDto {
@@ -54,8 +57,12 @@ export declare class PrendaServicioResponseDto {
     prendaId: number;
     servicioId: number;
     medidaEntregada: string | null;
-    tipoExpress: TipoExpress;
+    tiempoCalculado: number | null;
+    valorPorTiempo: string | null;
+    valorFactoresCobro: string | null;
+    precioBruto: string | null;
     precioFinal: string;
     observaciones: string | null;
+    detallesCalculo?: any;
     createdAt: Date;
 }

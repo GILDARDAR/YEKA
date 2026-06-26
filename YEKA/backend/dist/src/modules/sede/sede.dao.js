@@ -54,11 +54,8 @@ let SedeDAO = class SedeDAO {
                     },
                 },
             },
-            include: {
-                servicio: true,
-            },
         });
-        return result.reduce((sum, item) => sum + (item.servicio?.pesoPuntos ?? 0), 0);
+        return result.reduce((sum, item) => sum + (item.tiempoCalculado ?? 0), 0);
     }
 };
 exports.SedeDAO = SedeDAO;

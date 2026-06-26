@@ -18,9 +18,11 @@ export declare const ModelName: {
     readonly Factura: "Factura";
     readonly Abono: "Abono";
     readonly TipoPrenda: "TipoPrenda";
+    readonly TipoUrgencia: "TipoUrgencia";
     readonly Prenda: "Prenda";
     readonly CatalogoServicio: "CatalogoServicio";
-    readonly PrecioServicio: "PrecioServicio";
+    readonly CategoriaFactorCobro: "CategoriaFactorCobro";
+    readonly FactorCobro: "FactorCobro";
     readonly PrendaServicio: "PrendaServicio";
     readonly Inventario: "Inventario";
     readonly AuditLog: "AuditLog";
@@ -112,11 +114,21 @@ export declare const TipoPrendaScalarFieldEnum: {
     readonly id: "id";
     readonly nombre: "nombre";
     readonly descripcion: "descripcion";
+    readonly porcentajeDificultad: "porcentajeDificultad";
     readonly activo: "activo";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
 };
 export type TipoPrendaScalarFieldEnum = (typeof TipoPrendaScalarFieldEnum)[keyof typeof TipoPrendaScalarFieldEnum];
+export declare const TipoUrgenciaScalarFieldEnum: {
+    readonly id: "id";
+    readonly nombre: "nombre";
+    readonly porcentajeRecargo: "porcentajeRecargo";
+    readonly activo: "activo";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type TipoUrgenciaScalarFieldEnum = (typeof TipoUrgenciaScalarFieldEnum)[keyof typeof TipoUrgenciaScalarFieldEnum];
 export declare const PrendaScalarFieldEnum: {
     readonly id: "id";
     readonly facturaId: "facturaId";
@@ -134,39 +146,56 @@ export declare const PrendaScalarFieldEnum: {
     readonly color: "color";
     readonly marca: "marca";
     readonly talla: "talla";
-    readonly tipoExpress: "tipoExpress";
+    readonly tipoUrgenciaId: "tipoUrgenciaId";
+    readonly porcentajeAtencionAplicado: "porcentajeAtencionAplicado";
 };
 export type PrendaScalarFieldEnum = (typeof PrendaScalarFieldEnum)[keyof typeof PrendaScalarFieldEnum];
 export declare const CatalogoServicioScalarFieldEnum: {
     readonly id: "id";
+    readonly nombre: "nombre";
     readonly categoria: "categoria";
     readonly tipoEspecifico: "tipoEspecifico";
-    readonly pesoPuntos: "pesoPuntos";
+    readonly medidaBase: "medidaBase";
+    readonly tiempoBase: "tiempoBase";
     readonly activo: "activo";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
 };
 export type CatalogoServicioScalarFieldEnum = (typeof CatalogoServicioScalarFieldEnum)[keyof typeof CatalogoServicioScalarFieldEnum];
-export declare const PrecioServicioScalarFieldEnum: {
+export declare const CategoriaFactorCobroScalarFieldEnum: {
     readonly id: "id";
-    readonly catalogoServicioId: "catalogoServicioId";
-    readonly tipoPrendaId: "tipoPrendaId";
-    readonly medidaBase: "medidaBase";
-    readonly precioBase: "precioBase";
-    readonly medidaExtra: "medidaExtra";
-    readonly precioExtra: "precioExtra";
-    readonly activo: "activo";
+    readonly nombre: "nombre";
+    readonly activa: "activa";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
 };
-export type PrecioServicioScalarFieldEnum = (typeof PrecioServicioScalarFieldEnum)[keyof typeof PrecioServicioScalarFieldEnum];
+export type CategoriaFactorCobroScalarFieldEnum = (typeof CategoriaFactorCobroScalarFieldEnum)[keyof typeof CategoriaFactorCobroScalarFieldEnum];
+export declare const FactorCobroScalarFieldEnum: {
+    readonly id: "id";
+    readonly categoriaId: "categoriaId";
+    readonly nombre: "nombre";
+    readonly valor: "valor";
+    readonly tipo: "tipo";
+    readonly fechaInicio: "fechaInicio";
+    readonly fechaFin: "fechaFin";
+    readonly activo: "activo";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type FactorCobroScalarFieldEnum = (typeof FactorCobroScalarFieldEnum)[keyof typeof FactorCobroScalarFieldEnum];
 export declare const PrendaServicioScalarFieldEnum: {
     readonly id: "id";
     readonly prendaId: "prendaId";
     readonly servicioId: "servicioId";
-    readonly tipoExpress: "tipoExpress";
-    readonly precioFinal: "precioFinal";
-    readonly createdAt: "createdAt";
     readonly medidaEntregada: "medidaEntregada";
+    readonly tiempoCalculado: "tiempoCalculado";
+    readonly valorPorTiempo: "valorPorTiempo";
+    readonly valorFactoresCobro: "valorFactoresCobro";
+    readonly precioBruto: "precioBruto";
+    readonly precioFinal: "precioFinal";
     readonly observaciones: "observaciones";
+    readonly detallesCalculo: "detallesCalculo";
+    readonly createdAt: "createdAt";
 };
 export type PrendaServicioScalarFieldEnum = (typeof PrendaServicioScalarFieldEnum)[keyof typeof PrendaServicioScalarFieldEnum];
 export declare const InventarioScalarFieldEnum: {

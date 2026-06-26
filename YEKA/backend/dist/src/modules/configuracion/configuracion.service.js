@@ -15,6 +15,9 @@ const prisma_service_1 = require("../../prisma/prisma.service");
 const DEFAULT_CONFIG = {
     EXPRESS_24H_MULTIPLIER: '1.50',
     EXPRESS_48H_MULTIPLIER: '1.30',
+    VALOR_HORA_PUNTOS: '60.00',
+    MINUTOS_PRODUCTIVOS_MES: '21120',
+    MARGEN_UTILIDAD_GLOBAL: '30.00',
 };
 let ConfiguracionService = class ConfiguracionService {
     prisma;

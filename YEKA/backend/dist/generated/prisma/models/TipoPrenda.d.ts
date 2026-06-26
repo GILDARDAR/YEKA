@@ -10,14 +10,17 @@ export type AggregateTipoPrenda = {
 };
 export type TipoPrendaAvgAggregateOutputType = {
     id: number | null;
+    porcentajeDificultad: runtime.Decimal | null;
 };
 export type TipoPrendaSumAggregateOutputType = {
     id: number | null;
+    porcentajeDificultad: runtime.Decimal | null;
 };
 export type TipoPrendaMinAggregateOutputType = {
     id: number | null;
     nombre: string | null;
     descripcion: string | null;
+    porcentajeDificultad: runtime.Decimal | null;
     activo: boolean | null;
     createdAt: Date | null;
     updatedAt: Date | null;
@@ -26,6 +29,7 @@ export type TipoPrendaMaxAggregateOutputType = {
     id: number | null;
     nombre: string | null;
     descripcion: string | null;
+    porcentajeDificultad: runtime.Decimal | null;
     activo: boolean | null;
     createdAt: Date | null;
     updatedAt: Date | null;
@@ -34,6 +38,7 @@ export type TipoPrendaCountAggregateOutputType = {
     id: number;
     nombre: number;
     descripcion: number;
+    porcentajeDificultad: number;
     activo: number;
     createdAt: number;
     updatedAt: number;
@@ -41,14 +46,17 @@ export type TipoPrendaCountAggregateOutputType = {
 };
 export type TipoPrendaAvgAggregateInputType = {
     id?: true;
+    porcentajeDificultad?: true;
 };
 export type TipoPrendaSumAggregateInputType = {
     id?: true;
+    porcentajeDificultad?: true;
 };
 export type TipoPrendaMinAggregateInputType = {
     id?: true;
     nombre?: true;
     descripcion?: true;
+    porcentajeDificultad?: true;
     activo?: true;
     createdAt?: true;
     updatedAt?: true;
@@ -57,6 +65,7 @@ export type TipoPrendaMaxAggregateInputType = {
     id?: true;
     nombre?: true;
     descripcion?: true;
+    porcentajeDificultad?: true;
     activo?: true;
     createdAt?: true;
     updatedAt?: true;
@@ -65,6 +74,7 @@ export type TipoPrendaCountAggregateInputType = {
     id?: true;
     nombre?: true;
     descripcion?: true;
+    porcentajeDificultad?: true;
     activo?: true;
     createdAt?: true;
     updatedAt?: true;
@@ -102,6 +112,7 @@ export type TipoPrendaGroupByOutputType = {
     id: number;
     nombre: string;
     descripcion: string | null;
+    porcentajeDificultad: runtime.Decimal;
     activo: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -121,20 +132,20 @@ export type TipoPrendaWhereInput = {
     id?: Prisma.IntFilter<"TipoPrenda"> | number;
     nombre?: Prisma.StringFilter<"TipoPrenda"> | string;
     descripcion?: Prisma.StringNullableFilter<"TipoPrenda"> | string | null;
+    porcentajeDificultad?: Prisma.DecimalFilter<"TipoPrenda"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
     activo?: Prisma.BoolFilter<"TipoPrenda"> | boolean;
     createdAt?: Prisma.DateTimeFilter<"TipoPrenda"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"TipoPrenda"> | Date | string;
-    preciosServicios?: Prisma.PrecioServicioListRelationFilter;
     prendas?: Prisma.PrendaListRelationFilter;
 };
 export type TipoPrendaOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
     nombre?: Prisma.SortOrder;
     descripcion?: Prisma.SortOrderInput | Prisma.SortOrder;
+    porcentajeDificultad?: Prisma.SortOrder;
     activo?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
-    preciosServicios?: Prisma.PrecioServicioOrderByRelationAggregateInput;
     prendas?: Prisma.PrendaOrderByRelationAggregateInput;
 };
 export type TipoPrendaWhereUniqueInput = Prisma.AtLeast<{
@@ -144,16 +155,17 @@ export type TipoPrendaWhereUniqueInput = Prisma.AtLeast<{
     OR?: Prisma.TipoPrendaWhereInput[];
     NOT?: Prisma.TipoPrendaWhereInput | Prisma.TipoPrendaWhereInput[];
     descripcion?: Prisma.StringNullableFilter<"TipoPrenda"> | string | null;
+    porcentajeDificultad?: Prisma.DecimalFilter<"TipoPrenda"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
     activo?: Prisma.BoolFilter<"TipoPrenda"> | boolean;
     createdAt?: Prisma.DateTimeFilter<"TipoPrenda"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"TipoPrenda"> | Date | string;
-    preciosServicios?: Prisma.PrecioServicioListRelationFilter;
     prendas?: Prisma.PrendaListRelationFilter;
 }, "id" | "nombre">;
 export type TipoPrendaOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
     nombre?: Prisma.SortOrder;
     descripcion?: Prisma.SortOrderInput | Prisma.SortOrder;
+    porcentajeDificultad?: Prisma.SortOrder;
     activo?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
@@ -170,6 +182,7 @@ export type TipoPrendaScalarWhereWithAggregatesInput = {
     id?: Prisma.IntWithAggregatesFilter<"TipoPrenda"> | number;
     nombre?: Prisma.StringWithAggregatesFilter<"TipoPrenda"> | string;
     descripcion?: Prisma.StringNullableWithAggregatesFilter<"TipoPrenda"> | string | null;
+    porcentajeDificultad?: Prisma.DecimalWithAggregatesFilter<"TipoPrenda"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
     activo?: Prisma.BoolWithAggregatesFilter<"TipoPrenda"> | boolean;
     createdAt?: Prisma.DateTimeWithAggregatesFilter<"TipoPrenda"> | Date | string;
     updatedAt?: Prisma.DateTimeWithAggregatesFilter<"TipoPrenda"> | Date | string;
@@ -177,45 +190,46 @@ export type TipoPrendaScalarWhereWithAggregatesInput = {
 export type TipoPrendaCreateInput = {
     nombre: string;
     descripcion?: string | null;
+    porcentajeDificultad?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    preciosServicios?: Prisma.PrecioServicioCreateNestedManyWithoutTipoPrendaInput;
     prendas?: Prisma.PrendaCreateNestedManyWithoutTipoPrendaInput;
 };
 export type TipoPrendaUncheckedCreateInput = {
     id?: number;
     nombre: string;
     descripcion?: string | null;
+    porcentajeDificultad?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    preciosServicios?: Prisma.PrecioServicioUncheckedCreateNestedManyWithoutTipoPrendaInput;
     prendas?: Prisma.PrendaUncheckedCreateNestedManyWithoutTipoPrendaInput;
 };
 export type TipoPrendaUpdateInput = {
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
     descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    porcentajeDificultad?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    preciosServicios?: Prisma.PrecioServicioUpdateManyWithoutTipoPrendaNestedInput;
     prendas?: Prisma.PrendaUpdateManyWithoutTipoPrendaNestedInput;
 };
 export type TipoPrendaUncheckedUpdateInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
     descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    porcentajeDificultad?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    preciosServicios?: Prisma.PrecioServicioUncheckedUpdateManyWithoutTipoPrendaNestedInput;
     prendas?: Prisma.PrendaUncheckedUpdateManyWithoutTipoPrendaNestedInput;
 };
 export type TipoPrendaCreateManyInput = {
     id?: number;
     nombre: string;
     descripcion?: string | null;
+    porcentajeDificultad?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -223,6 +237,7 @@ export type TipoPrendaCreateManyInput = {
 export type TipoPrendaUpdateManyMutationInput = {
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
     descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    porcentajeDificultad?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -231,6 +246,7 @@ export type TipoPrendaUncheckedUpdateManyInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
     descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    porcentajeDificultad?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -239,17 +255,20 @@ export type TipoPrendaCountOrderByAggregateInput = {
     id?: Prisma.SortOrder;
     nombre?: Prisma.SortOrder;
     descripcion?: Prisma.SortOrder;
+    porcentajeDificultad?: Prisma.SortOrder;
     activo?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
 };
 export type TipoPrendaAvgOrderByAggregateInput = {
     id?: Prisma.SortOrder;
+    porcentajeDificultad?: Prisma.SortOrder;
 };
 export type TipoPrendaMaxOrderByAggregateInput = {
     id?: Prisma.SortOrder;
     nombre?: Prisma.SortOrder;
     descripcion?: Prisma.SortOrder;
+    porcentajeDificultad?: Prisma.SortOrder;
     activo?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
@@ -258,12 +277,14 @@ export type TipoPrendaMinOrderByAggregateInput = {
     id?: Prisma.SortOrder;
     nombre?: Prisma.SortOrder;
     descripcion?: Prisma.SortOrder;
+    porcentajeDificultad?: Prisma.SortOrder;
     activo?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
 };
 export type TipoPrendaSumOrderByAggregateInput = {
     id?: Prisma.SortOrder;
+    porcentajeDificultad?: Prisma.SortOrder;
 };
 export type TipoPrendaScalarRelationFilter = {
     is?: Prisma.TipoPrendaWhereInput;
@@ -281,34 +302,22 @@ export type TipoPrendaUpdateOneRequiredWithoutPrendasNestedInput = {
     connect?: Prisma.TipoPrendaWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.TipoPrendaUpdateToOneWithWhereWithoutPrendasInput, Prisma.TipoPrendaUpdateWithoutPrendasInput>, Prisma.TipoPrendaUncheckedUpdateWithoutPrendasInput>;
 };
-export type TipoPrendaCreateNestedOneWithoutPreciosServiciosInput = {
-    create?: Prisma.XOR<Prisma.TipoPrendaCreateWithoutPreciosServiciosInput, Prisma.TipoPrendaUncheckedCreateWithoutPreciosServiciosInput>;
-    connectOrCreate?: Prisma.TipoPrendaCreateOrConnectWithoutPreciosServiciosInput;
-    connect?: Prisma.TipoPrendaWhereUniqueInput;
-};
-export type TipoPrendaUpdateOneRequiredWithoutPreciosServiciosNestedInput = {
-    create?: Prisma.XOR<Prisma.TipoPrendaCreateWithoutPreciosServiciosInput, Prisma.TipoPrendaUncheckedCreateWithoutPreciosServiciosInput>;
-    connectOrCreate?: Prisma.TipoPrendaCreateOrConnectWithoutPreciosServiciosInput;
-    upsert?: Prisma.TipoPrendaUpsertWithoutPreciosServiciosInput;
-    connect?: Prisma.TipoPrendaWhereUniqueInput;
-    update?: Prisma.XOR<Prisma.XOR<Prisma.TipoPrendaUpdateToOneWithWhereWithoutPreciosServiciosInput, Prisma.TipoPrendaUpdateWithoutPreciosServiciosInput>, Prisma.TipoPrendaUncheckedUpdateWithoutPreciosServiciosInput>;
-};
 export type TipoPrendaCreateWithoutPrendasInput = {
     nombre: string;
     descripcion?: string | null;
+    porcentajeDificultad?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    preciosServicios?: Prisma.PrecioServicioCreateNestedManyWithoutTipoPrendaInput;
 };
 export type TipoPrendaUncheckedCreateWithoutPrendasInput = {
     id?: number;
     nombre: string;
     descripcion?: string | null;
+    porcentajeDificultad?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    preciosServicios?: Prisma.PrecioServicioUncheckedCreateNestedManyWithoutTipoPrendaInput;
 };
 export type TipoPrendaCreateOrConnectWithoutPrendasInput = {
     where: Prisma.TipoPrendaWhereUniqueInput;
@@ -326,80 +335,28 @@ export type TipoPrendaUpdateToOneWithWhereWithoutPrendasInput = {
 export type TipoPrendaUpdateWithoutPrendasInput = {
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
     descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    porcentajeDificultad?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    preciosServicios?: Prisma.PrecioServicioUpdateManyWithoutTipoPrendaNestedInput;
 };
 export type TipoPrendaUncheckedUpdateWithoutPrendasInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
     descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    porcentajeDificultad?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    preciosServicios?: Prisma.PrecioServicioUncheckedUpdateManyWithoutTipoPrendaNestedInput;
-};
-export type TipoPrendaCreateWithoutPreciosServiciosInput = {
-    nombre: string;
-    descripcion?: string | null;
-    activo?: boolean;
-    createdAt?: Date | string;
-    updatedAt?: Date | string;
-    prendas?: Prisma.PrendaCreateNestedManyWithoutTipoPrendaInput;
-};
-export type TipoPrendaUncheckedCreateWithoutPreciosServiciosInput = {
-    id?: number;
-    nombre: string;
-    descripcion?: string | null;
-    activo?: boolean;
-    createdAt?: Date | string;
-    updatedAt?: Date | string;
-    prendas?: Prisma.PrendaUncheckedCreateNestedManyWithoutTipoPrendaInput;
-};
-export type TipoPrendaCreateOrConnectWithoutPreciosServiciosInput = {
-    where: Prisma.TipoPrendaWhereUniqueInput;
-    create: Prisma.XOR<Prisma.TipoPrendaCreateWithoutPreciosServiciosInput, Prisma.TipoPrendaUncheckedCreateWithoutPreciosServiciosInput>;
-};
-export type TipoPrendaUpsertWithoutPreciosServiciosInput = {
-    update: Prisma.XOR<Prisma.TipoPrendaUpdateWithoutPreciosServiciosInput, Prisma.TipoPrendaUncheckedUpdateWithoutPreciosServiciosInput>;
-    create: Prisma.XOR<Prisma.TipoPrendaCreateWithoutPreciosServiciosInput, Prisma.TipoPrendaUncheckedCreateWithoutPreciosServiciosInput>;
-    where?: Prisma.TipoPrendaWhereInput;
-};
-export type TipoPrendaUpdateToOneWithWhereWithoutPreciosServiciosInput = {
-    where?: Prisma.TipoPrendaWhereInput;
-    data: Prisma.XOR<Prisma.TipoPrendaUpdateWithoutPreciosServiciosInput, Prisma.TipoPrendaUncheckedUpdateWithoutPreciosServiciosInput>;
-};
-export type TipoPrendaUpdateWithoutPreciosServiciosInput = {
-    nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    prendas?: Prisma.PrendaUpdateManyWithoutTipoPrendaNestedInput;
-};
-export type TipoPrendaUncheckedUpdateWithoutPreciosServiciosInput = {
-    id?: Prisma.IntFieldUpdateOperationsInput | number;
-    nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    prendas?: Prisma.PrendaUncheckedUpdateManyWithoutTipoPrendaNestedInput;
 };
 export type TipoPrendaCountOutputType = {
-    preciosServicios: number;
     prendas: number;
 };
 export type TipoPrendaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    preciosServicios?: boolean | TipoPrendaCountOutputTypeCountPreciosServiciosArgs;
     prendas?: boolean | TipoPrendaCountOutputTypeCountPrendasArgs;
 };
 export type TipoPrendaCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.TipoPrendaCountOutputTypeSelect<ExtArgs> | null;
-};
-export type TipoPrendaCountOutputTypeCountPreciosServiciosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    where?: Prisma.PrecioServicioWhereInput;
 };
 export type TipoPrendaCountOutputTypeCountPrendasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.PrendaWhereInput;
@@ -408,10 +365,10 @@ export type TipoPrendaSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
     id?: boolean;
     nombre?: boolean;
     descripcion?: boolean;
+    porcentajeDificultad?: boolean;
     activo?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    preciosServicios?: boolean | Prisma.TipoPrenda$preciosServiciosArgs<ExtArgs>;
     prendas?: boolean | Prisma.TipoPrenda$prendasArgs<ExtArgs>;
     _count?: boolean | Prisma.TipoPrendaCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["tipoPrenda"]>;
@@ -419,6 +376,7 @@ export type TipoPrendaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
     id?: boolean;
     nombre?: boolean;
     descripcion?: boolean;
+    porcentajeDificultad?: boolean;
     activo?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
@@ -427,6 +385,7 @@ export type TipoPrendaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
     id?: boolean;
     nombre?: boolean;
     descripcion?: boolean;
+    porcentajeDificultad?: boolean;
     activo?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
@@ -435,13 +394,13 @@ export type TipoPrendaSelectScalar = {
     id?: boolean;
     nombre?: boolean;
     descripcion?: boolean;
+    porcentajeDificultad?: boolean;
     activo?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
 };
-export type TipoPrendaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nombre" | "descripcion" | "activo" | "createdAt" | "updatedAt", ExtArgs["result"]["tipoPrenda"]>;
+export type TipoPrendaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nombre" | "descripcion" | "porcentajeDificultad" | "activo" | "createdAt" | "updatedAt", ExtArgs["result"]["tipoPrenda"]>;
 export type TipoPrendaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    preciosServicios?: boolean | Prisma.TipoPrenda$preciosServiciosArgs<ExtArgs>;
     prendas?: boolean | Prisma.TipoPrenda$prendasArgs<ExtArgs>;
     _count?: boolean | Prisma.TipoPrendaCountOutputTypeDefaultArgs<ExtArgs>;
 };
@@ -450,13 +409,13 @@ export type TipoPrendaIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.E
 export type $TipoPrendaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     name: "TipoPrenda";
     objects: {
-        preciosServicios: Prisma.$PrecioServicioPayload<ExtArgs>[];
         prendas: Prisma.$PrendaPayload<ExtArgs>[];
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: number;
         nombre: string;
         descripcion: string | null;
+        porcentajeDificultad: runtime.Decimal;
         activo: boolean;
         createdAt: Date;
         updatedAt: Date;
@@ -512,7 +471,6 @@ export interface TipoPrendaDelegate<ExtArgs extends runtime.Types.Extensions.Int
 }
 export interface Prisma__TipoPrendaClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise";
-    preciosServicios<T extends Prisma.TipoPrenda$preciosServiciosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TipoPrenda$preciosServiciosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrecioServicioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     prendas<T extends Prisma.TipoPrenda$prendasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TipoPrenda$prendasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrendaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): runtime.Types.Utils.JsPromise<TResult1 | TResult2>;
     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): runtime.Types.Utils.JsPromise<T | TResult>;
@@ -522,6 +480,7 @@ export interface TipoPrendaFieldRefs {
     readonly id: Prisma.FieldRef<"TipoPrenda", 'Int'>;
     readonly nombre: Prisma.FieldRef<"TipoPrenda", 'String'>;
     readonly descripcion: Prisma.FieldRef<"TipoPrenda", 'String'>;
+    readonly porcentajeDificultad: Prisma.FieldRef<"TipoPrenda", 'Decimal'>;
     readonly activo: Prisma.FieldRef<"TipoPrenda", 'Boolean'>;
     readonly createdAt: Prisma.FieldRef<"TipoPrenda", 'DateTime'>;
     readonly updatedAt: Prisma.FieldRef<"TipoPrenda", 'DateTime'>;
@@ -623,17 +582,6 @@ export type TipoPrendaDeleteArgs<ExtArgs extends runtime.Types.Extensions.Intern
 export type TipoPrendaDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.TipoPrendaWhereInput;
     limit?: number;
-};
-export type TipoPrenda$preciosServiciosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    select?: Prisma.PrecioServicioSelect<ExtArgs> | null;
-    omit?: Prisma.PrecioServicioOmit<ExtArgs> | null;
-    include?: Prisma.PrecioServicioInclude<ExtArgs> | null;
-    where?: Prisma.PrecioServicioWhereInput;
-    orderBy?: Prisma.PrecioServicioOrderByWithRelationInput | Prisma.PrecioServicioOrderByWithRelationInput[];
-    cursor?: Prisma.PrecioServicioWhereUniqueInput;
-    take?: number;
-    skip?: number;
-    distinct?: Prisma.PrecioServicioScalarFieldEnum | Prisma.PrecioServicioScalarFieldEnum[];
 };
 export type TipoPrenda$prendasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.PrendaSelect<ExtArgs> | null;

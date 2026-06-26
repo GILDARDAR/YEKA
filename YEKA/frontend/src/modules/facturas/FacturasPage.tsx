@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { facturasService } from './facturas.service';
 import type { Factura, EstadoPago } from '../../shared/types';
-import { Search, Plus, Filter, FileText } from 'lucide-react';
+import { Search, Plus, Filter, FileText, Calendar } from 'lucide-react';
 import { NuevaFacturaModal } from './NuevaFacturaModal';
 
 
@@ -85,43 +85,39 @@ export function FacturasPage() {
           <p className="empty-state-desc">No hay facturas que coincidan con los filtros</p>
         </div>
       ) : (
-        <div className="table-wrapper">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Número</th>
-                <th>Cliente</th>
-                <th>Fecha</th>
-                <th>Prendas</th>
-                <th>Total</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(f => (
-                <tr key={f.id}>
-                  <td>
-                    <Link to={`/facturas/${f.id}`} style={{ fontWeight: 'var(--font-medium)', color: 'var(--color-primary)' }}>
-                      {f.numero}
-                    </Link>
-                  </td>
-                  <td>{f.cliente?.nombre || <span style={{ color: 'var(--color-text-muted)' }}>Sin cliente</span>}</td>
-                  <td style={{ color: 'var(--color-text-light)', fontSize: 'var(--text-sm)' }}>
-                    {new Date(f.createdAt).toLocaleDateString('es-ES')}
-                  </td>
-                  <td>
-                    <span className="badge badge-neutral">{f.prendas?.length ?? '—'}</span>
-                  </td>
-                  <td style={{ fontWeight: 'var(--font-semibold)' }}>€{Number(f.total).toFixed(2)}</td>
-                  <td>
-                    <span className={`badge ${ESTADO_BADGE[f.estadoPago]}`}>
-                      {ESTADO_LABEL[f.estadoPago]}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--space-4)' }}>
+          {filtered.map(f => (
+            <div key={f.id} className="card" style={{ display: 'flex', flexDirection: 'column', padding: 'var(--space-4)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-2)' }}>
+                <Link to={`/facturas/${f.id}`} style={{ fontWeight: 'var(--font-heading)', fontSize: 'var(--text-lg)', color: 'var(--color-primary)', textDecoration: 'none' }}>
+                  #{f.numero}
+                </Link>
+                <span className={`badge ${ESTADO_BADGE[f.estadoPago]}`}>
+                  {ESTADO_LABEL[f.estadoPago]}
+                </span>
+              </div>
+              
+              <div style={{ flex: 1 }}>
+                <p style={{ fontWeight: 'var(--font-medium)', color: 'var(--color-text)', marginBottom: '4px' }}>
+                  {f.cliente?.nombre || <span style={{ color: 'var(--color-text-muted)' }}>Consumidor Final</span>}
+                </p>
+                <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-light)', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: 'var(--space-3)' }}>
+                  <Calendar size={12} /> {new Date(f.createdAt).toLocaleDateString('es-ES')}
+                </p>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: 'var(--text-sm)' }}>
+                  <span style={{ color: 'var(--color-text-muted)' }}>Prendas:</span>
+                  <span className="badge badge-neutral">{f.prendas?.length ?? 0}</span>
+                </div>
+              </div>
+              
+              <div style={{ marginTop: 'var(--space-4)', paddingTop: 'var(--space-3)', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'flex-end' }}>
+                <span style={{ fontWeight: 'bold', fontSize: 'var(--text-lg)', color: 'var(--color-text)' }}>
+                  €{Number(f.total).toFixed(2)}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 

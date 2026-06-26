@@ -1,30 +1,29 @@
-export declare class PrecioServicioDto {
-    tipoPrendaId: number;
-    medidaBase: number;
-    precioBase: number;
-    medidaExtra: number;
-    precioExtra: number;
-}
 export declare class CreateCatalogoServicioDto {
+    nombre?: string;
     categoria: string;
     tipoEspecifico: string;
-    pesoPuntos: number;
-    preciosPorPrenda: PrecioServicioDto[];
+    medidaBase: number;
+    tiempoBase: number;
+    categoriasFactoresIds?: number[];
 }
 export declare class UpdateCatalogoServicioDto {
+    nombre?: string;
     categoria?: string;
     tipoEspecifico?: string;
-    pesoPuntos?: number;
+    medidaBase?: number;
+    tiempoBase?: number;
     activo?: boolean;
-    preciosPorPrenda?: PrecioServicioDto[];
+    categoriasFactoresIds?: number[];
 }
 export declare class CatalogoServicioResponseDto {
     id: number;
+    nombre: string;
     categoria: string;
     tipoEspecifico: string;
-    pesoPuntos: number;
+    medidaBase: number;
+    tiempoBase: number;
     activo: boolean;
-    preciosPorPrenda: any[];
+    categoriasFactores: any[];
     createdAt: Date;
     updatedAt: Date;
 }

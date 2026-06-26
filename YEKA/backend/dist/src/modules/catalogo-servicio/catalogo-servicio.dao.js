@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CatalogoServicioDAO = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../prisma/prisma.service");
-const client_1 = require("../../../generated/prisma/client");
 let CatalogoServicioDAO = class CatalogoServicioDAO {
     prisma;
     constructor(prisma) {
@@ -25,7 +24,7 @@ let CatalogoServicioDAO = class CatalogoServicioDAO {
                 ...(categoria ? { categoria } : {}),
             },
             include: {
-                preciosServicios: true,
+                categoriasFactores: true,
             },
             orderBy: [
                 { categoria: 'asc' },
@@ -37,63 +36,52 @@ let CatalogoServicioDAO = class CatalogoServicioDAO {
         return this.prisma.catalogoServicio.findUnique({
             where: { id },
             include: {
-                preciosServicios: true,
+                categoriasFactores: true,
             },
         });
     }
     async create(data) {
         return this.prisma.catalogoServicio.create({
             data: {
+                nombre: data.nombre ?? '',
                 categoria: data.categoria,
                 tipoEspecifico: data.tipoEspecifico,
-                pesoPuntos: data.pesoPuntos,
+                medidaBase: data.medidaBase,
+                tiempoBase: data.tiempoBase,
                 activo: true,
-                preciosServicios: {
-                    create: data.preciosPorPrenda.map(p => ({
-                        tipoPrendaId: p.tipoPrendaId,
-                        medidaBase: new client_1.Prisma.Decimal(p.medidaBase),
-                        precioBase: new client_1.Prisma.Decimal(p.precioBase),
-                        medidaExtra: new client_1.Prisma.Decimal(p.medidaExtra),
-                        precioExtra: new client_1.Prisma.Decimal(p.precioExtra),
-                    }))
-                }
-            },
-            include: { preciosServicios: true }
-        });
-    }
-    async update(id, data) {
-        if (data.preciosPorPrenda) {
-            await this.prisma.precioServicio.deleteMany({
-                where: { catalogoServicioId: id }
-            });
-        }
-        return this.prisma.catalogoServicio.update({
-            where: { id },
-            data: {
-                ...(data.categoria ? { categoria: data.categoria } : {}),
-                ...(data.tipoEspecifico ? { tipoEspecifico: data.tipoEspecifico } : {}),
-                ...(data.pesoPuntos ? { pesoPuntos: data.pesoPuntos } : {}),
-                ...(data.activo !== undefined ? { activo: data.activo } : {}),
-                ...(data.preciosPorPrenda ? {
-                    preciosServicios: {
-                        create: data.preciosPorPrenda.map(p => ({
-                            tipoPrendaId: p.tipoPrendaId,
-                            medidaBase: new client_1.Prisma.Decimal(p.medidaBase),
-                            precioBase: new client_1.Prisma.Decimal(p.precioBase),
-                            medidaExtra: new client_1.Prisma.Decimal(p.medidaExtra),
-                            precioExtra: new client_1.Prisma.Decimal(p.precioExtra),
-                        }))
+                ...(data.categoriasFactoresIds ? {
+                    categoriasFactores: {
+                        connect: data.categoriasFactoresIds.map(id => ({ id }))
                     }
                 } : {})
             },
-            include: { preciosServicios: true }
+            include: { categoriasFactores: true }
+        });
+    }
+    async update(id, data) {
+        return this.prisma.catalogoServicio.update({
+            where: { id },
+            data: {
+                ...(data.nombre !== undefined ? { nombre: data.nombre } : {}),
+                ...(data.categoria ? { categoria: data.categoria } : {}),
+                ...(data.tipoEspecifico ? { tipoEspecifico: data.tipoEspecifico } : {}),
+                ...(data.medidaBase !== undefined ? { medidaBase: data.medidaBase } : {}),
+                ...(data.tiempoBase !== undefined ? { tiempoBase: data.tiempoBase } : {}),
+                ...(data.activo !== undefined ? { activo: data.activo } : {}),
+                ...(data.categoriasFactoresIds ? {
+                    categoriasFactores: {
+                        set: data.categoriasFactoresIds.map(id => ({ id }))
+                    }
+                } : {})
+            },
+            include: { categoriasFactores: true }
         });
     }
     async softDelete(id) {
         return this.prisma.catalogoServicio.update({
             where: { id },
             data: { activo: false },
-            include: { preciosServicios: true }
+            include: { categoriasFactores: true }
         });
     }
 };

@@ -4,36 +4,16 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsPositive,
   IsString,
   Min,
-  ValidateNested,
   IsArray,
 } from 'class-validator';
-import { Type } from 'class-transformer';
-
-export class PrecioServicioDto {
-  @IsInt()
-  tipoPrendaId: number;
-
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @Min(0)
-  medidaBase: number;
-
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @Min(0)
-  precioBase: number;
-
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @Min(0)
-  medidaExtra: number;
-
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @Min(0)
-  precioExtra: number;
-}
 
 export class CreateCatalogoServicioDto {
+  @IsString()
+  @IsOptional()
+  nombre?: string;
+
   @IsString()
   @IsNotEmpty()
   categoria: string;
@@ -42,17 +22,25 @@ export class CreateCatalogoServicioDto {
   @IsNotEmpty()
   tipoEspecifico: string;
 
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0)
+  medidaBase: number;
+
   @IsInt()
   @Min(1)
-  pesoPuntos: number;
+  tiempoBase: number;
 
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => PrecioServicioDto)
-  preciosPorPrenda: PrecioServicioDto[];
+  @IsInt({ each: true })
+  @IsOptional()
+  categoriasFactoresIds?: number[];
 }
 
 export class UpdateCatalogoServicioDto {
+  @IsString()
+  @IsOptional()
+  nombre?: string;
+
   @IsString()
   @IsOptional()
   categoria?: string;
@@ -61,29 +49,35 @@ export class UpdateCatalogoServicioDto {
   @IsOptional()
   tipoEspecifico?: string;
 
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0)
+  @IsOptional()
+  medidaBase?: number;
+
   @IsInt()
   @Min(1)
   @IsOptional()
-  pesoPuntos?: number;
+  tiempoBase?: number;
 
   @IsBoolean()
   @IsOptional()
   activo?: boolean;
 
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => PrecioServicioDto)
+  @IsInt({ each: true })
   @IsOptional()
-  preciosPorPrenda?: PrecioServicioDto[];
+  categoriasFactoresIds?: number[];
 }
 
 export class CatalogoServicioResponseDto {
   id: number;
+  nombre: string;
   categoria: string;
   tipoEspecifico: string;
-  pesoPuntos: number;
+  medidaBase: number;
+  tiempoBase: number;
   activo: boolean;
-  preciosPorPrenda: any[];
+  categoriasFactores: any[];
   createdAt: Date;
   updatedAt: Date;
 }

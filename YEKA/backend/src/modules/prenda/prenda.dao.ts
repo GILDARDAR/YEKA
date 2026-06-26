@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Prenda, PrendaServicio, EstadoPrenda, TipoExpress, Prisma } from '../../../generated/prisma/client';
+import { Prenda, PrendaServicio, EstadoPrenda, Prisma } from '../../../generated/prisma/client';
 
 @Injectable()
 export class PrendaDAO {
@@ -52,6 +52,8 @@ export class PrendaDAO {
     esLujo?: boolean;
     notas?: string;
     codigoQR: string;
+    tipoUrgenciaId?: number;
+    porcentajeAtencionAplicado?: Prisma.Decimal | number;
   }): Promise<Prenda> {
     return this.prisma.prenda.create({
       data: {
@@ -63,6 +65,8 @@ export class PrendaDAO {
         esLujo: data.esLujo ?? false,
         notas: data.notas || null,
         codigoQR: data.codigoQR,
+        tipoUrgenciaId: data.tipoUrgenciaId || null,
+        porcentajeAtencionAplicado: data.porcentajeAtencionAplicado !== undefined ? new Prisma.Decimal(data.porcentajeAtencionAplicado) : null,
       },
     });
   }
@@ -84,18 +88,26 @@ export class PrendaDAO {
     prendaId: number;
     servicioId: number;
     medidaEntregada?: number;
-    tipoExpress: TipoExpress;
+    tiempoCalculado?: number;
+    valorPorTiempo?: Prisma.Decimal | number;
+    valorFactoresCobro?: Prisma.Decimal | number;
+    precioBruto?: Prisma.Decimal | number;
     precioFinal: Prisma.Decimal | number;
     observaciones?: string;
+    detallesCalculo?: any;
   }): Promise<PrendaServicio> {
     return this.prisma.prendaServicio.create({
       data: {
         prendaId: data.prendaId,
         servicioId: data.servicioId,
         medidaEntregada: data.medidaEntregada !== undefined ? new Prisma.Decimal(data.medidaEntregada) : null,
-        tipoExpress: data.tipoExpress,
+        tiempoCalculado: data.tiempoCalculado !== undefined ? data.tiempoCalculado : null,
+        valorPorTiempo: data.valorPorTiempo !== undefined ? new Prisma.Decimal(data.valorPorTiempo) : null,
+        valorFactoresCobro: data.valorFactoresCobro !== undefined ? new Prisma.Decimal(data.valorFactoresCobro) : null,
+        precioBruto: data.precioBruto !== undefined ? new Prisma.Decimal(data.precioBruto) : null,
         precioFinal: new Prisma.Decimal(data.precioFinal),
         observaciones: data.observaciones || null,
+        detallesCalculo: data.detallesCalculo ? data.detallesCalculo : Prisma.JsonNull,
       },
     });
   }

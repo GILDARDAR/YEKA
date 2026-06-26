@@ -22,6 +22,8 @@ const prenda_module_1 = require("./modules/prenda/prenda.module");
 const tipo_prenda_module_1 = require("./modules/tipo-prenda/tipo-prenda.module");
 const configuracion_module_1 = require("./modules/configuracion/configuracion.module");
 const anuncios_module_1 = require("./modules/anuncios/anuncios.module");
+const tipo_urgencia_module_1 = require("./modules/tipo-urgencia/tipo-urgencia.module");
+const factor_cobro_module_1 = require("./modules/factor-cobro/factor-cobro.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -40,6 +42,8 @@ exports.AppModule = AppModule = __decorate([
             tipo_prenda_module_1.TipoPrendaModule,
             configuracion_module_1.ConfiguracionModule,
             anuncios_module_1.AnunciosModule,
+            tipo_urgencia_module_1.TipoUrgenciaModule,
+            factor_cobro_module_1.FactorCobroModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

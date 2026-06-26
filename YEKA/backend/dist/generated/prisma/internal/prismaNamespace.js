@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.defineExtension = exports.JsonNullValueFilter = exports.NullsOrder = exports.QueryMode = exports.NullableJsonNullValueInput = exports.SortOrder = exports.AnuncioRespuestaScalarFieldEnum = exports.AnuncioScalarFieldEnum = exports.ConfiguracionScalarFieldEnum = exports.AuditLogScalarFieldEnum = exports.InventarioScalarFieldEnum = exports.PrendaServicioScalarFieldEnum = exports.PrecioServicioScalarFieldEnum = exports.CatalogoServicioScalarFieldEnum = exports.PrendaScalarFieldEnum = exports.TipoPrendaScalarFieldEnum = exports.AbonoScalarFieldEnum = exports.FacturaScalarFieldEnum = exports.ClienteScalarFieldEnum = exports.RegistroJornadaScalarFieldEnum = exports.UsuarioScalarFieldEnum = exports.SedeScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.prismaVersion = exports.getExtensionContext = exports.Decimal = exports.Sql = exports.raw = exports.join = exports.empty = exports.sql = exports.PrismaClientValidationError = exports.PrismaClientInitializationError = exports.PrismaClientRustPanicError = exports.PrismaClientUnknownRequestError = exports.PrismaClientKnownRequestError = void 0;
+exports.defineExtension = exports.JsonNullValueFilter = exports.NullsOrder = exports.QueryMode = exports.NullableJsonNullValueInput = exports.SortOrder = exports.AnuncioRespuestaScalarFieldEnum = exports.AnuncioScalarFieldEnum = exports.ConfiguracionScalarFieldEnum = exports.AuditLogScalarFieldEnum = exports.InventarioScalarFieldEnum = exports.PrendaServicioScalarFieldEnum = exports.FactorCobroScalarFieldEnum = exports.CategoriaFactorCobroScalarFieldEnum = exports.CatalogoServicioScalarFieldEnum = exports.PrendaScalarFieldEnum = exports.TipoUrgenciaScalarFieldEnum = exports.TipoPrendaScalarFieldEnum = exports.AbonoScalarFieldEnum = exports.FacturaScalarFieldEnum = exports.ClienteScalarFieldEnum = exports.RegistroJornadaScalarFieldEnum = exports.UsuarioScalarFieldEnum = exports.SedeScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.prismaVersion = exports.getExtensionContext = exports.Decimal = exports.Sql = exports.raw = exports.join = exports.empty = exports.sql = exports.PrismaClientValidationError = exports.PrismaClientInitializationError = exports.PrismaClientRustPanicError = exports.PrismaClientUnknownRequestError = exports.PrismaClientKnownRequestError = void 0;
 const runtime = __importStar(require("@prisma/client/runtime/client"));
 exports.PrismaClientKnownRequestError = runtime.PrismaClientKnownRequestError;
 exports.PrismaClientUnknownRequestError = runtime.PrismaClientUnknownRequestError;
@@ -67,9 +67,11 @@ exports.ModelName = {
     Factura: 'Factura',
     Abono: 'Abono',
     TipoPrenda: 'TipoPrenda',
+    TipoUrgencia: 'TipoUrgencia',
     Prenda: 'Prenda',
     CatalogoServicio: 'CatalogoServicio',
-    PrecioServicio: 'PrecioServicio',
+    CategoriaFactorCobro: 'CategoriaFactorCobro',
+    FactorCobro: 'FactorCobro',
     PrendaServicio: 'PrendaServicio',
     Inventario: 'Inventario',
     AuditLog: 'AuditLog',
@@ -153,6 +155,15 @@ exports.TipoPrendaScalarFieldEnum = {
     id: 'id',
     nombre: 'nombre',
     descripcion: 'descripcion',
+    porcentajeDificultad: 'porcentajeDificultad',
+    activo: 'activo',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+};
+exports.TipoUrgenciaScalarFieldEnum = {
+    id: 'id',
+    nombre: 'nombre',
+    porcentajeRecargo: 'porcentajeRecargo',
     activo: 'activo',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -174,36 +185,52 @@ exports.PrendaScalarFieldEnum = {
     color: 'color',
     marca: 'marca',
     talla: 'talla',
-    tipoExpress: 'tipoExpress'
+    tipoUrgenciaId: 'tipoUrgenciaId',
+    porcentajeAtencionAplicado: 'porcentajeAtencionAplicado'
 };
 exports.CatalogoServicioScalarFieldEnum = {
     id: 'id',
+    nombre: 'nombre',
     categoria: 'categoria',
     tipoEspecifico: 'tipoEspecifico',
-    pesoPuntos: 'pesoPuntos',
+    medidaBase: 'medidaBase',
+    tiempoBase: 'tiempoBase',
     activo: 'activo',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
 };
-exports.PrecioServicioScalarFieldEnum = {
+exports.CategoriaFactorCobroScalarFieldEnum = {
     id: 'id',
-    catalogoServicioId: 'catalogoServicioId',
-    tipoPrendaId: 'tipoPrendaId',
-    medidaBase: 'medidaBase',
-    precioBase: 'precioBase',
-    medidaExtra: 'medidaExtra',
-    precioExtra: 'precioExtra',
-    activo: 'activo'
+    nombre: 'nombre',
+    activa: 'activa',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+};
+exports.FactorCobroScalarFieldEnum = {
+    id: 'id',
+    categoriaId: 'categoriaId',
+    nombre: 'nombre',
+    valor: 'valor',
+    tipo: 'tipo',
+    fechaInicio: 'fechaInicio',
+    fechaFin: 'fechaFin',
+    activo: 'activo',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
 };
 exports.PrendaServicioScalarFieldEnum = {
     id: 'id',
     prendaId: 'prendaId',
     servicioId: 'servicioId',
-    tipoExpress: 'tipoExpress',
-    precioFinal: 'precioFinal',
-    createdAt: 'createdAt',
     medidaEntregada: 'medidaEntregada',
-    observaciones: 'observaciones'
+    tiempoCalculado: 'tiempoCalculado',
+    valorPorTiempo: 'valorPorTiempo',
+    valorFactoresCobro: 'valorFactoresCobro',
+    precioBruto: 'precioBruto',
+    precioFinal: 'precioFinal',
+    observaciones: 'observaciones',
+    detallesCalculo: 'detallesCalculo',
+    createdAt: 'createdAt'
 };
 exports.InventarioScalarFieldEnum = {
     id: 'id',

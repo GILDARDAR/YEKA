@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrendaDAO } from './prenda.dao';
@@ -20,7 +21,6 @@ import {
   Prenda,
   PrendaServicio,
   EstadoPrenda,
-  TipoExpress,
   AccionAuditoria,
 } from '../../../generated/prisma/client';
 
@@ -42,7 +42,8 @@ function toResponseDto(prenda: Prenda): PrendaResponseDto {
     notas: prenda.notas,
     createdAt: prenda.createdAt,
     updatedAt: prenda.updatedAt,
-    tipoExpress: (prenda as any).tipoExpress || 'NORMAL',
+    tipoUrgenciaId: (prenda as any).tipoUrgenciaId || null,
+    porcentajeAtencionAplicado: (prenda as any).porcentajeAtencionAplicado ? (prenda as any).porcentajeAtencionAplicado.toString() : null,
     factura: (prenda as any).factura,
   };
 }
@@ -53,15 +54,21 @@ function toPrendaServicioResponseDto(ps: PrendaServicio): PrendaServicioResponse
     prendaId: ps.prendaId,
     servicioId: ps.servicioId,
     medidaEntregada: ps.medidaEntregada ? ps.medidaEntregada.toString() : null,
-    tipoExpress: ps.tipoExpress,
+    tiempoCalculado: ps.tiempoCalculado,
+    valorPorTiempo: ps.valorPorTiempo ? ps.valorPorTiempo.toString() : null,
+    valorFactoresCobro: ps.valorFactoresCobro ? ps.valorFactoresCobro.toString() : null,
+    precioBruto: ps.precioBruto ? ps.precioBruto.toString() : null,
     precioFinal: ps.precioFinal.toString(),
     observaciones: (ps as any).observaciones || null,
+    detallesCalculo: (ps as any).detallesCalculo || null,
     createdAt: ps.createdAt,
   };
 }
 
 @Injectable()
 export class PrendaFacade {
+  private readonly logger = new Logger(PrendaFacade.name);
+  
   constructor(
     private readonly prendaDAO: PrendaDAO,
     private readonly prismaService: PrismaService,
@@ -71,7 +78,6 @@ export class PrendaFacade {
   ) {}
 
   async createPrenda(dto: CreatePrendaDto): Promise<PrendaResponseDto> {
-    // 1. Verify invoice exists
     const factura = await this.prismaService.factura.findUnique({
       where: { id: dto.facturaId },
     });
@@ -79,7 +85,6 @@ export class PrendaFacade {
       throw new NotFoundException(`Factura con id ${dto.facturaId} no encontrada`);
     }
 
-    // 1.5. Verify TipoPrenda exists
     const tipoPrenda = await this.prismaService.tipoPrenda.findUnique({
       where: { id: dto.tipoPrendaId }
     });
@@ -87,7 +92,6 @@ export class PrendaFacade {
       throw new NotFoundException(`Tipo de prenda con id ${dto.tipoPrendaId} no encontrado o inactivo`);
     }
 
-    // 2. Look up Sede to get codigoSede
     const sede = await this.prismaService.sede.findUnique({
       where: { id: factura.sedeId },
     });
@@ -105,8 +109,18 @@ export class PrendaFacade {
     const year = new Date().getFullYear();
     const codigoSede = sede.codigoSede;
 
-    // 3. Create garment with a temporary unique QR first
     const tempQr = `TEMP-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    
+    let porcentajeAtencionAplicado = undefined;
+    if (dto.tipoUrgenciaId) {
+      const urgencia = await this.prismaService.tipoUrgencia.findUnique({
+        where: { id: dto.tipoUrgenciaId }
+      });
+      if (urgencia) {
+        porcentajeAtencionAplicado = urgencia.porcentajeRecargo;
+      }
+    }
+
     const created = await this.prendaDAO.create({
       facturaId: dto.facturaId,
       tipoPrendaId: dto.tipoPrendaId,
@@ -116,9 +130,10 @@ export class PrendaFacade {
       esLujo: dto.esLujo,
       notas: dto.notas,
       codigoQR: tempQr,
+      tipoUrgenciaId: dto.tipoUrgenciaId,
+      porcentajeAtencionAplicado,
     });
 
-    // 4. Update the QR code using the generated auto-increment ID
     const qrCode = `PR-${codigoSede}-${year}-${String(created.id).padStart(5, '0')}`;
     const updated = await this.prendaDAO.update(created.id, {
       codigoQR: qrCode,
@@ -161,9 +176,26 @@ export class PrendaFacade {
     }
 
     const valorAnterior = { ...prenda };
-    const updated = await this.prendaDAO.update(id, dto);
+    
+    const updateData = { ...dto };
+    if (dto.tipoUrgenciaId !== undefined) {
+      if (dto.tipoUrgenciaId === null) {
+        updateData.porcentajeAtencionAplicado = null;
+      } else {
+        const urgencia = await this.prismaService.tipoUrgencia.findUnique({
+          where: { id: dto.tipoUrgenciaId }
+        });
+        updateData.porcentajeAtencionAplicado = urgencia?.porcentajeRecargo || 0;
+      }
+    }
 
-    // Create AuditLog
+    const updated = await this.prendaDAO.update(id, updateData);
+
+    // If urgency or tipo prenda changed, we should recalculate the prices of all assigned services
+    if (dto.tipoUrgenciaId !== undefined || dto.tipoPrendaId !== undefined) {
+      await this.recalcularPreciosPrenda(id);
+    }
+
     await this.prismaService.auditLog.create({
       data: {
         usuarioId,
@@ -178,65 +210,235 @@ export class PrendaFacade {
     return toResponseDto(updated);
   }
 
+  private async getValorHoraGlobal(): Promise<number> {
+    const conf = await this.prismaService.configuracion.findUnique({
+      where: { clave: 'VALOR_HORA_PUNTOS' }
+    });
+    return conf ? parseFloat(conf.valor) : 60; // Default 60
+  }
+
+  private async recalcularPreciosPrenda(prendaId: number) {
+    const prenda = await this.prismaService.prenda.findUnique({
+      where: { id: prendaId },
+      include: { tipoPrenda: true, tipoUrgencia: true, servicios: true }
+    });
+    if (!prenda) return;
+
+    for (const ps of prenda.servicios) {
+      const psDTO = {
+        servicioId: ps.servicioId,
+        medidaEntregada: ps.medidaEntregada ? ps.medidaEntregada.toNumber() : undefined,
+      };
+      const result = await this.calcularPreciosDeServicio(prenda, psDTO);
+      
+      await this.prismaService.prendaServicio.update({
+        where: { id: ps.id },
+        data: {
+          medidaEntregada: result.medidaEntregadaFinal,
+          tiempoCalculado: result.tiempoCalculado,
+          valorPorTiempo: result.valorPorTiempo,
+          valorFactoresCobro: result.valorFactoresCobro,
+          precioBruto: result.precioBruto,
+          precioFinal: result.precioFinal,
+          detallesCalculo: result.detallesCalculo as any
+        }
+      });
+    }
+
+    await this.facturaFacade.recalcularFactura(prenda.facturaId);
+  }
+
+  private async calcularPreciosDeServicio(prenda: any, dto: { servicioId: number, medidaEntregada?: number }) {
+    const servicio = await this.prismaService.catalogoServicio.findUnique({
+      where: { id: dto.servicioId },
+      include: {
+        categoriasFactores: {
+          include: {
+            factores: true
+          }
+        }
+      }
+    });
+
+    if (!servicio || !servicio.activo) {
+      throw new NotFoundException(`Servicio de catálogo con id ${dto.servicioId} no encontrado o inactivo`);
+    }
+
+    // 1. Obtener configuraciones globales
+    const confMinutos = await this.prismaService.configuracion.findUnique({
+      where: { clave: 'MINUTOS_PRODUCTIVOS_MES' }
+    });
+    const minutosProductivos = confMinutos ? parseInt(confMinutos.valor, 10) : 21120; // Default 21120
+
+    const confUtilidad = await this.prismaService.configuracion.findUnique({
+      where: { clave: 'MARGEN_UTILIDAD_GLOBAL' }
+    });
+    const margenUtilidad = confUtilidad ? parseFloat(confUtilidad.valor) : 30.0; // Default 30.0%
+
+    // 2. Obtener todos los factores activos en el sistema para calcular el costo prorrateado por minuto
+    const activeCategories = await this.prismaService.categoriaFactorCobro.findMany({
+      where: { activa: true },
+      include: {
+        factores: {
+          where: { activo: true }
+        }
+      }
+    });
+
+    let totalMensual = 0;
+    let totalAnual = 0;
+    let totalDiario = 0;
+
+    for (const cat of activeCategories) {
+      for (const factor of cat.factores) {
+        const valor = factor.valor.toNumber();
+        if (factor.tipo === 'MENSUAL') {
+          totalMensual += valor;
+        } else if (factor.tipo === 'ANUAL') {
+          totalAnual += valor;
+        } else if (factor.tipo === 'DIARIO') {
+          totalDiario += valor;
+        }
+      }
+    }
+
+    const costoMensualEquivalente = totalMensual + (totalAnual / 12) + (totalDiario * 22);
+    const cfMin = minutosProductivos > 0 ? (costoMensualEquivalente / minutosProductivos) : 0;
+
+    // 3. Medida y cálculo del tiempo base
+    const medidaBase = servicio.medidaBase.toNumber() || 1;
+    const tiempoBase = servicio.tiempoBase || 60;
+    
+    // Si la medida entregada es menor que la medida base, la medida entregada se convierte en la medida base
+    let medidaEntregadaFinal = dto.medidaEntregada;
+    if (dto.medidaEntregada !== undefined && dto.medidaEntregada !== null) {
+      if (dto.medidaEntregada < medidaBase) {
+        medidaEntregadaFinal = medidaBase;
+      }
+    }
+    
+    const medidaUsada = medidaEntregadaFinal || medidaBase;
+    const proporcion = medidaUsada / medidaBase;
+    const tiempoCalculadoBase = Math.round(proporcion * tiempoBase);
+
+    // Aplicar porcentaje de dificultad sobre el tiempo calculado (aumenta los minutos directos)
+    const porcentajeDificultad = prenda.tipoPrenda?.porcentajeDificultad?.toNumber() || 0;
+    const tiempoCalculado = Math.round(tiempoCalculadoBase * (1 + porcentajeDificultad / 100));
+
+    // Calcular costo por tiempo usando CF_min
+    const valorPorTiempo = tiempoCalculado * cfMin;
+
+    // 4. Factores fijos por servicio (FIJO_POR_SERVICIO) específicos de este servicio
+    let valorFactoresCobro = 0;
+    for (const cat of servicio.categoriasFactores) {
+      if (cat.activa) {
+        for (const factor of cat.factores) {
+          if (factor.activo && factor.tipo === 'FIJO_POR_SERVICIO') {
+            valorFactoresCobro += factor.valor.toNumber();
+          }
+        }
+      }
+    }
+
+    // 5. Calcular precio bruto operativo (costo operativo)
+    const precioBruto = valorPorTiempo + valorFactoresCobro;
+
+    // 6. Aplicar margen de utilidad global
+    const precioConUtilidad = precioBruto * (1 + margenUtilidad / 100);
+
+    // 7. Aplicar multiplicador de urgencia
+    const porcentajeUrgencia = prenda.porcentajeAtencionAplicado?.toNumber() ?? (prenda.tipoUrgencia?.porcentajeRecargo?.toNumber() || 0);
+    
+    const getUrgencyMultiplier = (val: number): number => {
+      if (val <= 0) return 1.0;
+      if (val > 5.0) {
+        return 1.0 + (val / 100);
+      }
+      return val >= 1.0 ? val : 1.0;
+    };
+    const urgMultiplier = getUrgencyMultiplier(porcentajeUrgencia);
+    const precioFinal = precioConUtilidad * urgMultiplier;
+
+    this.logger.log(`=== CALCULANDO PRECIOS DE SERVICIO (NUEVO MODELO) ===`);
+    this.logger.log(`Servicio ID: ${dto.servicioId} (${servicio.tipoEspecifico})`);
+    this.logger.log(`Medida Base: ${medidaBase} cm`);
+    this.logger.log(`Tiempo Base: ${tiempoBase} min`);
+    this.logger.log(`Medida Entregada (Original): ${dto.medidaEntregada ?? 'N/A'}`);
+    this.logger.log(`Medida Entregada (Final ajustada): ${medidaEntregadaFinal ?? 'N/A'}`);
+    this.logger.log(`Medida Usada: ${medidaUsada}`);
+    this.logger.log(`Proporción: ${proporcion}`);
+    this.logger.log(`Tiempo Calculado Base: ${tiempoCalculadoBase} min`);
+    this.logger.log(`Porcentaje Dificultad Prenda: ${porcentajeDificultad}%`);
+    this.logger.log(`Tiempo Calculado (Ajustado Dificultad): ${tiempoCalculado} min`);
+    this.logger.log(`Minutos Productivos Mes: ${minutosProductivos}`);
+    this.logger.log(`Gastos Fijos Sumas: Mensual=${totalMensual}, Anual=${totalAnual}, Diario=${totalDiario}`);
+    this.logger.log(`Costo Mensual Equivalente: €${costoMensualEquivalente}`);
+    this.logger.log(`Costo Fijo por Minuto (CF_min): €${cfMin}`);
+    this.logger.log(`Valor por Tiempo (Tiempo * CF_min): €${valorPorTiempo}`);
+    this.logger.log(`Valor Factores Fijos Servicio (FIJO_POR_SERVICIO): €${valorFactoresCobro}`);
+    this.logger.log(`Precio Bruto (Operativo): €${precioBruto}`);
+    this.logger.log(`Margen de Utilidad Global: ${margenUtilidad}%`);
+    this.logger.log(`Precio Con Utilidad: €${precioConUtilidad}`);
+    this.logger.log(`Porcentaje Urgencia Prenda: ${porcentajeUrgencia}%`);
+    this.logger.log(`Multiplicador de Urgencia: ${urgMultiplier}x`);
+    this.logger.log(`Precio Final: €${precioFinal}`);
+    this.logger.log(`=====================================================`);
+
+    const detallesCalculo = {
+      medidaBase,
+      tiempoBase,
+      medidaEntregada: medidaEntregadaFinal,
+      medidaUsada,
+      proporcion,
+      tiempoCalculadoBase,
+      porcentajeDificultad,
+      tiempoCalculado,
+      minutosProductivos,
+      totalMensual,
+      totalAnual,
+      totalDiario,
+      costoMensualEquivalente,
+      cfMin,
+      valorPorTiempo,
+      factoresCobroDetalle: servicio.categoriasFactores.flatMap(cat => 
+        cat.activa ? cat.factores.filter(f => f.activo && f.tipo === 'FIJO_POR_SERVICIO').map(f => ({
+          nombre: f.nombre,
+          valor: f.valor.toNumber()
+        })) : []
+      ),
+      valorFactoresCobro,
+      precioBruto,
+      margenUtilidad,
+      precioConUtilidad,
+      porcentajeUrgencia,
+      urgMultiplier,
+      precioFinal
+    };
+
+    return {
+      tiempoCalculado,
+      valorPorTiempo,
+      valorFactoresCobro,
+      precioBruto,
+      precioFinal,
+      medidaEntregadaFinal,
+      detallesCalculo
+    };
+  }
+
   async asignarServicio(
     prendaId: number,
     dto: AsignarServicioDto,
     usuarioId: number,
   ): Promise<PrendaServicioResponseDto> {
-    // 1. Verify garment exists
-    const prenda = await this.prendaDAO.findById(prendaId);
+    const prenda = await this.prismaService.prenda.findUnique({
+      where: { id: prendaId },
+      include: { tipoPrenda: true, tipoUrgencia: true }
+    });
     if (!prenda) {
       throw new NotFoundException(`Prenda con id ${prendaId} no encontrada`);
     }
 
-    // 2. Verify service exists in catalogue
-    const servicio = await this.prismaService.catalogoServicio.findUnique({
-      where: { id: dto.servicioId },
-    });
-    if (!servicio || !servicio.activo) {
-      throw new NotFoundException(`Servicio de catálogo con id ${dto.servicioId} no encontrado o inactivo`);
-    }
-
-    // 2.5 Get pricing rule for this specific garment type
-    const reglaPrecio = await this.prismaService.precioServicio.findUnique({
-      where: {
-        catalogoServicioId_tipoPrendaId: {
-          catalogoServicioId: dto.servicioId,
-          tipoPrendaId: prenda.tipoPrendaId
-        }
-      }
-    });
-
-    if (!reglaPrecio || !reglaPrecio.activo) {
-      throw new BadRequestException(`El servicio no tiene una regla de precio configurada para este tipo de prenda.`);
-    }
-
-    // 3. Calculate base price using the length algorithm
-    let basePrice = reglaPrecio.precioBase.toNumber();
-    
-    if (dto.medidaEntregada !== undefined && dto.medidaEntregada !== null) {
-      const medidaBase = reglaPrecio.medidaBase.toNumber();
-      const medidaExtra = reglaPrecio.medidaExtra.toNumber();
-      const precioExtra = reglaPrecio.precioExtra.toNumber();
-
-      if (dto.medidaEntregada > medidaBase && medidaExtra > 0) {
-        const exceso = dto.medidaEntregada - medidaBase;
-        const unidadesExtra = Math.ceil(exceso / medidaExtra);
-        basePrice = basePrice + (unidadesExtra * precioExtra);
-      }
-    }
-
-    // 3.5 Apply express multipliers using ConfiguracionService
-    let multiplier = 1.0;
-    if (dto.tipoExpress === TipoExpress.EXPRESS_48H) {
-      const multStr = await this.configuracionService.get('EXPRESS_48H_MULTIPLIER');
-      multiplier = parseFloat(multStr);
-    } else if (dto.tipoExpress === TipoExpress.EXPRESS_24H) {
-      const multStr = await this.configuracionService.get('EXPRESS_24H_MULTIPLIER');
-      multiplier = parseFloat(multStr);
-    }
-
-    // 3.8 Validate observaciones if present
     if (dto.observaciones) {
       const wordCount = dto.observaciones.trim().split(/\s+/).filter(Boolean).length;
       if (wordCount > 500) {
@@ -244,22 +446,23 @@ export class PrendaFacade {
       }
     }
 
-    const finalPrice = basePrice * multiplier;
+    const preciosCalculados = await this.calcularPreciosDeServicio(prenda, dto);
 
-    // 4. Create PrendaServicio pivot record
     const ps = await this.prendaDAO.asignarServicio({
       prendaId,
       servicioId: dto.servicioId,
-      medidaEntregada: dto.medidaEntregada,
-      tipoExpress: dto.tipoExpress,
-      precioFinal: finalPrice,
+      medidaEntregada: preciosCalculados.medidaEntregadaFinal,
+      tiempoCalculado: preciosCalculados.tiempoCalculado,
+      valorPorTiempo: preciosCalculados.valorPorTiempo,
+      valorFactoresCobro: preciosCalculados.valorFactoresCobro,
+      precioBruto: preciosCalculados.precioBruto,
+      precioFinal: preciosCalculados.precioFinal,
       observaciones: dto.observaciones,
+      detallesCalculo: preciosCalculados.detallesCalculo as any,
     });
 
-    // 5. Recalculate invoice totals
     await this.facturaFacade.recalcularFactura(prenda.facturaId);
 
-    // 6. Write AuditLog for assigning service
     await this.prismaService.auditLog.create({
       data: {
         usuarioId,
@@ -270,8 +473,7 @@ export class PrendaFacade {
           tipo: 'ASIGNAR_SERVICIO',
           prendaServicioId: ps.id,
           servicioId: dto.servicioId,
-          tipoExpress: dto.tipoExpress,
-          precioFinal: finalPrice,
+          precioFinal: preciosCalculados.precioFinal,
           observaciones: dto.observaciones,
         },
       },
@@ -285,25 +487,19 @@ export class PrendaFacade {
     prendaServicioId: number,
     usuarioId: number,
   ): Promise<void> {
-    // 1. Verify garment exists
     const prenda = await this.prendaDAO.findById(prendaId);
     if (!prenda) {
       throw new NotFoundException(`Prenda con id ${prendaId} no encontrada`);
     }
 
-    // 2. Verify the PrendaServicio belongs to this prenda
     const servicio = (prenda as any).servicios?.find((s: any) => s.id === prendaServicioId);
     if (!servicio) {
       throw new NotFoundException(`Servicio asignado con id ${prendaServicioId} no encontrado en la prenda ${prendaId}`);
     }
 
-    // 3. Delete the PrendaServicio
     const deleted = await this.prendaDAO.deletePrendaServicio(prendaServicioId);
-
-    // 4. Recalculate invoice totals
     await this.facturaFacade.recalcularFactura(prenda.facturaId);
 
-    // 5. Write AuditLog
     await this.prismaService.auditLog.create({
       data: {
         usuarioId,
@@ -334,14 +530,12 @@ export class PrendaFacade {
     };
 
     if (dto.usuarioTallerId !== undefined && dto.usuarioTallerId !== null) {
-      // Check if user exists
       const user = await this.prismaService.usuario.findUnique({
         where: { id: dto.usuarioTallerId },
       });
       if (!user || !user.activo) {
         throw new NotFoundException(`Usuario de taller con id ${dto.usuarioTallerId} no encontrado o inactivo`);
       }
-      // Check if user has TALLER or ADMIN role
       if (user.rol !== 'TALLER' && user.rol !== 'ADMIN') {
         throw new BadRequestException('El usuario asignado debe tener rol TALLER o ADMIN');
       }
@@ -357,7 +551,6 @@ export class PrendaFacade {
 
     const updated = await this.prendaDAO.update(id, updateData);
 
-    // Create AuditLog
     await this.prismaService.auditLog.create({
       data: {
         usuarioId,
@@ -369,82 +562,6 @@ export class PrendaFacade {
           estadoActual: updated.estadoActual,
           usuarioTallerId: updated.usuarioTallerId,
         } as any,
-      },
-    });
-
-    return toResponseDto(updated);
-  }
-
-  async cambiarTipoExpress(
-    id: number,
-    tipoExpress: TipoExpress,
-    usuarioId: number,
-  ): Promise<PrendaResponseDto> {
-    const prenda = await this.prendaDAO.findById(id);
-    if (!prenda) {
-      throw new NotFoundException(`Prenda con id ${id} no encontrada`);
-    }
-
-    const valorAnterior = { tipoExpress: (prenda as any).tipoExpress || 'NORMAL' };
-    
-    // Update the Prenda's own setting
-    const updated = await this.prendaDAO.update(id, { tipoExpress });
-
-    // Iterate over all assigned services and update them
-    const servicios = (prenda as any).servicios || [];
-    for (const s of servicios) {
-      const reglaPrecio = await this.prismaService.precioServicio.findUnique({
-        where: {
-          catalogoServicioId_tipoPrendaId: {
-            catalogoServicioId: s.servicioId,
-            tipoPrendaId: prenda.tipoPrendaId
-          }
-        }
-      });
-      if (reglaPrecio) {
-        let basePrice = reglaPrecio.precioBase.toNumber();
-        if (s.medidaEntregada !== null && s.medidaEntregada !== undefined) {
-          const mEntregada = s.medidaEntregada.toNumber();
-          const mBase = reglaPrecio.medidaBase.toNumber();
-          const mExtra = reglaPrecio.medidaExtra.toNumber();
-          const pExtra = reglaPrecio.precioExtra.toNumber();
-          if (mEntregada > mBase && mExtra > 0) {
-            const exceso = mEntregada - mBase;
-            const unidadesExtra = Math.ceil(exceso / mExtra);
-            basePrice = basePrice + (unidadesExtra * pExtra);
-          }
-        }
-
-        let multiplier = 1.0;
-        if (tipoExpress === TipoExpress.EXPRESS_48H) {
-          const multStr = await this.configuracionService.get('EXPRESS_48H_MULTIPLIER');
-          multiplier = parseFloat(multStr);
-        } else if (tipoExpress === TipoExpress.EXPRESS_24H) {
-          const multStr = await this.configuracionService.get('EXPRESS_24H_MULTIPLIER');
-          multiplier = parseFloat(multStr);
-        }
-
-        const finalPrice = basePrice * multiplier;
-
-        await this.prismaService.prendaServicio.update({
-          where: { id: s.id },
-          data: { tipoExpress, precioFinal: finalPrice },
-        });
-      }
-    }
-
-    // Recalculate invoice totals
-    await this.facturaFacade.recalcularFactura(prenda.facturaId);
-
-    // Create AuditLog
-    await this.prismaService.auditLog.create({
-      data: {
-        usuarioId,
-        accion: AccionAuditoria.MODIFICACION,
-        entidadAfectada: 'Prenda',
-        entidadId: id,
-        valorAnterior: valorAnterior as any,
-        valorNuevo: { tipoExpress } as any,
       },
     });
 
@@ -466,7 +583,6 @@ export class PrendaFacade {
       fotoUrl: dto.fotoUrl,
     });
 
-    // Create AuditLog
     await this.prismaService.auditLog.create({
       data: {
         usuarioId,
@@ -488,11 +604,8 @@ export class PrendaFacade {
     }
 
     const deleted = await this.prendaDAO.delete(id);
-
-    // Recalculate invoice totals
     await this.facturaFacade.recalcularFactura(prenda.facturaId);
 
-    // Create AuditLog
     await this.prismaService.auditLog.create({
       data: {
         usuarioId,

@@ -9,7 +9,7 @@ import {
   IsUrl,
   Min,
 } from 'class-validator';
-import { EstadoPrenda, TipoExpress } from '../../../generated/prisma/client';
+import { EstadoPrenda } from '../../../generated/prisma/client';
 
 // ─── CREATE ───────────────────────────────────────────────────
 
@@ -39,6 +39,10 @@ export class CreatePrendaDto {
   @IsOptional()
   @IsString()
   notas?: string;
+
+  @IsOptional()
+  @IsInt()
+  tipoUrgenciaId?: number;
 }
 
 export class UpdatePrendaDto {
@@ -65,6 +69,10 @@ export class UpdatePrendaDto {
   @IsOptional()
   @IsString()
   notas?: string;
+
+  @IsOptional()
+  @IsInt()
+  tipoUrgenciaId?: number;
 }
 
 // ─── ASIGNAR SERVICIO ─────────────────────────────────────────
@@ -78,10 +86,6 @@ export class AsignarServicioDto {
   @Min(0)
   @IsOptional()
   medidaEntregada?: number;
-
-  @IsEnum(TipoExpress)
-  @IsNotEmpty()
-  tipoExpress: TipoExpress;
 
   @IsString()
   @IsOptional()
@@ -128,7 +132,9 @@ export class PrendaResponseDto {
   notas: string | null;
   createdAt: Date;
   updatedAt: Date;
-  tipoExpress: TipoExpress;
+  tipoUrgenciaId: number | null;
+  tipoUrgencia?: any;
+  porcentajeAtencionAplicado?: string | null;
   factura?: any;
 }
 
@@ -139,8 +145,12 @@ export class PrendaServicioResponseDto {
   prendaId: number;
   servicioId: number;
   medidaEntregada: string | null;
-  tipoExpress: TipoExpress;
+  tiempoCalculado: number | null;
+  valorPorTiempo: string | null;
+  valorFactoresCobro: string | null;
+  precioBruto: string | null;
   precioFinal: string; // Decimal serialized as string
   observaciones: string | null;
+  detallesCalculo?: any;
   createdAt: Date;
 }

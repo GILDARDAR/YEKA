@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TipoExpress = exports.MetodoPago = exports.AccionAuditoria = exports.TipoJornada = exports.EstadoPrenda = exports.EstadoPago = exports.Rol = void 0;
+exports.TipoFactor = exports.MetodoPago = exports.AccionAuditoria = exports.TipoJornada = exports.EstadoPrenda = exports.EstadoPago = exports.Rol = void 0;
 exports.Rol = {
     ADMIN: 'ADMIN',
     RECEPCION: 'RECEPCION',
@@ -38,9 +38,10 @@ exports.MetodoPago = {
     TRANSFERENCIA: 'TRANSFERENCIA',
     BIZUM: 'BIZUM'
 };
-exports.TipoExpress = {
-    NORMAL: 'NORMAL',
-    EXPRESS_48H: 'EXPRESS_48H',
-    EXPRESS_24H: 'EXPRESS_24H'
+exports.TipoFactor = {
+    MENSUAL: 'MENSUAL',
+    ANUAL: 'ANUAL',
+    DIARIO: 'DIARIO',
+    FIJO_POR_SERVICIO: 'FIJO_POR_SERVICIO'
 };
 //# sourceMappingURL=enums.js.map
