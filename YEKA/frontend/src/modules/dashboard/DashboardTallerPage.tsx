@@ -8,7 +8,7 @@ import tipoPrendaService from '../../services/tipo-prenda.service';
 import { catalogoService } from '../catalogo/catalogo.service';
 import api from '../../shared/api';
 import type { Prenda, EstadoPrenda, Factura, Cliente, TipoPrenda, CatalogoServicio, MetodoPago } from '../../shared/types';
-import { FileText, Tag, Search, Plus, Shirt, Edit2, Trash2, PlusCircle, TrendingUp, AlertCircle } from 'lucide-react';
+import { FileText, Tag, Search, Plus, Shirt, Edit2, Trash2, PlusCircle, TrendingUp, AlertCircle, Calendar } from 'lucide-react';
 
 import { ClienteModal } from '../clientes/ClienteModal';
 import { PrendaModal } from '../prendas/PrendaModal';
@@ -498,6 +498,11 @@ export function DashboardTallerPage() {
                                 )}
                               </div>
                               <div style={{ fontSize: '10px', color: 'var(--color-text-muted)', fontWeight: 'normal' }}>{p.codigoQR}</div>
+                              {p.fechaCompromiso && (
+                                <div style={{ fontSize: '10px', color: 'var(--color-info)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '3px', fontWeight: 'normal', textTransform: 'none' }}>
+                                  <Calendar size={10} /> F. Compromiso: {new Date(p.fechaCompromiso).toLocaleDateString()}
+                                </div>
+                              )}
                             </td>
                             <td style={{ fontSize: 'var(--text-sm)' }}>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>

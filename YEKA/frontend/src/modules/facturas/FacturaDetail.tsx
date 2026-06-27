@@ -574,6 +574,29 @@ export function FacturaDetail() {
                 </div>
               )}
             </form>
+
+            {activePrenda && activePrenda.fechaCompromiso && (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: 'var(--space-3) var(--space-4)',
+                background: 'rgba(59, 130, 246, 0.08)',
+                border: '1px solid rgba(59, 130, 246, 0.2)',
+                borderRadius: 'var(--radius-md)',
+                marginTop: 'var(--space-4)'
+              }}>
+                <div style={{ color: 'var(--color-primary)' }}>
+                  <Calendar size={20} />
+                </div>
+                <div>
+                  <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)', margin: 0 }}>Fecha de Compromiso Estimada</p>
+                  <p style={{ fontSize: 'var(--text-sm)', fontWeight: 'bold', color: 'var(--color-text)', margin: 0 }}>
+                    {new Date(activePrenda.fechaCompromiso).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                  </p>
+                </div>
+              </div>
+            )}
       
             <hr style={{ margin: 'var(--space-6) 0', border: 'none', borderTop: '1px solid var(--color-border)' }} />
 
