@@ -40,6 +40,14 @@ export function DashboardTallerPage() {
   const [facturasList, setFacturasList] = useState<Factura[]>([]);
   const [prendasList, setPrendasList] = useState<Prenda[]>([]);
   
+  const prendasUrgentesList = useMemo(() => {
+    return prendasList.filter(p => 
+      p.estadoActual !== 'ENTREGADA' && 
+      p.estadoActual !== 'PROPIEDAD_TALLER' && 
+      p.tipoUrgenciaId !== null
+    );
+  }, [prendasList]);
+  
   // Draft Invoice State
   const [draftFactura, setDraftFactura] = useState<Factura | null>(null);
   const [creatingDraft, setCreatingDraft] = useState(false);
@@ -128,7 +136,7 @@ export function DashboardTallerPage() {
           facturasHoyEfectivo: efectivoHoy,
           facturasHoyTarjeta: tarjetaHoy,
           prendasActivas: filteredPrendas.filter(p => p.estadoActual !== 'ENTREGADA' && p.estadoActual !== 'PROPIEDAD_TALLER').length,
-          prendasUrgentes: filteredPrendas.filter(p => PRENDA_URGENTE.includes(p.estadoActual)).length,
+          prendasUrgentes: filteredPrendas.filter(p => p.estadoActual !== 'ENTREGADA' && p.estadoActual !== 'PROPIEDAD_TALLER' && p.tipoUrgenciaId !== null).length,
         });
 
       } catch (err) {
@@ -840,7 +848,75 @@ export function DashboardTallerPage() {
                 <AlertCircle size={20} />
               </div>
             </div>
-            <p className="stat-card-sub">Esperando prueba o recogida</p>
+            <p className="stat-card-sub" style={{ marginBottom: 'var(--space-3)' }}>Prendas activas con recargo de urgencia</p>
+            
+            {prendasUrgentesList.length > 0 ? (
+              <div style={{
+                marginTop: 'var(--space-3)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+                maxHeight: '200px',
+                overflowY: 'auto',
+                paddingRight: '4px'
+              }}>
+                {prendasUrgentesList.map(p => {
+                  const tipo = tiposPrenda.find(t => t.id === p.tipoPrendaId)?.nombre || 'Prenda';
+                  const urgNombre = tiposUrgencia.find(u => u.id === p.tipoUrgenciaId)?.nombre || 'Urgente';
+                  return (
+                    <div 
+                      key={p.id}
+                      style={{
+                        padding: '8px 12px',
+                        background: 'rgba(245, 158, 11, 0.1)',
+                        border: '1px solid rgba(245, 158, 11, 0.2)',
+                        borderRadius: 'var(--radius-md)',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        gap: '8px'
+                      }}
+                    >
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span style={{ fontWeight: 'bold', fontSize: 'var(--text-xs)', color: 'var(--color-warning)' }}>
+                            {urgNombre.toUpperCase()}
+                          </span>
+                          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-light)', textTransform: 'uppercase' }}>
+                            {tipo}
+                          </span>
+                        </div>
+                        <Link 
+                          to={`/facturas/${p.facturaId}`}
+                          style={{
+                            fontSize: 'var(--text-sm)',
+                            fontWeight: 'bold',
+                            color: 'var(--color-primary)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            marginTop: '2px',
+                            textDecoration: 'underline'
+                          }}
+                        >
+                          {p.codigoQR}
+                        </Link>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <p style={{ fontSize: '10px', color: 'var(--color-text-muted)', margin: 0 }}>Compromiso</p>
+                        <p style={{ fontSize: 'var(--text-xs)', fontWeight: 'bold', color: 'var(--color-text)', margin: 0 }}>
+                          {p.fechaCompromiso ? new Date(p.fechaCompromiso).toLocaleDateString() : 'Sin fecha'}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)', fontStyle: 'italic', marginTop: 'var(--space-2)' }}>
+                No hay prendas urgentes activas.
+              </p>
+            )}
           </div>
 
         </div>
