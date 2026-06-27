@@ -33,6 +33,10 @@ let PrendaController = class PrendaController {
         const facturaId = facturaIdQuery ? parseInt(facturaIdQuery, 10) : undefined;
         return this.prendaService.getPrendas(estadoActual, usuarioTallerId, facturaId);
     }
+    async simularFechaCompromiso(minutos) {
+        const fecha = await this.prendaService.calcularFechaCompromiso(minutos);
+        return { fechaCompromiso: fecha };
+    }
     async getPrendaById(id) {
         return this.prendaService.getPrendaById(id);
     }
@@ -72,6 +76,13 @@ __decorate([
     __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", Promise)
 ], PrendaController.prototype, "getPrendas", null);
+__decorate([
+    (0, common_1.Get)('simular-fecha-compromiso'),
+    __param(0, (0, common_1.Query)('minutos', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], PrendaController.prototype, "simularFechaCompromiso", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),

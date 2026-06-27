@@ -107,6 +107,9 @@ describe('PrendaFacade', () => {
       tipoPrenda: {
         findUnique: jest.fn(),
       },
+      prendaServicio: {
+        aggregate: jest.fn().mockResolvedValue({ _sum: { tiempoCalculado: 0 } }),
+      },
     };
 
     facturaFacade = {
@@ -224,7 +227,10 @@ describe('PrendaFacade', () => {
         createdAt: new Date(),
       };
 
-      prismaService.prenda = { findUnique: jest.fn().mockResolvedValue(mockPrenda) };
+      prismaService.prenda = { 
+        findUnique: jest.fn().mockResolvedValue(mockPrenda), 
+        update: jest.fn().mockResolvedValue(mockPrenda) 
+      };
       prismaService.catalogoServicio.findUnique.mockResolvedValue(mockServicio);
       
       prismaService.configuracion.findUnique.mockImplementation(({ where }: any) => {

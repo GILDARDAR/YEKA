@@ -26,6 +26,7 @@ export declare class PrendaFacade {
     private getValorHoraGlobal;
     private recalcularPreciosPrenda;
     private calcularPreciosDeServicio;
+    calcularFechaCompromiso(tiempoNuevasPrendas?: number): Promise<Date>;
     asignarServicio(prendaId: number, dto: AsignarServicioDto, usuarioId: number): Promise<PrendaServicioResponseDto>;
     eliminarServicio(prendaId: number, prendaServicioId: number, usuarioId: number): Promise<void>;
     cambiarEstado(id: number, dto: CambiarEstadoDto, usuarioId: number): Promise<PrendaResponseDto>;

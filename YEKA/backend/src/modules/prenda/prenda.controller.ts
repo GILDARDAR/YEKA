@@ -23,7 +23,7 @@ import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
-import { EstadoPrenda, Rol } from '../../../generated/prisma/client';
+import { EstadoPrenda, Rol, AccionAuditoria } from '../../../generated/prisma/client';
 
 @Controller('prendas')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -44,6 +44,12 @@ export class PrendaController {
     const usuarioTallerId = usuarioTallerIdQuery ? parseInt(usuarioTallerIdQuery, 10) : undefined;
     const facturaId = facturaIdQuery ? parseInt(facturaIdQuery, 10) : undefined;
     return this.prendaService.getPrendas(estadoActual, usuarioTallerId, facturaId);
+  }
+
+  @Get('simular-fecha-compromiso')
+  async simularFechaCompromiso(@Query('minutos', ParseIntPipe) minutos: number): Promise<{ fechaCompromiso: Date }> {
+    const fecha = await this.prendaService.calcularFechaCompromiso(minutos);
+    return { fechaCompromiso: fecha };
   }
 
   @Get(':id')

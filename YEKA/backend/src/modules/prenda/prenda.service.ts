@@ -30,6 +30,10 @@ export class PrendaService {
     return this.prendaFacade.getPrendaById(id);
   }
 
+  async calcularFechaCompromiso(tiempoNuevasPrendas: number): Promise<Date> {
+    return this.prendaFacade.calcularFechaCompromiso(tiempoNuevasPrendas);
+  }
+
   async updatePrenda(id: number, dto: any, usuarioId: number): Promise<PrendaResponseDto> {
     return this.prendaFacade.updatePrenda(id, dto, usuarioId);
   }

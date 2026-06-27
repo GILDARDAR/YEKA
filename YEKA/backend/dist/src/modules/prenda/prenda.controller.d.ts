@@ -6,6 +6,9 @@ export declare class PrendaController {
     constructor(prendaService: PrendaService);
     createPrenda(dto: CreatePrendaDto): Promise<PrendaResponseDto>;
     getPrendas(estadoActual?: EstadoPrenda, usuarioTallerIdQuery?: string, facturaIdQuery?: string): Promise<PrendaResponseDto[]>;
+    simularFechaCompromiso(minutos: number): Promise<{
+        fechaCompromiso: Date;
+    }>;
     getPrendaById(id: number): Promise<PrendaResponseDto>;
     updatePrenda(id: number, dto: any, usuarioId: number): Promise<PrendaResponseDto>;
     asignarServicio(prendaId: number, dto: AsignarServicioDto, usuarioId: number): Promise<PrendaServicioResponseDto>;

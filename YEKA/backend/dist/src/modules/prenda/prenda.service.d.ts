@@ -7,6 +7,7 @@ export declare class PrendaService {
     createPrenda(dto: CreatePrendaDto): Promise<PrendaResponseDto>;
     getPrendas(estadoActual?: EstadoPrenda, usuarioTallerId?: number, facturaId?: number): Promise<PrendaResponseDto[]>;
     getPrendaById(id: number): Promise<PrendaResponseDto>;
+    calcularFechaCompromiso(tiempoNuevasPrendas: number): Promise<Date>;
     updatePrenda(id: number, dto: any, usuarioId: number): Promise<PrendaResponseDto>;
     asignarServicio(prendaId: number, dto: AsignarServicioDto, usuarioId: number): Promise<PrendaServicioResponseDto>;
     eliminarServicio(prendaId: number, prendaServicioId: number, usuarioId: number): Promise<void>;

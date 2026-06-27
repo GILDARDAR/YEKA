@@ -26,6 +26,9 @@ let PrendaService = class PrendaService {
     async getPrendaById(id) {
         return this.prendaFacade.getPrendaById(id);
     }
+    async calcularFechaCompromiso(tiempoNuevasPrendas) {
+        return this.prendaFacade.calcularFechaCompromiso(tiempoNuevasPrendas);
+    }
     async updatePrenda(id, dto, usuarioId) {
         return this.prendaFacade.updatePrenda(id, dto, usuarioId);
     }

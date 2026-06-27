@@ -61,6 +61,7 @@ let PrendaDAO = class PrendaDAO {
                 codigoQR: data.codigoQR,
                 tipoUrgenciaId: data.tipoUrgenciaId || null,
                 porcentajeAtencionAplicado: data.porcentajeAtencionAplicado !== undefined ? new client_1.Prisma.Decimal(data.porcentajeAtencionAplicado) : null,
+                fechaCompromiso: data.fechaCompromiso || null,
             },
         });
     }

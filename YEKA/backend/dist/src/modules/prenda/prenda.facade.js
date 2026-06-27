@@ -108,6 +108,7 @@ let PrendaFacade = PrendaFacade_1 = class PrendaFacade {
                 porcentajeAtencionAplicado = urgencia.porcentajeRecargo;
             }
         }
+        const defaultFecha = await this.calcularFechaCompromiso(0);
         const created = await this.prendaDAO.create({
             facturaId: dto.facturaId,
             tipoPrendaId: dto.tipoPrendaId,
@@ -119,6 +120,7 @@ let PrendaFacade = PrendaFacade_1 = class PrendaFacade {
             codigoQR: tempQr,
             tipoUrgenciaId: dto.tipoUrgenciaId,
             porcentajeAtencionAplicado,
+            fechaCompromiso: defaultFecha,
         });
         const qrCode = `PR-${codigoSede}-${year}-${String(created.id).padStart(5, '0')}`;
         const updated = await this.prendaDAO.update(created.id, {
@@ -164,10 +166,14 @@ let PrendaFacade = PrendaFacade_1 = class PrendaFacade {
                 updateData.porcentajeAtencionAplicado = urgencia?.porcentajeRecargo || 0;
             }
         }
-        const updated = await this.prendaDAO.update(id, updateData);
         if (dto.tipoUrgenciaId !== undefined || dto.tipoPrendaId !== undefined) {
             await this.recalcularPreciosPrenda(id);
         }
+        const nuevaFecha = await this.calcularFechaCompromiso(0);
+        const updated = await this.prendaDAO.update(id, {
+            ...updateData,
+            fechaCompromiso: nuevaFecha,
+        });
         await this.prismaService.auditLog.create({
             data: {
                 usuarioId,
@@ -362,6 +368,36 @@ let PrendaFacade = PrendaFacade_1 = class PrendaFacade {
             detallesCalculo
         };
     }
+    async calcularFechaCompromiso(tiempoNuevasPrendas = 0) {
+        const result = await this.prismaService.prendaServicio.aggregate({
+            _sum: {
+                tiempoCalculado: true,
+            },
+            where: {
+                prenda: {
+                    estadoActual: {
+                        in: ['RECIBIDA', 'PENDIENTE_VALORACION', 'EN_PRODUCCION']
+                    }
+                }
+            }
+        });
+        const totalTiempoPendiente = result._sum.tiempoCalculado || 0;
+        const totalMinutes = totalTiempoPendiente + tiempoNuevasPrendas;
+        const diasRequeridos = Math.max(1, Math.ceil(totalMinutes / 480));
+        let fecha = new Date();
+        fecha.setHours(0, 0, 0, 0);
+        fecha.setDate(fecha.getDate() + 1);
+        let diasAgregados = 0;
+        while (diasAgregados < diasRequeridos) {
+            if (fecha.getDay() !== 0 && fecha.getDay() !== 6) {
+                diasAgregados++;
+            }
+            if (diasAgregados < diasRequeridos) {
+                fecha.setDate(fecha.getDate() + 1);
+            }
+        }
+        return fecha;
+    }
     async asignarServicio(prendaId, dto, usuarioId) {
         const prenda = await this.prismaService.prenda.findUnique({
             where: { id: prendaId },
@@ -390,6 +426,11 @@ let PrendaFacade = PrendaFacade_1 = class PrendaFacade {
             detallesCalculo: preciosCalculados.detallesCalculo,
         });
         await this.facturaFacade.recalcularFactura(prenda.facturaId);
+        const nuevaFecha = await this.calcularFechaCompromiso(0);
+        await this.prismaService.prenda.update({
+            where: { id: prendaId },
+            data: { fechaCompromiso: nuevaFecha }
+        });
         await this.prismaService.auditLog.create({
             data: {
                 usuarioId,
@@ -418,6 +459,11 @@ let PrendaFacade = PrendaFacade_1 = class PrendaFacade {
         }
         const deleted = await this.prendaDAO.deletePrendaServicio(prendaServicioId);
         await this.facturaFacade.recalcularFactura(prenda.facturaId);
+        const nuevaFecha = await this.calcularFechaCompromiso(0);
+        await this.prismaService.prenda.update({
+            where: { id: prendaId },
+            data: { fechaCompromiso: nuevaFecha }
+        });
         await this.prismaService.auditLog.create({
             data: {
                 usuarioId,

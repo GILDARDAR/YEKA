@@ -54,6 +54,7 @@ export class PrendaDAO {
     codigoQR: string;
     tipoUrgenciaId?: number;
     porcentajeAtencionAplicado?: Prisma.Decimal | number;
+    fechaCompromiso?: Date | string | null;
   }): Promise<Prenda> {
     return this.prisma.prenda.create({
       data: {
@@ -67,6 +68,7 @@ export class PrendaDAO {
         codigoQR: data.codigoQR,
         tipoUrgenciaId: data.tipoUrgenciaId || null,
         porcentajeAtencionAplicado: data.porcentajeAtencionAplicado !== undefined ? new Prisma.Decimal(data.porcentajeAtencionAplicado) : null,
+        fechaCompromiso: data.fechaCompromiso || null,
       },
     });
   }
