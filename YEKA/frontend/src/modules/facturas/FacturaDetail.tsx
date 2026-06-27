@@ -4,13 +4,28 @@ import { facturasService } from './facturas.service';
 import { prendasService } from '../prendas/prendas.service';
 import tipoPrendaService from '../../services/tipo-prenda.service';
 import { catalogoService } from '../catalogo/catalogo.service';
-import type { Factura, Prenda, TipoPrenda, CatalogoServicio, PrendaServicio } from '../../shared/types';
+import type { Factura, Prenda, TipoPrenda, CatalogoServicio, PrendaServicio, EstadoPrenda } from '../../shared/types';
 import api from '../../shared/api';
 import { ChevronLeft, FileText, Plus, Check, Trash2, Tag, Calendar, Euro, Edit2, CreditCard } from 'lucide-react';
 
 const toTitleCase = (str: string) => {
   if (!str) return '';
   return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+};
+
+const ESTADOS_PRENDA: EstadoPrenda[] = [
+  'RECIBIDA', 'PENDIENTE_VALORACION', 'EN_PRODUCCION', 
+  'ESPERANDO_PRUEBA', 'PENDIENTE_RECOGIDA', 'ENTREGADA', 'PROPIEDAD_TALLER'
+];
+
+const ESTADO_PRENDA_LABELS: Record<EstadoPrenda, string> = {
+  RECIBIDA: 'Recibida',
+  PENDIENTE_VALORACION: 'Pend. valoración',
+  EN_PRODUCCION: 'En producción',
+  ESPERANDO_PRUEBA: 'Esp. prueba',
+  PENDIENTE_RECOGIDA: 'Pend. recogida',
+  ENTREGADA: 'Entregada',
+  PROPIEDAD_TALLER: 'Del taller'
 };
 
 export function FacturaDetail() {
@@ -224,6 +239,15 @@ export function FacturaDetail() {
     }
   };
 
+  const handleCambiarEstado = async (prendaId: number, nuevoEstado: EstadoPrenda) => {
+    try {
+      await prendasService.cambiarEstado(prendaId, { nuevoEstado });
+      await fetchFactura();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Error al cambiar estado');
+    }
+  };
+
   const handleAbonar = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!factura) return;
@@ -428,13 +452,36 @@ export function FacturaDetail() {
                       padding: '2px 4px', 
                       borderRadius: '4px', 
                       border: '1px solid var(--color-border)',
-                      backgroundColor: 'var(--bg-card)'
+                      backgroundColor: 'var(--bg-card)',
+                      color: 'var(--color-text)'
                     }}
                   >
                     <option value="">Normal (0%)</option>
                     {tiposUrgencia.map(tu => (
                       <option key={tu.id} value={tu.id.toString()}>
                         {tu.nombre} ({Number(tu.porcentajeRecargo) > 0 ? '+' : ''}{Number(tu.porcentajeRecargo)}%)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+                  <label style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>Estado:</label>
+                  <select 
+                    value={prenda.estadoActual}
+                    onChange={(e) => handleCambiarEstado(prenda.id, e.target.value as EstadoPrenda)}
+                    onClick={e => e.stopPropagation()}
+                    style={{ 
+                      fontSize: 'var(--text-xs)', 
+                      padding: '2px 4px', 
+                      borderRadius: '4px', 
+                      border: '1px solid var(--color-border)',
+                      backgroundColor: 'var(--bg-card)',
+                      color: 'var(--color-text)'
+                    }}
+                  >
+                    {ESTADOS_PRENDA.map(e => (
+                      <option key={e} value={e}>
+                        {ESTADO_PRENDA_LABELS[e]}
                       </option>
                     ))}
                   </select>
