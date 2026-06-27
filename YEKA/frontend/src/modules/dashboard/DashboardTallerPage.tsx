@@ -47,6 +47,24 @@ export function DashboardTallerPage() {
       p.tipoUrgenciaId !== null
     );
   }, [prendasList]);
+
+  const garmentsForToday = useMemo(() => {
+    const today = new Date();
+    const isToday = (dateVal: string | Date) => {
+      const d = new Date(dateVal);
+      return d.getFullYear() === today.getFullYear() &&
+             d.getMonth() === today.getMonth() &&
+             d.getDate() === today.getDate();
+    };
+
+    return prendasList
+      .filter(p => 
+        ['RECIBIDA', 'PENDIENTE_VALORACION', 'EN_PRODUCCION'].includes(p.estadoActual) &&
+        p.fechaCompromiso &&
+        isToday(p.fechaCompromiso)
+      )
+      .sort((a, b) => a.id - b.id);
+  }, [prendasList]);
   
   // Draft Invoice State
   const [draftFactura, setDraftFactura] = useState<Factura | null>(null);
@@ -920,6 +938,86 @@ export function DashboardTallerPage() {
           </div>
 
         </div>
+      </div>
+
+      {/* Tabla Resumen de Prendas con Compromiso Hoy */}
+      <div className="card" style={{ marginTop: 'var(--space-6)', padding: 'var(--space-6)' }}>
+        <h3 className="card-title" style={{ fontSize: 'var(--text-lg)', marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <AlertCircle size={20} style={{ color: 'var(--color-primary)' }} />
+          Prendas Comprometidas para Hoy ({garmentsForToday.length})
+        </h3>
+        
+        {garmentsForToday.length > 0 ? (
+          <div className="table-wrapper">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Prenda (QR)</th>
+                  <th>Tipo Prenda</th>
+                  <th>Factura</th>
+                  <th>Prioridad</th>
+                  <th>Estado</th>
+                  <th>Servicios Asignados</th>
+                </tr>
+              </thead>
+              <tbody>
+                {garmentsForToday.map(p => {
+                  const tipo = tiposPrenda.find(t => t.id === p.tipoPrendaId)?.nombre || 'Desconocido';
+                  const urg = tiposUrgencia.find(u => u.id === p.tipoUrgenciaId);
+                  const srvResumen = p.servicios?.map((s: any) => {
+                    const c = catalogoServicios.find(cs => cs.id === s.servicioId);
+                    return c ? c.tipoEspecifico : 'Servicio';
+                  }).join(', ') || 'Sin servicios';
+
+                  return (
+                    <tr key={p.id}>
+                      <td style={{ fontWeight: 'bold' }}>{p.id}</td>
+                      <td>
+                        <Link 
+                          to={`/facturas/${p.facturaId}`}
+                          style={{ color: 'var(--color-primary)', fontWeight: 'var(--font-medium)', fontFamily: 'monospace' }}
+                        >
+                          {p.codigoQR}
+                        </Link>
+                      </td>
+                      <td style={{ textTransform: 'uppercase' }}>{tipo}</td>
+                      <td>
+                        <Link to={`/facturas/${p.facturaId}`} style={{ color: 'var(--color-text-light)' }}>
+                          #{p.facturaId}
+                        </Link>
+                      </td>
+                      <td>
+                        {urg ? (
+                          <span className="badge badge-warning" style={{ fontSize: '11px', fontWeight: 'bold' }}>
+                            {urg.nombre}
+                          </span>
+                        ) : (
+                          <span style={{ color: 'var(--color-text-muted)', fontSize: 'var(--text-sm)' }}>Normal</span>
+                        )}
+                      </td>
+                      <td>
+                        <span className={`badge ${p.estadoActual === 'RECIBIDA' ? 'badge-info' : p.estadoActual === 'PENDIENTE_VALORACION' ? 'badge-neutral' : 'badge-primary'}`}>
+                          {p.estadoActual === 'RECIBIDA' ? 'Recibida' : p.estadoActual === 'PENDIENTE_VALORACION' ? 'Pend. valoración' : 'En producción'}
+                        </span>
+                      </td>
+                      <td style={{ fontSize: 'var(--text-sm)' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                          <span>{p.servicios?.length || 0} asignados</span>
+                          <span style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{srvResumen}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--text-sm)', margin: 0, fontStyle: 'italic' }}>
+            No hay prendas con estado Recibida, Pendiente de valoración o En proceso con compromiso para el día de hoy.
+          </p>
+        )}
       </div>
 
       {/* Modals */}
