@@ -144,8 +144,8 @@ export function FacturaDetail() {
         talla: prendaForm.talla,
         color: prendaForm.color,
         esLujo: prendaForm.esLujo,
-        marca: prendaForm.marca || null,
-        notas: prendaForm.notas || null,
+        marca: prendaForm.marca || undefined,
+        notas: prendaForm.notas || undefined,
       };
 
       if (isEditingPrenda && activePrenda) {
@@ -444,6 +444,7 @@ export function FacturaDetail() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
                   <label style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>Atención:</label>
                   <select 
+                    key={`urg-${prenda.id}-${prenda.tipoUrgenciaId}-${tiposUrgencia.length}`}
                     value={prenda.tipoUrgenciaId != null ? prenda.tipoUrgenciaId.toString() : ''}
                     onChange={(e) => handleCambiarUrgencia(prenda.id, e.target.value ? Number(e.target.value) : null)}
                     onClick={e => e.stopPropagation()}
@@ -561,6 +562,7 @@ export function FacturaDetail() {
                 <div className="form-group">
                   <label className="form-label">Tipo de Urgencia</label>
                   <select 
+                    key={prendaForm.tipoUrgenciaId + '-' + tiposUrgencia.length}
                     className="form-select" 
                     value={prendaForm.tipoUrgenciaId}
                     onChange={e => setPrendaForm(p => ({ ...p, tipoUrgenciaId: e.target.value }))}

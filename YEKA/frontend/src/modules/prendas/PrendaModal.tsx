@@ -54,6 +54,15 @@ export function PrendaModal({
     if (prendaToEdit && prendaToEdit.id) {
       prendasService.getById(prendaToEdit.id).then(fullPrenda => {
         setActivePrenda(fullPrenda);
+        setPrendaForm({
+          tipoPrendaId: fullPrenda.tipoPrendaId?.toString() || '',
+          tipoUrgenciaId: fullPrenda.tipoUrgenciaId?.toString() || '',
+          talla: fullPrenda.talla || '',
+          color: fullPrenda.color || '',
+          esLujo: fullPrenda.esLujo || false,
+          marca: fullPrenda.marca || '',
+          notas: fullPrenda.notas || '',
+        });
       }).catch(err => console.error("Error fetching full prenda:", err));
     }
   }, [prendaToEdit?.id]);
@@ -234,6 +243,7 @@ export function PrendaModal({
             <div className="form-group">
               <label className="form-label">Tipo de Urgencia</label>
               <select 
+                key={`form-urg-${prendaForm.tipoUrgenciaId}-${tiposUrgencia.length}`}
                 className="form-select" 
                 value={prendaForm.tipoUrgenciaId}
                 onChange={e => setPrendaForm(p => ({ ...p, tipoUrgenciaId: e.target.value }))}

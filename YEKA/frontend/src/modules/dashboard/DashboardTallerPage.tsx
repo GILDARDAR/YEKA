@@ -7,13 +7,13 @@ import { prendasService } from '../prendas/prendas.service';
 import tipoPrendaService from '../../services/tipo-prenda.service';
 import { catalogoService } from '../catalogo/catalogo.service';
 import api from '../../shared/api';
-import type { Prenda, EstadoPrenda, Factura, Cliente, TipoPrenda, CatalogoServicio, MetodoPago } from '../../shared/types';
+import type { Prenda, Factura, Cliente, TipoPrenda, CatalogoServicio, MetodoPago } from '../../shared/types';
 import { FileText, Tag, Search, Plus, Shirt, Edit2, Trash2, PlusCircle, TrendingUp, AlertCircle, Calendar } from 'lucide-react';
 
 import { ClienteModal } from '../clientes/ClienteModal';
 import { PrendaModal } from '../prendas/PrendaModal';
 
-const PRENDA_URGENTE: EstadoPrenda[] = ['PENDIENTE_RECOGIDA', 'ESPERANDO_PRUEBA'];
+
 
 export function DashboardTallerPage() {
   const { user } = useAuth();
