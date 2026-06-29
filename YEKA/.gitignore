@@ -1,0 +1,12 @@
+# Local configuration and environment variables
+.env
+
+# Logs
+*.log
+
+# Editor configurations
+.vscode/
+
+# Dependency directories (fallback)
+node_modules/
+dist/
