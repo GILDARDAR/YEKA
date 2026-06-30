@@ -14,7 +14,7 @@ echo.
 
 echo [2/3] Iniciando el Backend (NestJS)...
 :: Abre una nueva ventana de terminal para el backend
-start "YEKA - Backend" cmd /k "cd backend && npm run start:dev"
+start "YEKA - Backend" cmd /k "cd backend && npm run start:dev" >> yeka.log
 
 echo [3/3] Iniciando el Frontend (Vite + React)...
 :: Abre una nueva ventana de terminal para el frontend
