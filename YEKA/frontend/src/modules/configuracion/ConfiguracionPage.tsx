@@ -6,6 +6,8 @@ export function ConfiguracionPage() {
     EXPRESS_24H_MULTIPLIER: '',
     EXPRESS_48H_MULTIPLIER: '',
     VALOR_HORA_PUNTOS: '',
+    MINUTOS_PRODUCTIVOS_MES: '',
+    MARGEN_UTILIDAD_GLOBAL: '',
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -76,6 +78,38 @@ export function ConfiguracionPage() {
               required
             />
             <p className="text-xs text-gray-500 mt-1">Costo base establecido para un minuto de trabajo efectivo (Costo por hora / 60).</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Minutos Productivos al Mes
+            </label>
+            <input
+              type="number"
+              step="1"
+              name="MINUTOS_PRODUCTIVOS_MES"
+              value={config.MINUTOS_PRODUCTIVOS_MES}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded p-2 focus:ring focus:ring-blue-200"
+              required
+            />
+            <p className="text-xs text-gray-500 mt-1">Minutos útiles totales al mes para prorratear costos fijos globales (Ej: 21120 para 8h/día, Lun a Vie).</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Margen de Utilidad Global (%)
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              name="MARGEN_UTILIDAD_GLOBAL"
+              value={config.MARGEN_UTILIDAD_GLOBAL}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded p-2 focus:ring focus:ring-blue-200"
+              required
+            />
+            <p className="text-xs text-gray-500 mt-1">Margen porcentual de utilidad agregado sobre el costo operativo (Ej: 30.00 para +30% de ganancia).</p>
           </div>
 
           <h2 className="text-xl font-semibold mt-6 mb-4 border-b pb-2">Tarifas Express (Multiplicadores)</h2>
