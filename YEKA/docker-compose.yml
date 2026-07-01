@@ -24,6 +24,7 @@ services:
       - "3000:3000"
     environment:
       DATABASE_URL: postgresql://yeka_user:yeka_password@postgres:5432/yeka?schema=public
+      JWT_SECRET: ${JWT_SECRET:-yeka_jwt_secret_key_2026_safe_and_long}
       PORT: 3000
     depends_on:
       - postgres
@@ -33,7 +34,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - VITE_API_URL=${VITE_API_URL}
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
     container_name: yeka-frontend
     restart: always
     ports:
