@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { prendasService } from './prendas.service';
+import tipoPrendaService from '../../services/tipo-prenda.service';
 import type { Prenda, TipoPrenda, CatalogoServicio, PrendaServicio, EstadoPrenda } from '../../shared/types';
-import { Check, Trash2, Edit2, X, Calendar } from 'lucide-react';
+import { Check, Trash2, Edit2, X, Calendar, Plus } from 'lucide-react';
 
 interface PrendaModalProps {
   facturaId: number;
@@ -10,6 +11,7 @@ interface PrendaModalProps {
   catalogoServicios: CatalogoServicio[];
   onClose: () => void;
   onSaved: () => void; // Called when any change happens so parent can refresh
+  onTipoPrendaCreated?: (nuevoTipo: TipoPrenda) => void; // Optional: called after creating a new tipo
 }
 
 const ESTADOS_PRENDA: EstadoPrenda[] = [
@@ -30,11 +32,14 @@ const ESTADO_LABELS: Record<EstadoPrenda, string> = {
 export function PrendaModal({
   facturaId,
   prendaToEdit,
-  tiposPrenda,
+  tiposPrenda: tiposPrendaProp,
   catalogoServicios,
   onClose,
-  onSaved
+  onSaved,
+  onTipoPrendaCreated,
 }: PrendaModalProps) {
+  // Local copy of tiposPrenda so we can append newly created ones without refreshing parent
+  const [tiposPrenda, setTiposPrenda] = useState<TipoPrenda[]>(tiposPrendaProp);
   const isEditingInitial = !!prendaToEdit;
   const [isEditingPrenda, setIsEditingPrenda] = useState(isEditingInitial);
   
@@ -66,6 +71,29 @@ export function PrendaModal({
       }).catch(err => console.error("Error fetching full prenda:", err));
     }
   }, [prendaToEdit?.id]);
+
+  // ─── Nuevo Tipo de Prenda inline ──────────────────────────────────────
+  const [showNuevoTipoModal, setShowNuevoTipoModal] = useState(false);
+  const [nuevoTipoForm, setNuevoTipoForm] = useState({ nombre: '', descripcion: '', porcentajeDificultad: 0 });
+  const [savingNuevoTipo, setSavingNuevoTipo] = useState(false);
+
+  const handleCrearNuevoTipo = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setSavingNuevoTipo(true);
+      const created = await tipoPrendaService.createTipoPrenda({ ...nuevoTipoForm, activo: true });
+      // Add to local list and auto-select it
+      setTiposPrenda(prev => [...prev, created]);
+      setPrendaForm(p => ({ ...p, tipoPrendaId: created.id.toString() }));
+      if (onTipoPrendaCreated) onTipoPrendaCreated(created);
+      setShowNuevoTipoModal(false);
+      setNuevoTipoForm({ nombre: '', descripcion: '', porcentajeDificultad: 0 });
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Error al crear tipo de prenda');
+    } finally {
+      setSavingNuevoTipo(false);
+    }
+  };
 
   // Service Row State
   const [servicioSeleccionado, setServicioSeleccionado] = useState('');
@@ -189,6 +217,7 @@ export function PrendaModal({
   };
 
   return (
+    <>
     <div style={{
       position: 'fixed', inset: 0, zIndex: 1000, 
       display: 'flex', alignItems: 'center', justifyContent: 'center', 
@@ -229,16 +258,25 @@ export function PrendaModal({
                 required 
                 className="form-select" 
                 value={prendaForm.tipoPrendaId}
-                onChange={e => setPrendaForm(p => ({ ...p, tipoPrendaId: e.target.value }))}
+                onChange={e => {
+                  if (e.target.value === '__CREAR__') {
+                    setShowNuevoTipoModal(true);
+                  } else {
+                    setPrendaForm(p => ({ ...p, tipoPrendaId: e.target.value }));
+                  }
+                }}
                 disabled={!!activePrenda && !isEditingPrenda}
               >
                 <option value="">Seleccione...</option>
                 {tiposPrenda.map(t => <option key={t.id} value={t.id}>{t.nombre.toUpperCase()}</option>)}
+                {!activePrenda || isEditingPrenda ? (
+                  <option value="__CREAR__" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>➕ Crear nuevo tipo de prenda...</option>
+                ) : null}
               </select>
             </div>
             <div className="form-group">
-              <label className="form-label">Talla</label>
-              <input type="text" required className="form-input" value={prendaForm.talla} onChange={e => setPrendaForm(p => ({ ...p, talla: e.target.value }))} placeholder="Ej. L, 42..." disabled={!!activePrenda && !isEditingPrenda} />
+              <label className="form-label">Talla <span style={{ color: 'var(--color-text-muted)', fontWeight: 400 }}>(Opcional)</span></label>
+              <input type="text" className="form-input" value={prendaForm.talla} onChange={e => setPrendaForm(p => ({ ...p, talla: e.target.value }))} placeholder="Ej. L, 42..." disabled={!!activePrenda && !isEditingPrenda} />
             </div>
             <div className="form-group">
               <label className="form-label">Tipo de Urgencia</label>
@@ -261,8 +299,8 @@ export function PrendaModal({
               <input type="text" required className="form-input" value={prendaForm.color} onChange={e => setPrendaForm(p => ({ ...p, color: e.target.value }))} placeholder="Ej. Azul marino..." disabled={!!activePrenda && !isEditingPrenda} />
             </div>
             <div className="form-group">
-              <label className="form-label">Marca {prendaForm.esLujo ? '(Requerida)' : '(Opcional)'}</label>
-              <input type="text" required={prendaForm.esLujo} className="form-input" value={prendaForm.marca} onChange={e => setPrendaForm(p => ({ ...p, marca: e.target.value }))} placeholder="Ej. Gucci, Prada..." disabled={!!activePrenda && !isEditingPrenda} />
+              <label className="form-label">Marca <span style={{ color: 'var(--color-danger)' }}>*</span></label>
+              <input type="text" required className="form-input" value={prendaForm.marca} onChange={e => setPrendaForm(p => ({ ...p, marca: e.target.value }))} placeholder="Ej. Gucci, Zara, Sin marca..." disabled={!!activePrenda && !isEditingPrenda} />
             </div>
             <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '28px' }}>
               <input type="checkbox" id="esLujo" checked={prendaForm.esLujo} onChange={e => setPrendaForm(p => ({ ...p, esLujo: e.target.checked }))} disabled={!!activePrenda && !isEditingPrenda} />
@@ -567,5 +605,70 @@ export function PrendaModal({
         )}
       </div>
     </div>
+
+    {/* MINI-MODAL: Nuevo Tipo de Prenda */}
+    {showNuevoTipoModal && (
+      <div style={{
+        position: 'fixed', inset: 0, zIndex: 2000,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        backgroundColor: 'rgba(0,0,0,0.6)',
+      }}>
+        <div className="card" style={{ width: '100%', maxWidth: '420px', padding: 'var(--space-6)', position: 'relative' }}>
+          <button
+            type="button"
+            onClick={() => setShowNuevoTipoModal(false)}
+            style={{ position: 'absolute', top: 'var(--space-3)', right: 'var(--space-3)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)' }}
+          >
+            <X size={18} />
+          </button>
+          <h3 style={{ fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Plus size={18} /> Nuevo Tipo de Prenda
+          </h3>
+          <form onSubmit={handleCrearNuevoTipo} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <div className="form-group">
+              <label className="form-label">Nombre <span style={{ color: 'var(--color-danger)' }}>*</span></label>
+              <input
+                type="text"
+                required
+                className="form-input"
+                value={nuevoTipoForm.nombre}
+                onChange={e => setNuevoTipoForm(f => ({ ...f, nombre: e.target.value }))}
+                placeholder="Ej. Pantalón, Chaqueta..."
+                autoFocus
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Descripción <span style={{ color: 'var(--color-text-muted)', fontWeight: 400 }}>(Opcional)</span></label>
+              <input
+                type="text"
+                className="form-input"
+                value={nuevoTipoForm.descripcion}
+                onChange={e => setNuevoTipoForm(f => ({ ...f, descripcion: e.target.value }))}
+                placeholder="Descripción breve..."
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">% Dificultad <span style={{ color: 'var(--color-text-muted)', fontWeight: 400 }}>(Ej: 0.15 para 15%)</span></label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                className="form-input"
+                value={nuevoTipoForm.porcentajeDificultad}
+                onChange={e => setNuevoTipoForm(f => ({ ...f, porcentajeDificultad: Number(e.target.value) }))}
+                placeholder="0.00"
+              />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)', marginTop: 'var(--space-2)' }}>
+              <button type="button" className="btn btn-ghost" onClick={() => setShowNuevoTipoModal(false)}>Cancelar</button>
+              <button type="submit" className="btn btn-primary" disabled={savingNuevoTipo}>
+                {savingNuevoTipo ? 'Guardando...' : <><Check size={15} /> Guardar y Seleccionar</>}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )}
+    </>
   );
 }
