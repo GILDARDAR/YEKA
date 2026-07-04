@@ -4,9 +4,10 @@ import { facturasService } from './facturas.service';
 import { prendasService } from '../prendas/prendas.service';
 import tipoPrendaService from '../../services/tipo-prenda.service';
 import { catalogoService } from '../catalogo/catalogo.service';
+import { imprimirFactura } from './FacturaPrint';
 import type { Factura, Prenda, TipoPrenda, CatalogoServicio, PrendaServicio, EstadoPrenda } from '../../shared/types';
 import api from '../../shared/api';
-import { ChevronLeft, FileText, Plus, Check, Trash2, Tag, Calendar, Euro, Edit2, CreditCard } from 'lucide-react';
+import { ChevronLeft, FileText, Plus, Check, Trash2, Tag, Calendar, Euro, Edit2, CreditCard, Printer } from 'lucide-react';
 
 const toTitleCase = (str: string) => {
   if (!str) return '';
@@ -348,13 +349,20 @@ export function FacturaDetail() {
             )}
           </div>
           
-          <div style={{ marginLeft: 'var(--space-6)' }}>
+          <div style={{ marginLeft: 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
             <button 
               className="btn btn-primary" 
               onClick={() => setIsAbonoModalOpen(true)}
               disabled={factura.estadoPago === 'PAGADO' || factura.estadoPago === 'ANULADO'}
             >
               <CreditCard size={16} /> Abonar
+            </button>
+            <button
+              className="btn btn-ghost"
+              style={{ border: '1px solid var(--color-border)' }}
+              onClick={() => imprimirFactura({ factura, tiposPrenda })}
+            >
+              <Printer size={16} /> Imprimir
             </button>
           </div>
         </div>
