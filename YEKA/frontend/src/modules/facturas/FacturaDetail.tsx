@@ -4,7 +4,7 @@ import { facturasService } from './facturas.service';
 import { prendasService } from '../prendas/prendas.service';
 import tipoPrendaService from '../../services/tipo-prenda.service';
 import { catalogoService } from '../catalogo/catalogo.service';
-import { imprimirFactura } from './FacturaPrint';
+import { imprimirFactura, imprimirEtiquetas } from './FacturaPrint';
 import type { Factura, Prenda, TipoPrenda, CatalogoServicio, PrendaServicio, EstadoPrenda } from '../../shared/types';
 import api from '../../shared/api';
 import { ChevronLeft, FileText, Plus, Check, Trash2, Tag, Calendar, Euro, Edit2, CreditCard, Printer } from 'lucide-react';
@@ -363,6 +363,14 @@ export function FacturaDetail() {
               onClick={() => imprimirFactura({ factura, tiposPrenda })}
             >
               <Printer size={16} /> Imprimir
+            </button>
+            <button
+              className="btn btn-ghost"
+              style={{ border: '1px solid var(--color-border)' }}
+              onClick={() => imprimirEtiquetas({ factura, tiposPrenda })}
+              title="Imprimir etiquetas para colgar en cada prenda"
+            >
+              <Tag size={16} /> Etiquetas
             </button>
           </div>
         </div>

@@ -5,6 +5,11 @@ interface FacturaPrintProps {
   tiposPrenda: TipoPrenda[];
 }
 
+interface EtiquetasPrintProps {
+  factura: Factura;
+  tiposPrenda: TipoPrenda[];
+}
+
 /** Opens the browser print dialog with a styled invoice in a new window */
 export function imprimirFactura({ factura, tiposPrenda }: FacturaPrintProps) {
   const getTipoPrendaNombre = (id: number) =>
@@ -548,6 +553,206 @@ export function imprimirFactura({ factura, tiposPrenda }: FacturaPrintProps) {
     · ${factura.numero}
   </div>
 
+  <script>window.onload = () => window.print();</script>
+</body>
+</html>`;
+
+  const win = window.open('', '_blank', 'width=900,height=700');
+  if (!win) {
+    alert('El navegador bloqueó la ventana emergente. Permite las ventanas emergentes para este sitio e inténtalo de nuevo.');
+    return;
+  }
+  win.document.write(html);
+  win.document.close();
+}
+
+/** Opens a print window with one sticky label per prenda */
+export function imprimirEtiquetas({ factura, tiposPrenda }: EtiquetasPrintProps) {
+  const getTipoPrendaNombre = (id: number) =>
+    tiposPrenda.find(t => t.id === id)?.nombre || `Tipo #${id}`;
+
+  const clienteNombre = factura.cliente?.nombre || 'Consumidor Final';
+
+  const etiquetasHtml = (factura.prendas || []).map((prenda, idx) => {
+    const tipoPrenda = getTipoPrendaNombre(prenda.tipoPrendaId);
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(prenda.codigoQR)}&bgcolor=ffffff&color=1e293b&margin=4`;
+
+    const serviciosHtml = (prenda.servicios || []).length > 0
+      ? (prenda.servicios || []).map(s =>
+          `<li>${s.servicio?.nombre || s.servicio?.tipoEspecifico || 'Servicio'}</li>`
+        ).join('')
+      : '<li style="color:#94a3b8;font-style:italic">Sin servicios</li>';
+
+    return `
+      <div class="etiqueta">
+        <div class="etiqueta-qr">
+          <img src="${qrUrl}" width="150" height="150" alt="QR ${prenda.codigoQR}" />
+          <div class="codigo-texto">${prenda.codigoQR}</div>
+        </div>
+        <div class="etiqueta-info">
+          <div class="etiqueta-num">#${idx + 1}</div>
+          <div class="etiqueta-cliente">${clienteNombre}</div>
+          <div class="etiqueta-tipo">${tipoPrenda.toUpperCase()}</div>
+          ${prenda.marca ? `<div class="etiqueta-marca">${prenda.marca} · ${prenda.color}</div>` : `<div class="etiqueta-marca">${prenda.color}</div>`}
+          <div class="etiqueta-servicios-label">Servicios:</div>
+          <ul class="etiqueta-servicios">${serviciosHtml}</ul>
+          ${prenda.fechaCompromiso
+            ? `<div class="etiqueta-fecha">📅 ${new Date(prenda.fechaCompromiso).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}</div>`
+            : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Etiquetas · Factura ${factura.numero}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      padding: 16px;
+    }
+
+    /* page title (hidden when printing) */
+    .page-title {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    /* 2-column grid */
+    .etiquetas-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* each label */
+    .etiqueta {
+      display: flex;
+      flex-direction: row;
+      gap: 0;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      overflow: hidden;
+      min-height: 170px;
+      page-break-inside: avoid;
+      background: #fff;
+    }
+
+    /* left: QR */
+    .etiqueta-qr {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 10px;
+      background: #f8fafc;
+      border-right: 1.5px solid #e2e8f0;
+      min-width: 170px;
+    }
+    .etiqueta-qr img {
+      display: block;
+      border-radius: 6px;
+    }
+    .codigo-texto {
+      margin-top: 6px;
+      font-size: 9px;
+      font-weight: 600;
+      color: #64748b;
+      letter-spacing: .04em;
+      text-align: center;
+      word-break: break-all;
+    }
+
+    /* right: info */
+    .etiqueta-info {
+      flex: 1;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      overflow: hidden;
+    }
+    .etiqueta-num {
+      font-size: 10px;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .etiqueta-cliente {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1e293b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .etiqueta-tipo {
+      font-size: 12px;
+      font-weight: 600;
+      color: #4f46e5;
+      margin-top: 2px;
+    }
+    .etiqueta-marca {
+      font-size: 11px;
+      color: #64748b;
+    }
+    .etiqueta-servicios-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-top: 6px;
+    }
+    .etiqueta-servicios {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .etiqueta-servicios li {
+      font-size: 11px;
+      color: #334155;
+      padding: 1px 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .etiqueta-servicios li::before {
+      content: '• ';
+      color: #4f46e5;
+      font-weight: 700;
+    }
+    .etiqueta-fecha {
+      margin-top: auto;
+      padding-top: 6px;
+      font-size: 10.5px;
+      color: #0369a1;
+      font-weight: 600;
+    }
+
+    @media print {
+      .page-title { display: none; }
+      body { padding: 8px; }
+      .etiquetas-grid { gap: 8px; }
+      .etiqueta { border-color: #94a3b8; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-title">Etiquetas de prendas · Factura ${factura.numero} · ${clienteNombre}</div>
+  <div class="etiquetas-grid">
+    ${etiquetasHtml || '<p style="color:#94a3b8;text-align:center">Sin prendas</p>'}
+  </div>
   <script>window.onload = () => window.print();</script>
 </body>
 </html>`;
