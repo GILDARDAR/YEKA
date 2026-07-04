@@ -8,7 +8,8 @@ import tipoPrendaService from '../../services/tipo-prenda.service';
 import { catalogoService } from '../catalogo/catalogo.service';
 import api from '../../shared/api';
 import type { Prenda, Factura, Cliente, TipoPrenda, CatalogoServicio, MetodoPago } from '../../shared/types';
-import { FileText, Tag, Search, Plus, Shirt, Edit2, Trash2, PlusCircle, TrendingUp, AlertCircle, Calendar } from 'lucide-react';
+import { FileText, Tag, Search, Plus, Shirt, Edit2, Trash2, PlusCircle, TrendingUp, AlertCircle, Calendar, Printer } from 'lucide-react';
+import { imprimirFactura, imprimirEtiquetas } from '../facturas/FacturaPrint';
 
 import { ClienteModal } from '../clientes/ClienteModal';
 import { PrendaModal } from '../prendas/PrendaModal';
@@ -94,6 +95,12 @@ export function DashboardTallerPage() {
     metodoPago: 'EFECTIVO',
     notas: ''
   });
+
+  // Print Modal State
+  const [showPrintModal, setShowPrintModal] = useState(false);
+  const [printRecibo, setPrintRecibo] = useState(true);
+  const [printPrendas, setPrintPrendas] = useState(true);
+  const [facturaParaImprimir, setFacturaParaImprimir] = useState<Factura | null>(null);
 
   const [tiposPrenda, setTiposPrenda] = useState<TipoPrenda[]>([]);
   const [catalogoServicios, setCatalogoServicios] = useState<CatalogoServicio[]>([]);
@@ -356,26 +363,43 @@ export function DashboardTallerPage() {
       alert('Debes agregar al menos una prenda para finalizar la factura.');
       return;
     }
-    
-    // Si queremos actualizar las notas para quitar "en proceso" podríamos hacerlo,
-    // pero por ahora solo reseteamos el estado para empezar una nueva.
+
     setSavingInvoice(true);
     try {
       // Simular un pequeño delay para feedback visual
       await new Promise(r => setTimeout(r, 500));
-      alert(`Factura #${draftFactura.numero} creada exitosamente.`);
-      
+
+      // Guardar referencia de la factura antes de limpiar el estado
+      const facturaGuardada = { ...draftFactura };
+
       // Reiniciar vista
       setDraftFactura(null);
       setClienteSearch('');
       // Refrescar KPIs
       await facturasService.getAll();
-      // ... update stats ...
+
+      // Mostrar modal de impresión con los checkboxes por defecto seleccionados
+      setPrintRecibo(true);
+      setPrintPrendas(true);
+      setFacturaParaImprimir(facturaGuardada as Factura);
+      setShowPrintModal(true);
     } catch (e) {
       console.error(e);
     } finally {
       setSavingInvoice(false);
     }
+  };
+
+  const handleConfirmPrint = () => {
+    if (!facturaParaImprimir) return;
+    setShowPrintModal(false);
+    if (printRecibo) {
+      imprimirFactura({ factura: facturaParaImprimir, tiposPrenda });
+    }
+    if (printPrendas) {
+      imprimirEtiquetas({ factura: facturaParaImprimir, tiposPrenda });
+    }
+    setFacturaParaImprimir(null);
   };
 
   if (loading) {
@@ -1122,6 +1146,97 @@ export function DashboardTallerPage() {
             window.location.reload();
           }}
         />
+      )}
+
+      {/* MODAL: Confirmar Impresión */}
+      {showPrintModal && facturaParaImprimir && (
+        <div style={{
+          position: 'fixed', inset: 0,
+          backgroundColor: 'rgba(0,0,0,0.55)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div className="card" style={{
+            width: '100%', maxWidth: '420px',
+            padding: 'var(--space-6)',
+            display: 'flex', flexDirection: 'column', gap: 'var(--space-4)'
+          }}>
+            {/* Encabezado */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+              <Printer size={24} style={{ color: 'var(--color-primary)' }} />
+              <div>
+                <h3 style={{ margin: 0, fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)' }}>
+                  Factura #{facturaParaImprimir.numero} guardada
+                </h3>
+                <p style={{ margin: 0, fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)' }}>
+                  ¿Qué deseas imprimir?
+                </p>
+              </div>
+            </div>
+
+            {/* Checkboxes */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+              <label style={{
+                display: 'flex', alignItems: 'center', gap: 'var(--space-3)',
+                padding: 'var(--space-3)', borderRadius: 'var(--radius-md)',
+                border: `2px solid ${printRecibo ? 'var(--color-primary)' : 'var(--color-border)'}`,
+                cursor: 'pointer', transition: 'border-color 0.2s'
+              }}>
+                <input
+                  type="checkbox"
+                  checked={printRecibo}
+                  onChange={e => setPrintRecibo(e.target.checked)}
+                  style={{ width: '18px', height: '18px', accentColor: 'var(--color-primary)', cursor: 'pointer' }}
+                />
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 'var(--text-sm)' }}>Recibo</div>
+                  <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>Ticket completo de la factura</div>
+                </div>
+              </label>
+
+              <label style={{
+                display: 'flex', alignItems: 'center', gap: 'var(--space-3)',
+                padding: 'var(--space-3)', borderRadius: 'var(--radius-md)',
+                border: `2px solid ${printPrendas ? 'var(--color-primary)' : 'var(--color-border)'}`,
+                cursor: 'pointer', transition: 'border-color 0.2s'
+              }}>
+                <input
+                  type="checkbox"
+                  checked={printPrendas}
+                  onChange={e => setPrintPrendas(e.target.checked)}
+                  style={{ width: '18px', height: '18px', accentColor: 'var(--color-primary)', cursor: 'pointer' }}
+                />
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 'var(--text-sm)' }}>Prendas</div>
+                  <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>Etiquetas para colgar en cada prenda</div>
+                </div>
+              </label>
+            </div>
+
+            {/* Botones */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)', marginTop: 'var(--space-2)' }}>
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => {
+                  setShowPrintModal(false);
+                  setFacturaParaImprimir(null);
+                }}
+              >
+                Omitir
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                disabled={!printRecibo && !printPrendas}
+                onClick={handleConfirmPrint}
+              >
+                <Printer size={16} />
+                Imprimir
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
