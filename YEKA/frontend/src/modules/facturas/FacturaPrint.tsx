@@ -577,11 +577,24 @@ export function imprimirEtiquetas({ factura, tiposPrenda }: EtiquetasPrintProps)
     const tipoPrenda = getTipoPrendaNombre(prenda.tipoPrendaId);
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(prenda.codigoQR)}&bgcolor=ffffff&color=1e293b&margin=4`;
 
+    // Fecha de recepción: cuándo se creó la prenda
+    const fechaRecepcion = new Date(prenda.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+
+    // Fecha de compromiso de entrega
+    const fechaCompromiso = prenda.fechaCompromiso
+      ? new Date(prenda.fechaCompromiso).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })
+      : null;
+
+    // Tipo de atención (urgencia)
+    const urgencia = prenda.tipoUrgencia?.nombre || null;
+
+    // Nombre específico de cada servicio: tipoEspecifico es el más descriptivo
     const serviciosHtml = (prenda.servicios || []).length > 0
-      ? (prenda.servicios || []).map(s =>
-          `<li>${s.servicio?.nombre || s.servicio?.tipoEspecifico || 'Servicio'}</li>`
-        ).join('')
-      : '<li style="color:#94a3b8;font-style:italic">Sin servicios</li>';
+      ? (prenda.servicios || []).map(s => {
+          const nombreServicio = s.servicio?.tipoEspecifico || s.servicio?.nombre || 'Servicio';
+          return `<li>${nombreServicio}</li>`;
+        }).join('')
+      : '<li style="color:#94a3b8;font-style:italic">Sin servicios asignados</li>';
 
     return `
       <div class="etiqueta">
@@ -590,15 +603,32 @@ export function imprimirEtiquetas({ factura, tiposPrenda }: EtiquetasPrintProps)
           <div class="codigo-texto">${prenda.codigoQR}</div>
         </div>
         <div class="etiqueta-info">
-          <div class="etiqueta-num">#${idx + 1}</div>
+          <div class="etiqueta-header-row">
+            <span class="etiqueta-num">Prenda #${idx + 1}</span>
+            ${urgencia ? `<span class="urgencia-etiqueta">⚡ ${urgencia}</span>` : ''}
+          </div>
           <div class="etiqueta-cliente">${clienteNombre}</div>
           <div class="etiqueta-tipo">${tipoPrenda.toUpperCase()}</div>
-          ${prenda.marca ? `<div class="etiqueta-marca">${prenda.marca} · ${prenda.color}</div>` : `<div class="etiqueta-marca">${prenda.color}</div>`}
+          ${prenda.marca
+            ? `<div class="etiqueta-marca">${prenda.marca} · ${prenda.color}</div>`
+            : `<div class="etiqueta-marca">${prenda.color}</div>`}
+
           <div class="etiqueta-servicios-label">Servicios:</div>
           <ul class="etiqueta-servicios">${serviciosHtml}</ul>
-          ${prenda.fechaCompromiso
-            ? `<div class="etiqueta-fecha">📅 ${new Date(prenda.fechaCompromiso).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}</div>`
-            : ''}
+
+          <div class="etiqueta-dates">
+            <div class="date-item">
+              <span class="date-icon">&#128229;</span>
+              <span class="date-label">Recepción:</span>
+              <span class="date-val">${fechaRecepcion}</span>
+            </div>
+            ${fechaCompromiso ? `
+            <div class="date-item date-compromiso">
+              <span class="date-icon">&#128197;</span>
+              <span class="date-label">Entrega:</span>
+              <span class="date-val">${fechaCompromiso}</span>
+            </div>` : ''}
+          </div>
         </div>
       </div>
     `;
@@ -739,6 +769,47 @@ export function imprimirEtiquetas({ factura, tiposPrenda }: EtiquetasPrintProps)
       color: #0369a1;
       font-weight: 600;
     }
+
+    /* header row with prenda number + urgencia */
+    .etiqueta-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+    }
+    .urgencia-etiqueta {
+      font-size: 9.5px;
+      font-weight: 700;
+      background: #fee2e2;
+      color: #b91c1c;
+      border-radius: 99px;
+      padding: 1px 7px;
+      white-space: nowrap;
+    }
+
+    /* dates block at bottom */
+    .etiqueta-dates {
+      margin-top: auto;
+      padding-top: 6px;
+      border-top: 1px dashed #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .date-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10.5px;
+      color: #475569;
+    }
+    .date-item.date-compromiso {
+      font-weight: 700;
+      color: #0369a1;
+    }
+    .date-icon { font-size: 11px; }
+    .date-label { color: #94a3b8; font-weight: 500; white-space: nowrap; }
+    .date-val { font-weight: 600; }
 
     @media print {
       .page-title { display: none; }
