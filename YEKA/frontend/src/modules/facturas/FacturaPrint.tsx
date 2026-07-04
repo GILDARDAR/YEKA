@@ -379,6 +379,61 @@ export function imprimirFactura({ factura, tiposPrenda }: FacturaPrintProps) {
       color: #94a3b8;
     }
 
+    /* ── ABONOS ── */
+    .abonos-section {
+      margin-top: 28px;
+      page-break-inside: avoid;
+    }
+    .abonos-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      overflow: hidden;
+      font-size: 12.5px;
+    }
+    .abonos-table thead tr {
+      background: #f1f5f9;
+    }
+    .abonos-table th {
+      padding: 9px 14px;
+      text-align: left;
+      font-weight: 600;
+      color: #475569;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .abonos-table th.right,
+    .abonos-table td.right { text-align: right; }
+    .abonos-table td {
+      padding: 8px 14px;
+      border-top: 1px solid #f1f5f9;
+      color: #334155;
+    }
+    .abonos-table tr:last-child td { border-top: 1px solid #e2e8f0; }
+    .metodo-badge {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 99px;
+      font-size: 10.5px;
+      font-weight: 600;
+      background: #e0e7ff;
+      color: #4338ca;
+    }
+    .abonos-summary {
+      display: flex;
+      justify-content: flex-end;
+      gap: 32px;
+      margin-top: 10px;
+      font-size: 12.5px;
+    }
+    .abonos-summary .item { display: flex; gap: 8px; align-items: baseline; }
+    .abonos-summary .item .lbl { color: #64748b; }
+    .abonos-summary .item .val { font-weight: 700; font-size: 14px; }
+    .abonos-summary .item .val.green { color: #16a34a; }
+    .abonos-summary .item .val.red   { color: #dc2626; }
+
     /* ── PRINT ── */
     @media print {
       body { padding: 20px 28px; }
@@ -447,6 +502,43 @@ export function imprimirFactura({ factura, tiposPrenda }: FacturaPrintProps) {
     <div>
       <div class="label">Fecha máxima de entrega</div>
       <div class="date">${fmtFecha(fechaMaxima)}</div>
+    </div>
+  </div>` : ''}
+
+  <!-- ▸ ABONOS -->
+  ${(factura.abonos && factura.abonos.length > 0) ? `
+  <div class="abonos-section">
+    <div class="section-title" style="margin-top:28px">Historial de Pagos</div>
+    <table class="abonos-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Fecha</th>
+          <th>Método</th>
+          <th>Notas</th>
+          <th class="right">Monto</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${factura.abonos.map((a, i) => `
+        <tr>
+          <td style="color:#94a3b8">${i + 1}</td>
+          <td>${fmtFecha(a.fecha)}</td>
+          <td><span class="metodo-badge">${a.metodoPago}</span></td>
+          <td style="color:#64748b">${a.notas || '—'}</td>
+          <td class="right" style="font-weight:600;color:#16a34a">€${fmt(a.monto)}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    <div class="abonos-summary">
+      <div class="item">
+        <span class="lbl">Total abonado:</span>
+        <span class="val green">€${fmt(abonado)}</span>
+      </div>
+      <div class="item">
+        <span class="lbl">Saldo pendiente:</span>
+        <span class="val ${restante > 0 ? 'red' : 'green'}">€${fmt(restante)}</span>
+      </div>
     </div>
   </div>` : ''}
 
