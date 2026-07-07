@@ -8,6 +8,11 @@ export function ConfiguracionPage() {
     VALOR_HORA_PUNTOS: '',
     MINUTOS_PRODUCTIVOS_MES: '',
     MARGEN_UTILIDAD_GLOBAL: '',
+    EMPRESA_NOMBRE: '',
+    EMPRESA_NIF: '',
+    EMPRESA_TELEFONO: '',
+    EMPRESA_WHATSAPP: '',
+    EMPRESA_DIRECCION: '',
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -22,6 +27,7 @@ export function ConfiguracionPage() {
       setLoading(true);
       const { data } = await api.get('/configuracion');
       setConfig(data);
+      localStorage.setItem('yeka_config', JSON.stringify(data));
     } catch (error) {
       console.error('Error fetching config', error);
       setMessage('Error cargando la configuración');
@@ -39,6 +45,7 @@ export function ConfiguracionPage() {
     try {
       setSaving(true);
       await api.patch('/configuracion', config);
+      localStorage.setItem('yeka_config', JSON.stringify(config));
       setMessage('Configuración guardada exitosamente');
       setTimeout(() => setMessage(''), 3000);
     } catch (error) {
@@ -62,8 +69,65 @@ export function ConfiguracionPage() {
       )}
 
       <div className="bg-white p-6 rounded shadow">
-        <h2 className="text-xl font-semibold mb-4 border-b pb-2">Parámetros del Sistema</h2>
+        <h2 className="text-xl font-semibold mb-4 border-b pb-2">Datos de la Empresa</h2>
         <form onSubmit={handleSave} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nombre de la Empresa</label>
+              <input
+                type="text"
+                name="EMPRESA_NOMBRE"
+                value={config.EMPRESA_NOMBRE || ''}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded p-2 focus:ring focus:ring-blue-200"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">NIF / CIF</label>
+              <input
+                type="text"
+                name="EMPRESA_NIF"
+                value={config.EMPRESA_NIF || ''}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded p-2 focus:ring focus:ring-blue-200"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+              <input
+                type="text"
+                name="EMPRESA_TELEFONO"
+                value={config.EMPRESA_TELEFONO || ''}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded p-2 focus:ring focus:ring-blue-200"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp</label>
+              <input
+                type="text"
+                name="EMPRESA_WHATSAPP"
+                value={config.EMPRESA_WHATSAPP || ''}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded p-2 focus:ring focus:ring-blue-200"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
+            <input
+              type="text"
+              name="EMPRESA_DIRECCION"
+              value={config.EMPRESA_DIRECCION || ''}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded p-2 focus:ring focus:ring-blue-200"
+              required
+            />
+          </div>
+
+          <h2 className="text-xl font-semibold mt-8 mb-4 border-b pb-2">Parámetros del Sistema</h2>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Valor de la Hora de Trabajo (€/hora)

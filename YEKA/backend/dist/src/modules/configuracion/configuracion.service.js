@@ -18,6 +18,11 @@ const DEFAULT_CONFIG = {
     VALOR_HORA_PUNTOS: '60.00',
     MINUTOS_PRODUCTIVOS_MES: '21120',
     MARGEN_UTILIDAD_GLOBAL: '30.00',
+    EMPRESA_NOMBRE: 'Nombre del Taller',
+    EMPRESA_NIF: 'B00000000',
+    EMPRESA_TELEFONO: '+34 600 000 000',
+    EMPRESA_WHATSAPP: '+34 600 000 000',
+    EMPRESA_DIRECCION: 'Dirección del establecimiento',
 };
 let ConfiguracionService = class ConfiguracionService {
     prisma;
@@ -43,9 +48,7 @@ let ConfiguracionService = class ConfiguracionService {
         const records = await this.prisma.configuracion.findMany();
         const config = { ...DEFAULT_CONFIG };
         records.forEach(r => {
-            if (r.clave in config) {
-                config[r.clave] = r.valor;
-            }
+            config[r.clave] = r.valor;
         });
         return config;
     }
@@ -57,7 +60,7 @@ let ConfiguracionService = class ConfiguracionService {
     }
     async update(dto) {
         for (const [clave, valor] of Object.entries(dto)) {
-            if (clave in DEFAULT_CONFIG && valor) {
+            if (valor !== undefined) {
                 await this.prisma.configuracion.upsert({
                     where: { clave },
                     update: { valor },

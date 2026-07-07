@@ -6,6 +6,11 @@ export interface AppConfig {
     VALOR_HORA_PUNTOS: string;
     MINUTOS_PRODUCTIVOS_MES: string;
     MARGEN_UTILIDAD_GLOBAL: string;
+    EMPRESA_NOMBRE: string;
+    EMPRESA_NIF: string;
+    EMPRESA_TELEFONO: string;
+    EMPRESA_WHATSAPP: string;
+    EMPRESA_DIRECCION: string;
 }
 export declare class ConfiguracionService implements OnModuleInit {
     private readonly prisma;

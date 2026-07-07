@@ -5,23 +5,23 @@ export declare class AnunciosDao {
     createAnuncio(data: any): Promise<{
         sede: {
             id: number;
+            updatedAt: Date;
             codigoSede: string;
             nombre: string;
             direccion: string | null;
             capacidadDiariaMax: number;
             activa: boolean;
             createdAt: Date;
-            updatedAt: Date;
         };
         admin: {
             id: number;
+            updatedAt: Date;
             nombre: string;
             createdAt: Date;
-            updatedAt: Date;
-            sedeId: number;
             dni: string | null;
-            telefono: string | null;
             email: string;
+            sedeId: number;
+            telefono: string | null;
             password: string;
             pinAcceso: string | null;
             rol: import("../../../generated/prisma/enums").Rol;
@@ -31,8 +31,8 @@ export declare class AnunciosDao {
         id: number;
         createdAt: Date;
         sedeId: number;
-        adminId: number;
         mensaje: string;
+        adminId: number;
     }>;
     getAnunciosBySede(sedeId: number): Promise<({
         admin: {
@@ -43,8 +43,8 @@ export declare class AnunciosDao {
         id: number;
         createdAt: Date;
         sedeId: number;
-        adminId: number;
         mensaje: string;
+        adminId: number;
     })[]>;
     getAnuncioRespuesta(anuncioId: number, usuarioId: number): Promise<{
         id: number;
@@ -85,7 +85,7 @@ export declare class AnunciosDao {
         id: number;
         createdAt: Date;
         sedeId: number;
-        adminId: number;
         mensaje: string;
+        adminId: number;
     })[]>;
 }

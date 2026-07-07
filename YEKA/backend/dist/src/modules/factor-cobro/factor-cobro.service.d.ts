@@ -6,41 +6,41 @@ export declare class FactorCobroService {
     findAll(): Promise<({
         factores: {
             id: number;
+            valor: import("@prisma/client-runtime-utils").Decimal;
+            updatedAt: Date;
             nombre: string;
             createdAt: Date;
-            updatedAt: Date;
             activo: boolean;
             tipo: TipoFactor;
             categoriaId: number;
-            valor: import("@prisma/client-runtime-utils").Decimal;
             fechaInicio: Date | null;
             fechaFin: Date | null;
         }[];
     } & {
         id: number;
+        updatedAt: Date;
         nombre: string;
         activa: boolean;
         createdAt: Date;
-        updatedAt: Date;
     })[]>;
     createCategoria(data: {
         nombre: string;
     }): Promise<{
         id: number;
+        updatedAt: Date;
         nombre: string;
         activa: boolean;
         createdAt: Date;
-        updatedAt: Date;
     }>;
     updateCategoria(id: number, data: {
         nombre?: string;
         activa?: boolean;
     }): Promise<{
         id: number;
+        updatedAt: Date;
         nombre: string;
         activa: boolean;
         createdAt: Date;
-        updatedAt: Date;
     }>;
     createFactor(data: {
         categoriaId: number;
@@ -49,13 +49,13 @@ export declare class FactorCobroService {
         tipo: TipoFactor;
     }): Promise<{
         id: number;
+        valor: import("@prisma/client-runtime-utils").Decimal;
+        updatedAt: Date;
         nombre: string;
         createdAt: Date;
-        updatedAt: Date;
         activo: boolean;
         tipo: TipoFactor;
         categoriaId: number;
-        valor: import("@prisma/client-runtime-utils").Decimal;
         fechaInicio: Date | null;
         fechaFin: Date | null;
     }>;
@@ -66,13 +66,13 @@ export declare class FactorCobroService {
         activo?: boolean;
     }): Promise<{
         id: number;
+        valor: import("@prisma/client-runtime-utils").Decimal;
+        updatedAt: Date;
         nombre: string;
         createdAt: Date;
-        updatedAt: Date;
         activo: boolean;
         tipo: TipoFactor;
         categoriaId: number;
-        valor: import("@prisma/client-runtime-utils").Decimal;
         fechaInicio: Date | null;
         fechaFin: Date | null;
     }>;

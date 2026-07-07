@@ -5,45 +5,45 @@ export declare class TipoPrendaService {
     constructor(tipoPrendaDao: TipoPrendaDao);
     create(dto: CreateTipoPrendaDto): Promise<{
         id: number;
+        updatedAt: Date;
         nombre: string;
         createdAt: Date;
-        updatedAt: Date;
         activo: boolean;
         descripcion: string | null;
         porcentajeDificultad: import("@prisma/client-runtime-utils").Decimal;
     }>;
     findAll(): Promise<{
         id: number;
+        updatedAt: Date;
         nombre: string;
         createdAt: Date;
-        updatedAt: Date;
         activo: boolean;
         descripcion: string | null;
         porcentajeDificultad: import("@prisma/client-runtime-utils").Decimal;
     }[]>;
     findOne(id: number): Promise<{
         id: number;
+        updatedAt: Date;
         nombre: string;
         createdAt: Date;
-        updatedAt: Date;
         activo: boolean;
         descripcion: string | null;
         porcentajeDificultad: import("@prisma/client-runtime-utils").Decimal;
     }>;
     update(id: number, dto: UpdateTipoPrendaDto): Promise<{
         id: number;
+        updatedAt: Date;
         nombre: string;
         createdAt: Date;
-        updatedAt: Date;
         activo: boolean;
         descripcion: string | null;
         porcentajeDificultad: import("@prisma/client-runtime-utils").Decimal;
     }>;
     remove(id: number): Promise<{
         id: number;
+        updatedAt: Date;
         nombre: string;
         createdAt: Date;
-        updatedAt: Date;
         activo: boolean;
         descripcion: string | null;
         porcentajeDificultad: import("@prisma/client-runtime-utils").Decimal;

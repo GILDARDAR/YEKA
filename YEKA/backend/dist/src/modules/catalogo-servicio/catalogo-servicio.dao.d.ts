@@ -6,16 +6,16 @@ export declare class CatalogoServicioDAO {
     findAll(categoria?: string): Promise<({
         categoriasFactores: {
             id: number;
+            updatedAt: Date;
             nombre: string;
             activa: boolean;
             createdAt: Date;
-            updatedAt: Date;
         }[];
     } & {
         id: number;
+        updatedAt: Date;
         nombre: string;
         createdAt: Date;
-        updatedAt: Date;
         activo: boolean;
         categoria: string;
         tipoEspecifico: string;
@@ -25,16 +25,16 @@ export declare class CatalogoServicioDAO {
     findById(id: number): Promise<({
         categoriasFactores: {
             id: number;
+            updatedAt: Date;
             nombre: string;
             activa: boolean;
             createdAt: Date;
-            updatedAt: Date;
         }[];
     } & {
         id: number;
+        updatedAt: Date;
         nombre: string;
         createdAt: Date;
-        updatedAt: Date;
         activo: boolean;
         categoria: string;
         tipoEspecifico: string;
@@ -44,16 +44,16 @@ export declare class CatalogoServicioDAO {
     create(data: CreateCatalogoServicioDto): Promise<{
         categoriasFactores: {
             id: number;
+            updatedAt: Date;
             nombre: string;
             activa: boolean;
             createdAt: Date;
-            updatedAt: Date;
         }[];
     } & {
         id: number;
+        updatedAt: Date;
         nombre: string;
         createdAt: Date;
-        updatedAt: Date;
         activo: boolean;
         categoria: string;
         tipoEspecifico: string;
@@ -63,16 +63,16 @@ export declare class CatalogoServicioDAO {
     update(id: number, data: UpdateCatalogoServicioDto): Promise<{
         categoriasFactores: {
             id: number;
+            updatedAt: Date;
             nombre: string;
             activa: boolean;
             createdAt: Date;
-            updatedAt: Date;
         }[];
     } & {
         id: number;
+        updatedAt: Date;
         nombre: string;
         createdAt: Date;
-        updatedAt: Date;
         activo: boolean;
         categoria: string;
         tipoEspecifico: string;
@@ -82,16 +82,16 @@ export declare class CatalogoServicioDAO {
     softDelete(id: number): Promise<{
         categoriasFactores: {
             id: number;
+            updatedAt: Date;
             nombre: string;
             activa: boolean;
             createdAt: Date;
-            updatedAt: Date;
         }[];
     } & {
         id: number;
+        updatedAt: Date;
         nombre: string;
         createdAt: Date;
-        updatedAt: Date;
         activo: boolean;
         categoria: string;
         tipoEspecifico: string;

@@ -38,6 +38,7 @@ export function FacturaDetail() {
   const [tiposPrenda, setTiposPrenda] = useState<TipoPrenda[]>([]);
   const [catalogoServicios, setCatalogoServicios] = useState<CatalogoServicio[]>([]);
   const [tiposUrgencia, setTiposUrgencia] = useState<any[]>([]);
+  const [configuracion, setConfiguracion] = useState<any>({});
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -93,6 +94,7 @@ export function FacturaDetail() {
     tipoPrendaService.getTiposPrenda().then(res => setTiposPrenda(res.filter(t => t.activo)));
     catalogoService.getAll().then(res => setCatalogoServicios(res.filter(s => s.activo)));
     api.get('/tipo-urgencia').then(res => setTiposUrgencia(res.data)).catch(console.error);
+    api.get('/configuracion').then(res => setConfiguracion(res.data)).catch(console.error);
   }, [id]);
 
   const handleOpenModal = (prendaToEdit?: Prenda) => {
@@ -360,14 +362,14 @@ export function FacturaDetail() {
             <button
               className="btn btn-ghost"
               style={{ border: '1px solid var(--color-border)' }}
-              onClick={() => imprimirFactura({ factura, tiposPrenda })}
+              onClick={() => imprimirFactura({ factura, tiposPrenda, configuracion })}
             >
               <Printer size={16} /> Imprimir
             </button>
             <button
               className="btn btn-ghost"
               style={{ border: '1px solid var(--color-border)' }}
-              onClick={() => imprimirEtiquetas({ factura, tiposPrenda })}
+              onClick={() => imprimirEtiquetas({ factura, tiposPrenda, configuracion })}
               title="Imprimir etiquetas para colgar en cada prenda"
             >
               <Tag size={16} /> Etiquetas

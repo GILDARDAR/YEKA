@@ -19,6 +19,7 @@ import { PrendaModal } from '../prendas/PrendaModal';
 export function DashboardTallerPage() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [configuracion, setConfiguracion] = useState<any>({});
   
   // Dashboard Stats
   const [stats, setStats] = useState({
@@ -112,25 +113,28 @@ export function DashboardTallerPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [cls, facs, prs, tps, cats, urgsRes] = await Promise.all([
-          clientesService.getAll(),
+        const [facturasData, prendasData, clientesData, catalogData, urgenciasData, tiposPrendaData, configData] = await Promise.all([
           facturasService.getAll(),
           prendasService.getAll(),
-          tipoPrendaService.getTiposPrenda(),
+          clientesService.getClientes(),
           catalogoService.getAll(),
-          api.get('/tipo-urgencia'),
+          api.get('/tipo-urgencia').then(res => res.data).catch(() => []),
+          tipoPrendaService.getTiposPrenda(),
+          api.get('/configuracion').then(res => res.data).catch(() => ({}))
         ]);
 
-        setClientes(cls);
-        setTiposPrenda(tps.filter(t => t.activo));
-        setCatalogoServicios(cats.filter(c => c.activo));
-        setTiposUrgencia(urgsRes.data);
+        setFacturasList(facturasData);
+        setPrendasList(prendasData);
+        setClientes(clientesData.filter(c => c.activo));
+        setCatalogoServicios(catalogData.filter(s => s.activo));
+        setTiposUrgencia(urgenciasData);
+        setTiposPrenda(tiposPrendaData.filter(t => t.activo));
+        setConfiguracion(configData);
 
         // Compute Stats based on user's sede (Taller) or all if admin
         const filterSedeId = user?.rol !== 'ADMIN' ? user?.sedeId : null;
-        
-        const filteredFacturas = filterSedeId ? facs.filter(f => f.sedeId === filterSedeId) : facs;
-        const filteredPrendas = filterSedeId ? prs.filter(p => p.factura?.sedeId === filterSedeId) : prs;
+        const filteredFacturas = filterSedeId ? facturasData.filter(f => f.sedeId === filterSedeId) : facturasData;
+        const filteredPrendas = filterSedeId ? prendasData.filter(p => p.factura?.sedeId === filterSedeId) : prendasData;
 
         setFacturasList(filteredFacturas);
         setPrendasList(filteredPrendas);
@@ -394,10 +398,10 @@ export function DashboardTallerPage() {
     if (!facturaParaImprimir) return;
     setShowPrintModal(false);
     if (printRecibo) {
-      imprimirFactura({ factura: facturaParaImprimir, tiposPrenda });
+      imprimirFactura({ factura: facturaParaImprimir, tiposPrenda, configuracion });
     }
     if (printPrendas) {
-      imprimirEtiquetas({ factura: facturaParaImprimir, tiposPrenda });
+      imprimirEtiquetas({ factura: facturaParaImprimir, tiposPrenda, configuracion });
     }
     setFacturaParaImprimir(null);
   };

@@ -4,9 +4,9 @@ export declare class TipoUrgenciaService {
     constructor(prisma: PrismaService);
     findAll(): Promise<{
         id: number;
+        updatedAt: Date;
         nombre: string;
         createdAt: Date;
-        updatedAt: Date;
         activo: boolean;
         porcentajeRecargo: import("@prisma/client-runtime-utils").Decimal;
     }[]>;
@@ -15,9 +15,9 @@ export declare class TipoUrgenciaService {
         porcentajeRecargo: number;
     }): Promise<{
         id: number;
+        updatedAt: Date;
         nombre: string;
         createdAt: Date;
-        updatedAt: Date;
         activo: boolean;
         porcentajeRecargo: import("@prisma/client-runtime-utils").Decimal;
     }>;
@@ -27,17 +27,17 @@ export declare class TipoUrgenciaService {
         activo?: boolean;
     }): Promise<{
         id: number;
+        updatedAt: Date;
         nombre: string;
         createdAt: Date;
-        updatedAt: Date;
         activo: boolean;
         porcentajeRecargo: import("@prisma/client-runtime-utils").Decimal;
     }>;
     delete(id: number): Promise<{
         id: number;
+        updatedAt: Date;
         nombre: string;
         createdAt: Date;
-        updatedAt: Date;
         activo: boolean;
         porcentajeRecargo: import("@prisma/client-runtime-utils").Decimal;
     }>;
