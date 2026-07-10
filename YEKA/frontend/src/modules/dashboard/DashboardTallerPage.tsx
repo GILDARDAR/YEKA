@@ -116,7 +116,7 @@ export function DashboardTallerPage() {
         const [facturasData, prendasData, clientesData, catalogData, urgenciasData, tiposPrendaData, configData] = await Promise.all([
           facturasService.getAll(),
           prendasService.getAll(),
-          clientesService.getClientes(),
+          clientesService.getAll(),
           catalogoService.getAll(),
           api.get('/tipo-urgencia').then(res => res.data).catch(() => []),
           tipoPrendaService.getTiposPrenda(),
