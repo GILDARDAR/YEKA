@@ -23,6 +23,7 @@ const DEFAULT_CONFIG = {
     EMPRESA_TELEFONO: '+34 600 000 000',
     EMPRESA_WHATSAPP: '+34 600 000 000',
     EMPRESA_DIRECCION: 'Dirección del establecimiento',
+    IVA_PORCENTAJE: '21.00',
 };
 let ConfiguracionService = class ConfiguracionService {
     prisma;

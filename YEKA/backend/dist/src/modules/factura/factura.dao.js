@@ -115,9 +115,16 @@ let FacturaDAO = class FacturaDAO {
             },
         });
         const subtotal = asignaciones.reduce((sum, item) => sum.add(item.precioFinal), new client_1.Prisma.Decimal(0));
-        const ivaPorcentaje = 21;
-        const ivaMonto = subtotal.mul(ivaPorcentaje).div(100);
-        const total = subtotal.add(ivaMonto);
+        const confIva = await this.prisma.configuracion.findUnique({
+            where: { clave: 'IVA_PORCENTAJE' }
+        });
+        const ivaPorcentaje = confIva ? parseFloat(confIva.valor) : 21.0;
+        const subtotalNum = subtotal.toNumber();
+        const factor = 1 - (ivaPorcentaje / 100);
+        const totalNum = factor > 0 ? (subtotalNum / factor) : subtotalNum;
+        const totalRedondeado = Math.round(totalNum * 100) / 100;
+        const total = new client_1.Prisma.Decimal(totalRedondeado);
+        const ivaMonto = new client_1.Prisma.Decimal(totalRedondeado - subtotalNum);
         const impuestosJson = {
             iva: ivaPorcentaje,
             monto: ivaMonto.toNumber(),

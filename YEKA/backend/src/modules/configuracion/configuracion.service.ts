@@ -12,6 +12,7 @@ export interface AppConfig {
   EMPRESA_TELEFONO: string;
   EMPRESA_WHATSAPP: string;
   EMPRESA_DIRECCION: string;
+  IVA_PORCENTAJE: string;
 }
 
 const DEFAULT_CONFIG: AppConfig = {
@@ -25,6 +26,7 @@ const DEFAULT_CONFIG: AppConfig = {
   EMPRESA_TELEFONO: '+34 600 000 000',
   EMPRESA_WHATSAPP: '+34 600 000 000',
   EMPRESA_DIRECCION: 'Dirección del establecimiento',
+  IVA_PORCENTAJE: '21.00',
 };
 
 @Injectable()

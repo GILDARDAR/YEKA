@@ -305,7 +305,15 @@ let PrendaFacade = PrendaFacade_1 = class PrendaFacade {
             return val >= 1.0 ? val : 1.0;
         };
         const urgMultiplier = getUrgencyMultiplier(porcentajeUrgencia);
-        const precioFinal = precioConUtilidad * urgMultiplier;
+        const precioBaseOriginal = precioConUtilidad * urgMultiplier;
+        const confIva = await this.prismaService.configuracion.findUnique({
+            where: { clave: 'IVA_PORCENTAJE' }
+        });
+        const ivaPorcentaje = confIva ? parseFloat(confIva.valor) : 21.0;
+        const totalTemporal = precioBaseOriginal * (1 + ivaPorcentaje / 100);
+        const totalRedondeado = Math.ceil(totalTemporal / 0.50) * 0.50;
+        const ivaServicio = totalRedondeado * (ivaPorcentaje / 100);
+        const precioFinal = totalRedondeado - ivaServicio;
         this.logger.log(`=== CALCULANDO PRECIOS DE SERVICIO (NUEVO MODELO) ===`);
         this.logger.log(`Servicio ID: ${dto.servicioId} (${servicio.tipoEspecifico})`);
         this.logger.log(`Medida Base: ${medidaBase} cm`);
@@ -328,7 +336,12 @@ let PrendaFacade = PrendaFacade_1 = class PrendaFacade {
         this.logger.log(`Precio Con Utilidad: €${precioConUtilidad}`);
         this.logger.log(`Porcentaje Urgencia Prenda: ${porcentajeUrgencia}%`);
         this.logger.log(`Multiplicador de Urgencia: ${urgMultiplier}x`);
-        this.logger.log(`Precio Final: €${precioFinal}`);
+        this.logger.log(`Precio Base Original (Antes de IVA): €${precioBaseOriginal}`);
+        this.logger.log(`IVA Porcentaje: ${ivaPorcentaje}%`);
+        this.logger.log(`Total Temporal (Con IVA): €${totalTemporal}`);
+        this.logger.log(`Total Redondeado (Múltiplo 0.50): €${totalRedondeado}`);
+        this.logger.log(`IVA del Servicio Redondeado: €${ivaServicio}`);
+        this.logger.log(`Precio Final (Base Nueva): €${precioFinal}`);
         this.logger.log(`=====================================================`);
         const detallesCalculo = {
             medidaBase,
@@ -356,6 +369,11 @@ let PrendaFacade = PrendaFacade_1 = class PrendaFacade {
             precioConUtilidad,
             porcentajeUrgencia,
             urgMultiplier,
+            precioBaseOriginal,
+            ivaPorcentaje,
+            totalTemporal,
+            totalRedondeado,
+            ivaServicio,
             precioFinal
         };
         return {

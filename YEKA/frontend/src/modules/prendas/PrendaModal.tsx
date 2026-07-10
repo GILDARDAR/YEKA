@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { prendasService } from './prendas.service';
 import tipoPrendaService from '../../services/tipo-prenda.service';
-import type { Prenda, TipoPrenda, CatalogoServicio, PrendaServicio, EstadoPrenda } from '../../shared/types';
+import { catalogoService } from '../catalogo/catalogo.service';
+import api from '../../shared/api';
+import type { Prenda, TipoPrenda, CatalogoServicio, PrendaServicio, EstadoPrenda, CategoriaFactorCobro } from '../../shared/types';
 import { Check, Trash2, Edit2, X, Calendar, Plus } from 'lucide-react';
 
 interface PrendaModalProps {
@@ -33,13 +35,14 @@ export function PrendaModal({
   facturaId,
   prendaToEdit,
   tiposPrenda: tiposPrendaProp,
-  catalogoServicios,
+  catalogoServicios: catalogoServiciosProp,
   onClose,
   onSaved,
   onTipoPrendaCreated,
 }: PrendaModalProps) {
   // Local copy of tiposPrenda so we can append newly created ones without refreshing parent
   const [tiposPrenda, setTiposPrenda] = useState<TipoPrenda[]>(tiposPrendaProp);
+  const [catalogoServicios, setCatalogoServicios] = useState<CatalogoServicio[]>(catalogoServiciosProp);
   const isEditingInitial = !!prendaToEdit;
   const [isEditingPrenda, setIsEditingPrenda] = useState(isEditingInitial);
   
@@ -95,6 +98,69 @@ export function PrendaModal({
     }
   };
 
+  // ─── Nuevo Servicio inline ──────────────────────────────────────
+  const [showNuevoServicioModal, setShowNuevoServicioModal] = useState(false);
+  const [nuevoServicioForm, setNuevoServicioForm] = useState({
+    nombre: '',
+    categoria: '',
+    tipoEspecifico: '',
+    medidaBase: 0,
+    tiempoBase: 0,
+    categoriasFactoresIds: [] as number[],
+    activa: true,
+  });
+  const [savingNuevoServicio, setSavingNuevoServicio] = useState(false);
+  const [categoriasFactores, setCategoriasFactores] = useState<CategoriaFactorCobro[]>([]);
+
+  React.useEffect(() => {
+    if (showNuevoServicioModal && categoriasFactores.length === 0) {
+      api.get('/factores-cobro/categorias').then(res => setCategoriasFactores(res.data)).catch(console.error);
+    }
+  }, [showNuevoServicioModal, categoriasFactores.length]);
+
+  const toggleCategoriaFactor = (id: number) => {
+    setNuevoServicioForm(prev => {
+      const ids = prev.categoriasFactoresIds;
+      if (ids.includes(id)) {
+        return { ...prev, categoriasFactoresIds: ids.filter(i => i !== id) };
+      } else {
+        return { ...prev, categoriasFactoresIds: [...ids, id] };
+      }
+    });
+  };
+
+  const handleCrearNuevoServicio = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setSavingNuevoServicio(true);
+      const created = await catalogoService.create(nuevoServicioForm);
+      
+      // Actualizamos la lista local de servicios
+      setCatalogoServicios(prev => [...prev, created]);
+      
+      // Auto seleccionamos el nuevo servicio
+      setServicioSeleccionado(created.id.toString());
+      setBusquedaServicio('');
+      setMedidaEntregada('');
+      setObservacionesServicio('');
+      
+      setShowNuevoServicioModal(false);
+      setNuevoServicioForm({
+        nombre: '',
+        categoria: '',
+        tipoEspecifico: '',
+        medidaBase: 0,
+        tiempoBase: 0,
+        categoriasFactoresIds: [],
+        activa: true,
+      });
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Error al crear servicio');
+    } finally {
+      setSavingNuevoServicio(false);
+    }
+  };
+
   // Service Row State
   const [servicioSeleccionado, setServicioSeleccionado] = useState('');
   const [medidaEntregada, setMedidaEntregada] = useState<number | ''>('');
@@ -104,9 +170,7 @@ export function PrendaModal({
   const [tiposUrgencia, setTiposUrgencia] = useState<any[]>([]);
 
   React.useEffect(() => {
-    import('../../shared/api').then(({ default: api }) => {
-      api.get('/tipo-urgencia').then(res => setTiposUrgencia(res.data)).catch(console.error);
-    });
+    api.get('/tipo-urgencia').then(res => setTiposUrgencia(res.data)).catch(console.error);
   }, []);
 
   // Handle ESC key
@@ -434,15 +498,22 @@ export function PrendaModal({
             )}
 
             {/* Buscador de Servicios y Botones de acción */}
-            <div style={{ marginBottom: 'var(--space-4)', display: 'flex', gap: 'var(--space-4)', alignItems: 'center' }}>
+            <div style={{ marginBottom: 'var(--space-4)', display: 'flex', gap: 'var(--space-4)', alignItems: 'center', flexWrap: 'wrap' }}>
               <input
                 type="text"
                 className="form-input"
-                style={{ flex: 1 }}
+                style={{ flex: 1, minWidth: '250px' }}
                 placeholder="Buscar servicio disponible (ej. dobladillo, bajo, cremallera)..."
                 value={busquedaServicio}
                 onChange={e => setBusquedaServicio(e.target.value)}
               />
+              <button 
+                type="button" 
+                onClick={() => setShowNuevoServicioModal(true)} 
+                style={{ color: 'var(--color-primary)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontSize: 'var(--text-sm)', fontWeight: 'var(--font-medium)' }}
+              >
+                + Nuevo Servicio
+              </button>
               <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
                 <button type="button" className="btn btn-primary" onClick={onClose}>
                   Finalizar Prenda
@@ -663,6 +734,109 @@ export function PrendaModal({
               <button type="button" className="btn btn-ghost" onClick={() => setShowNuevoTipoModal(false)}>Cancelar</button>
               <button type="submit" className="btn btn-primary" disabled={savingNuevoTipo}>
                 {savingNuevoTipo ? 'Guardando...' : <><Check size={15} /> Guardar y Seleccionar</>}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )}
+
+    {/* MINI-MODAL: Nuevo Servicio */}
+    {showNuevoServicioModal && (
+      <div style={{
+        position: 'fixed', inset: 0, zIndex: 2000,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        backgroundColor: 'rgba(0,0,0,0.6)', padding: 'var(--space-4)'
+      }}>
+        <div className="card" style={{ width: '100%', maxWidth: '600px', padding: 'var(--space-6)', maxHeight: '92vh', overflowY: 'auto', position: 'relative' }}>
+          <button
+            type="button"
+            onClick={() => setShowNuevoServicioModal(false)}
+            style={{ position: 'absolute', top: 'var(--space-3)', right: 'var(--space-3)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)' }}
+          >
+            <X size={18} />
+          </button>
+          <h3 style={{ fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Plus size={18} /> Nuevo Servicio
+          </h3>
+          <form onSubmit={handleCrearNuevoServicio} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+              <div className="form-group">
+                <label className="form-label">Nombre General</label>
+                <input
+                  type="text" required
+                  value={nuevoServicioForm.nombre}
+                  onChange={e => setNuevoServicioForm(prev => ({ ...prev, nombre: e.target.value }))}
+                  className="form-input" placeholder="Ej. Dobladillo Pantalón"
+                  autoFocus
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Categoría</label>
+                <input
+                  type="text" required
+                  value={nuevoServicioForm.categoria}
+                  onChange={e => setNuevoServicioForm(prev => ({ ...prev, categoria: e.target.value }))}
+                  className="form-input" placeholder="Ej. Arreglos, Tintorería..."
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+              <div className="form-group">
+                <label className="form-label">Tipo Específico</label>
+                <input
+                  type="text" required
+                  value={nuevoServicioForm.tipoEspecifico}
+                  onChange={e => setNuevoServicioForm(prev => ({ ...prev, tipoEspecifico: e.target.value }))}
+                  className="form-input" placeholder="Ej. Dobladillo simple"
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Medida Base (cm)</label>
+                <input
+                  type="number" required min="0" step="0.01"
+                  value={nuevoServicioForm.medidaBase}
+                  onChange={e => setNuevoServicioForm(prev => ({ ...prev, medidaBase: Number(e.target.value) }))}
+                  className="form-input"
+                />
+              </div>
+            </div>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 'var(--space-4)' }}>
+              <div className="form-group">
+                <label className="form-label">Tiempo Base (minutos)</label>
+                <input
+                  type="number" required min="0"
+                  value={nuevoServicioForm.tiempoBase}
+                  onChange={e => setNuevoServicioForm(prev => ({ ...prev, tiempoBase: Number(e.target.value) }))}
+                  className="form-input"
+                />
+              </div>
+            </div>
+
+            <div style={{ borderTop: '2px solid var(--color-border)', paddingTop: 'var(--space-4)', marginTop: 'var(--space-2)' }}>
+              <h3 style={{ fontSize: 'var(--text-base)', fontFamily: 'var(--font-heading)', fontWeight: 'var(--font-semibold)', marginBottom: 'var(--space-2)' }}>
+                Categorías de Factores Aplicables
+              </h3>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
+                {categoriasFactores.filter(c => c.activa).map(cat => (
+                  <label key={cat.id} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--bg-hover)', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', border: '1px solid var(--color-border)' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={nuevoServicioForm.categoriasFactoresIds.includes(cat.id)}
+                      onChange={() => toggleCategoriaFactor(cat.id)}
+                    />
+                    {cat.nombre}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)', marginTop: 'var(--space-4)' }}>
+              <button type="button" onClick={() => setShowNuevoServicioModal(false)} className="btn btn-ghost">Cancelar</button>
+              <button type="submit" className="btn btn-primary" disabled={savingNuevoServicio}>
+                {savingNuevoServicio ? 'Guardando...' : <><Check size={15} /> Guardar y Seleccionar</>}
               </button>
             </div>
           </form>

@@ -11,6 +11,7 @@ export interface AppConfig {
     EMPRESA_TELEFONO: string;
     EMPRESA_WHATSAPP: string;
     EMPRESA_DIRECCION: string;
+    IVA_PORCENTAJE: string;
 }
 export declare class ConfiguracionService implements OnModuleInit {
     private readonly prisma;

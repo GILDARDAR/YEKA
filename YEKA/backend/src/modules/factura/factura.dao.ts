@@ -140,14 +140,25 @@ export class FacturaDAO {
       new Prisma.Decimal(0),
     );
 
-    // 3. Calculate taxes (21% IVA is default)
-    const ivaPorcentaje = 21;
-    // subtotal = total sin iva, total = subtotal * 1.21? Or total is the sum and subtotal is base?
-    // Let's assume total = subtotal (sum of services) and base is subtotal / 1.21.
-    // Or let's assume subtotal is base (sum of services) and total is subtotal + iva.
-    // Let's go with: subtotal is sum of services (base), total = subtotal * 1.21.
-    const ivaMonto = subtotal.mul(ivaPorcentaje).div(100);
-    const total = subtotal.add(ivaMonto);
+    // 3. Calculate taxes (fetch IVA from config or default to 21)
+    const confIva = await this.prisma.configuracion.findUnique({
+      where: { clave: 'IVA_PORCENTAJE' }
+    });
+    const ivaPorcentaje = confIva ? parseFloat(confIva.valor) : 21.0;
+
+    // Como el precioFinal de cada servicio ahora es = TotalRedondeado - (TotalRedondeado * iva/100)
+    // Matemáticamente: precioFinal = TotalRedondeado * (1 - iva/100)
+    // Entonces la suma de todos los totales redondeados es = subtotal / (1 - iva/100)
+    const subtotalNum = subtotal.toNumber();
+    const factor = 1 - (ivaPorcentaje / 100);
+    const totalNum = factor > 0 ? (subtotalNum / factor) : subtotalNum;
+
+    // Redondear a 2 decimales para evitar problemas de precisión en JS
+    const totalRedondeado = Math.round(totalNum * 100) / 100;
+    const total = new Prisma.Decimal(totalRedondeado);
+    
+    // El monto del IVA será la diferencia entre el Total de la Factura y el Subtotal de la Factura
+    const ivaMonto = new Prisma.Decimal(totalRedondeado - subtotalNum);
 
     const impuestosJson = {
       iva: ivaPorcentaje,

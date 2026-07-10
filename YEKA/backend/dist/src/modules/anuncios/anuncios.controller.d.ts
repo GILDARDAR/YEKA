@@ -7,19 +7,19 @@ export declare class AnunciosController {
     createAnuncio(adminId: number, dto: CreateAnuncioDto): Promise<{
         sede: {
             id: number;
-            updatedAt: Date;
             codigoSede: string;
             nombre: string;
             direccion: string | null;
             capacidadDiariaMax: number;
             activa: boolean;
             createdAt: Date;
+            updatedAt: Date;
         };
         admin: {
             id: number;
-            updatedAt: Date;
             nombre: string;
             createdAt: Date;
+            updatedAt: Date;
             dni: string | null;
             email: string;
             sedeId: number;
