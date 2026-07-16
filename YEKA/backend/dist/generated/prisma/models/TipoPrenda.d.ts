@@ -137,6 +137,7 @@ export type TipoPrendaWhereInput = {
     createdAt?: Prisma.DateTimeFilter<"TipoPrenda"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"TipoPrenda"> | Date | string;
     prendas?: Prisma.PrendaListRelationFilter;
+    materiales?: Prisma.MaterialListRelationFilter;
 };
 export type TipoPrendaOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
@@ -147,6 +148,7 @@ export type TipoPrendaOrderByWithRelationInput = {
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
     prendas?: Prisma.PrendaOrderByRelationAggregateInput;
+    materiales?: Prisma.MaterialOrderByRelationAggregateInput;
 };
 export type TipoPrendaWhereUniqueInput = Prisma.AtLeast<{
     id?: number;
@@ -160,6 +162,7 @@ export type TipoPrendaWhereUniqueInput = Prisma.AtLeast<{
     createdAt?: Prisma.DateTimeFilter<"TipoPrenda"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"TipoPrenda"> | Date | string;
     prendas?: Prisma.PrendaListRelationFilter;
+    materiales?: Prisma.MaterialListRelationFilter;
 }, "id" | "nombre">;
 export type TipoPrendaOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
@@ -195,6 +198,7 @@ export type TipoPrendaCreateInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     prendas?: Prisma.PrendaCreateNestedManyWithoutTipoPrendaInput;
+    materiales?: Prisma.MaterialCreateNestedManyWithoutTiposPrendaInput;
 };
 export type TipoPrendaUncheckedCreateInput = {
     id?: number;
@@ -205,6 +209,7 @@ export type TipoPrendaUncheckedCreateInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     prendas?: Prisma.PrendaUncheckedCreateNestedManyWithoutTipoPrendaInput;
+    materiales?: Prisma.MaterialUncheckedCreateNestedManyWithoutTiposPrendaInput;
 };
 export type TipoPrendaUpdateInput = {
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -214,6 +219,7 @@ export type TipoPrendaUpdateInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     prendas?: Prisma.PrendaUpdateManyWithoutTipoPrendaNestedInput;
+    materiales?: Prisma.MaterialUpdateManyWithoutTiposPrendaNestedInput;
 };
 export type TipoPrendaUncheckedUpdateInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -224,6 +230,7 @@ export type TipoPrendaUncheckedUpdateInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     prendas?: Prisma.PrendaUncheckedUpdateManyWithoutTipoPrendaNestedInput;
+    materiales?: Prisma.MaterialUncheckedUpdateManyWithoutTiposPrendaNestedInput;
 };
 export type TipoPrendaCreateManyInput = {
     id?: number;
@@ -290,6 +297,14 @@ export type TipoPrendaScalarRelationFilter = {
     is?: Prisma.TipoPrendaWhereInput;
     isNot?: Prisma.TipoPrendaWhereInput;
 };
+export type TipoPrendaListRelationFilter = {
+    every?: Prisma.TipoPrendaWhereInput;
+    some?: Prisma.TipoPrendaWhereInput;
+    none?: Prisma.TipoPrendaWhereInput;
+};
+export type TipoPrendaOrderByRelationAggregateInput = {
+    _count?: Prisma.SortOrder;
+};
 export type TipoPrendaCreateNestedOneWithoutPrendasInput = {
     create?: Prisma.XOR<Prisma.TipoPrendaCreateWithoutPrendasInput, Prisma.TipoPrendaUncheckedCreateWithoutPrendasInput>;
     connectOrCreate?: Prisma.TipoPrendaCreateOrConnectWithoutPrendasInput;
@@ -302,6 +317,40 @@ export type TipoPrendaUpdateOneRequiredWithoutPrendasNestedInput = {
     connect?: Prisma.TipoPrendaWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.TipoPrendaUpdateToOneWithWhereWithoutPrendasInput, Prisma.TipoPrendaUpdateWithoutPrendasInput>, Prisma.TipoPrendaUncheckedUpdateWithoutPrendasInput>;
 };
+export type TipoPrendaCreateNestedManyWithoutMaterialesInput = {
+    create?: Prisma.XOR<Prisma.TipoPrendaCreateWithoutMaterialesInput, Prisma.TipoPrendaUncheckedCreateWithoutMaterialesInput> | Prisma.TipoPrendaCreateWithoutMaterialesInput[] | Prisma.TipoPrendaUncheckedCreateWithoutMaterialesInput[];
+    connectOrCreate?: Prisma.TipoPrendaCreateOrConnectWithoutMaterialesInput | Prisma.TipoPrendaCreateOrConnectWithoutMaterialesInput[];
+    connect?: Prisma.TipoPrendaWhereUniqueInput | Prisma.TipoPrendaWhereUniqueInput[];
+};
+export type TipoPrendaUncheckedCreateNestedManyWithoutMaterialesInput = {
+    create?: Prisma.XOR<Prisma.TipoPrendaCreateWithoutMaterialesInput, Prisma.TipoPrendaUncheckedCreateWithoutMaterialesInput> | Prisma.TipoPrendaCreateWithoutMaterialesInput[] | Prisma.TipoPrendaUncheckedCreateWithoutMaterialesInput[];
+    connectOrCreate?: Prisma.TipoPrendaCreateOrConnectWithoutMaterialesInput | Prisma.TipoPrendaCreateOrConnectWithoutMaterialesInput[];
+    connect?: Prisma.TipoPrendaWhereUniqueInput | Prisma.TipoPrendaWhereUniqueInput[];
+};
+export type TipoPrendaUpdateManyWithoutMaterialesNestedInput = {
+    create?: Prisma.XOR<Prisma.TipoPrendaCreateWithoutMaterialesInput, Prisma.TipoPrendaUncheckedCreateWithoutMaterialesInput> | Prisma.TipoPrendaCreateWithoutMaterialesInput[] | Prisma.TipoPrendaUncheckedCreateWithoutMaterialesInput[];
+    connectOrCreate?: Prisma.TipoPrendaCreateOrConnectWithoutMaterialesInput | Prisma.TipoPrendaCreateOrConnectWithoutMaterialesInput[];
+    upsert?: Prisma.TipoPrendaUpsertWithWhereUniqueWithoutMaterialesInput | Prisma.TipoPrendaUpsertWithWhereUniqueWithoutMaterialesInput[];
+    set?: Prisma.TipoPrendaWhereUniqueInput | Prisma.TipoPrendaWhereUniqueInput[];
+    disconnect?: Prisma.TipoPrendaWhereUniqueInput | Prisma.TipoPrendaWhereUniqueInput[];
+    delete?: Prisma.TipoPrendaWhereUniqueInput | Prisma.TipoPrendaWhereUniqueInput[];
+    connect?: Prisma.TipoPrendaWhereUniqueInput | Prisma.TipoPrendaWhereUniqueInput[];
+    update?: Prisma.TipoPrendaUpdateWithWhereUniqueWithoutMaterialesInput | Prisma.TipoPrendaUpdateWithWhereUniqueWithoutMaterialesInput[];
+    updateMany?: Prisma.TipoPrendaUpdateManyWithWhereWithoutMaterialesInput | Prisma.TipoPrendaUpdateManyWithWhereWithoutMaterialesInput[];
+    deleteMany?: Prisma.TipoPrendaScalarWhereInput | Prisma.TipoPrendaScalarWhereInput[];
+};
+export type TipoPrendaUncheckedUpdateManyWithoutMaterialesNestedInput = {
+    create?: Prisma.XOR<Prisma.TipoPrendaCreateWithoutMaterialesInput, Prisma.TipoPrendaUncheckedCreateWithoutMaterialesInput> | Prisma.TipoPrendaCreateWithoutMaterialesInput[] | Prisma.TipoPrendaUncheckedCreateWithoutMaterialesInput[];
+    connectOrCreate?: Prisma.TipoPrendaCreateOrConnectWithoutMaterialesInput | Prisma.TipoPrendaCreateOrConnectWithoutMaterialesInput[];
+    upsert?: Prisma.TipoPrendaUpsertWithWhereUniqueWithoutMaterialesInput | Prisma.TipoPrendaUpsertWithWhereUniqueWithoutMaterialesInput[];
+    set?: Prisma.TipoPrendaWhereUniqueInput | Prisma.TipoPrendaWhereUniqueInput[];
+    disconnect?: Prisma.TipoPrendaWhereUniqueInput | Prisma.TipoPrendaWhereUniqueInput[];
+    delete?: Prisma.TipoPrendaWhereUniqueInput | Prisma.TipoPrendaWhereUniqueInput[];
+    connect?: Prisma.TipoPrendaWhereUniqueInput | Prisma.TipoPrendaWhereUniqueInput[];
+    update?: Prisma.TipoPrendaUpdateWithWhereUniqueWithoutMaterialesInput | Prisma.TipoPrendaUpdateWithWhereUniqueWithoutMaterialesInput[];
+    updateMany?: Prisma.TipoPrendaUpdateManyWithWhereWithoutMaterialesInput | Prisma.TipoPrendaUpdateManyWithWhereWithoutMaterialesInput[];
+    deleteMany?: Prisma.TipoPrendaScalarWhereInput | Prisma.TipoPrendaScalarWhereInput[];
+};
 export type TipoPrendaCreateWithoutPrendasInput = {
     nombre: string;
     descripcion?: string | null;
@@ -309,6 +358,7 @@ export type TipoPrendaCreateWithoutPrendasInput = {
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    materiales?: Prisma.MaterialCreateNestedManyWithoutTiposPrendaInput;
 };
 export type TipoPrendaUncheckedCreateWithoutPrendasInput = {
     id?: number;
@@ -318,6 +368,7 @@ export type TipoPrendaUncheckedCreateWithoutPrendasInput = {
     activo?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    materiales?: Prisma.MaterialUncheckedCreateNestedManyWithoutTiposPrendaInput;
 };
 export type TipoPrendaCreateOrConnectWithoutPrendasInput = {
     where: Prisma.TipoPrendaWhereUniqueInput;
@@ -339,8 +390,86 @@ export type TipoPrendaUpdateWithoutPrendasInput = {
     activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    materiales?: Prisma.MaterialUpdateManyWithoutTiposPrendaNestedInput;
 };
 export type TipoPrendaUncheckedUpdateWithoutPrendasInput = {
+    id?: Prisma.IntFieldUpdateOperationsInput | number;
+    nombre?: Prisma.StringFieldUpdateOperationsInput | string;
+    descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    porcentajeDificultad?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    materiales?: Prisma.MaterialUncheckedUpdateManyWithoutTiposPrendaNestedInput;
+};
+export type TipoPrendaCreateWithoutMaterialesInput = {
+    nombre: string;
+    descripcion?: string | null;
+    porcentajeDificultad?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    activo?: boolean;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    prendas?: Prisma.PrendaCreateNestedManyWithoutTipoPrendaInput;
+};
+export type TipoPrendaUncheckedCreateWithoutMaterialesInput = {
+    id?: number;
+    nombre: string;
+    descripcion?: string | null;
+    porcentajeDificultad?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    activo?: boolean;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    prendas?: Prisma.PrendaUncheckedCreateNestedManyWithoutTipoPrendaInput;
+};
+export type TipoPrendaCreateOrConnectWithoutMaterialesInput = {
+    where: Prisma.TipoPrendaWhereUniqueInput;
+    create: Prisma.XOR<Prisma.TipoPrendaCreateWithoutMaterialesInput, Prisma.TipoPrendaUncheckedCreateWithoutMaterialesInput>;
+};
+export type TipoPrendaUpsertWithWhereUniqueWithoutMaterialesInput = {
+    where: Prisma.TipoPrendaWhereUniqueInput;
+    update: Prisma.XOR<Prisma.TipoPrendaUpdateWithoutMaterialesInput, Prisma.TipoPrendaUncheckedUpdateWithoutMaterialesInput>;
+    create: Prisma.XOR<Prisma.TipoPrendaCreateWithoutMaterialesInput, Prisma.TipoPrendaUncheckedCreateWithoutMaterialesInput>;
+};
+export type TipoPrendaUpdateWithWhereUniqueWithoutMaterialesInput = {
+    where: Prisma.TipoPrendaWhereUniqueInput;
+    data: Prisma.XOR<Prisma.TipoPrendaUpdateWithoutMaterialesInput, Prisma.TipoPrendaUncheckedUpdateWithoutMaterialesInput>;
+};
+export type TipoPrendaUpdateManyWithWhereWithoutMaterialesInput = {
+    where: Prisma.TipoPrendaScalarWhereInput;
+    data: Prisma.XOR<Prisma.TipoPrendaUpdateManyMutationInput, Prisma.TipoPrendaUncheckedUpdateManyWithoutMaterialesInput>;
+};
+export type TipoPrendaScalarWhereInput = {
+    AND?: Prisma.TipoPrendaScalarWhereInput | Prisma.TipoPrendaScalarWhereInput[];
+    OR?: Prisma.TipoPrendaScalarWhereInput[];
+    NOT?: Prisma.TipoPrendaScalarWhereInput | Prisma.TipoPrendaScalarWhereInput[];
+    id?: Prisma.IntFilter<"TipoPrenda"> | number;
+    nombre?: Prisma.StringFilter<"TipoPrenda"> | string;
+    descripcion?: Prisma.StringNullableFilter<"TipoPrenda"> | string | null;
+    porcentajeDificultad?: Prisma.DecimalFilter<"TipoPrenda"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    activo?: Prisma.BoolFilter<"TipoPrenda"> | boolean;
+    createdAt?: Prisma.DateTimeFilter<"TipoPrenda"> | Date | string;
+    updatedAt?: Prisma.DateTimeFilter<"TipoPrenda"> | Date | string;
+};
+export type TipoPrendaUpdateWithoutMaterialesInput = {
+    nombre?: Prisma.StringFieldUpdateOperationsInput | string;
+    descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    porcentajeDificultad?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    prendas?: Prisma.PrendaUpdateManyWithoutTipoPrendaNestedInput;
+};
+export type TipoPrendaUncheckedUpdateWithoutMaterialesInput = {
+    id?: Prisma.IntFieldUpdateOperationsInput | number;
+    nombre?: Prisma.StringFieldUpdateOperationsInput | string;
+    descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    porcentajeDificultad?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    prendas?: Prisma.PrendaUncheckedUpdateManyWithoutTipoPrendaNestedInput;
+};
+export type TipoPrendaUncheckedUpdateManyWithoutMaterialesInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
     descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -351,15 +480,20 @@ export type TipoPrendaUncheckedUpdateWithoutPrendasInput = {
 };
 export type TipoPrendaCountOutputType = {
     prendas: number;
+    materiales: number;
 };
 export type TipoPrendaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     prendas?: boolean | TipoPrendaCountOutputTypeCountPrendasArgs;
+    materiales?: boolean | TipoPrendaCountOutputTypeCountMaterialesArgs;
 };
 export type TipoPrendaCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.TipoPrendaCountOutputTypeSelect<ExtArgs> | null;
 };
 export type TipoPrendaCountOutputTypeCountPrendasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.PrendaWhereInput;
+};
+export type TipoPrendaCountOutputTypeCountMaterialesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.MaterialWhereInput;
 };
 export type TipoPrendaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -370,6 +504,7 @@ export type TipoPrendaSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
     createdAt?: boolean;
     updatedAt?: boolean;
     prendas?: boolean | Prisma.TipoPrenda$prendasArgs<ExtArgs>;
+    materiales?: boolean | Prisma.TipoPrenda$materialesArgs<ExtArgs>;
     _count?: boolean | Prisma.TipoPrendaCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["tipoPrenda"]>;
 export type TipoPrendaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -402,6 +537,7 @@ export type TipoPrendaSelectScalar = {
 export type TipoPrendaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nombre" | "descripcion" | "porcentajeDificultad" | "activo" | "createdAt" | "updatedAt", ExtArgs["result"]["tipoPrenda"]>;
 export type TipoPrendaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     prendas?: boolean | Prisma.TipoPrenda$prendasArgs<ExtArgs>;
+    materiales?: boolean | Prisma.TipoPrenda$materialesArgs<ExtArgs>;
     _count?: boolean | Prisma.TipoPrendaCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type TipoPrendaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {};
@@ -410,6 +546,7 @@ export type $TipoPrendaPayload<ExtArgs extends runtime.Types.Extensions.Internal
     name: "TipoPrenda";
     objects: {
         prendas: Prisma.$PrendaPayload<ExtArgs>[];
+        materiales: Prisma.$MaterialPayload<ExtArgs>[];
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: number;
@@ -472,6 +609,7 @@ export interface TipoPrendaDelegate<ExtArgs extends runtime.Types.Extensions.Int
 export interface Prisma__TipoPrendaClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise";
     prendas<T extends Prisma.TipoPrenda$prendasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TipoPrenda$prendasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrendaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    materiales<T extends Prisma.TipoPrenda$materialesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TipoPrenda$materialesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MaterialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): runtime.Types.Utils.JsPromise<TResult1 | TResult2>;
     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): runtime.Types.Utils.JsPromise<T | TResult>;
     finally(onfinally?: (() => void) | undefined | null): runtime.Types.Utils.JsPromise<T>;
@@ -593,6 +731,17 @@ export type TipoPrenda$prendasArgs<ExtArgs extends runtime.Types.Extensions.Inte
     take?: number;
     skip?: number;
     distinct?: Prisma.PrendaScalarFieldEnum | Prisma.PrendaScalarFieldEnum[];
+};
+export type TipoPrenda$materialesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.MaterialSelect<ExtArgs> | null;
+    omit?: Prisma.MaterialOmit<ExtArgs> | null;
+    include?: Prisma.MaterialInclude<ExtArgs> | null;
+    where?: Prisma.MaterialWhereInput;
+    orderBy?: Prisma.MaterialOrderByWithRelationInput | Prisma.MaterialOrderByWithRelationInput[];
+    cursor?: Prisma.MaterialWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.MaterialScalarFieldEnum | Prisma.MaterialScalarFieldEnum[];
 };
 export type TipoPrendaDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.TipoPrendaSelect<ExtArgs> | null;

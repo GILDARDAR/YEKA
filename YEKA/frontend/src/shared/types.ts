@@ -134,6 +134,12 @@ export interface UpdateClienteDto {
 }
 
 // ─── Tipo Prenda ───────────────────────────────────────────────────
+export interface TipoPrendaMaterial {
+  id: number;
+  descripcion: string;
+  activo: boolean;
+}
+
 export interface TipoPrenda {
   id: number;
   nombre: string;
@@ -142,6 +148,7 @@ export interface TipoPrenda {
   activo: boolean;
   createdAt: string;
   updatedAt: string;
+  materiales?: TipoPrendaMaterial[];
 }
 
 export interface CreateTipoPrendaDto {
@@ -149,6 +156,7 @@ export interface CreateTipoPrendaDto {
   descripcion?: string;
   porcentajeDificultad?: number;
   activo?: boolean;
+  materialesIds?: number[];
 }
 
 export interface UpdateTipoPrendaDto {
@@ -156,6 +164,7 @@ export interface UpdateTipoPrendaDto {
   descripcion?: string;
   porcentajeDificultad?: number;
   activo?: boolean;
+  materialesIds?: number[];
 }
 
 // ─── Tipo Urgencia ──────────────────────────────────────────────────

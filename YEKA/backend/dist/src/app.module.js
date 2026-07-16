@@ -24,6 +24,9 @@ const configuracion_module_1 = require("./modules/configuracion/configuracion.mo
 const anuncios_module_1 = require("./modules/anuncios/anuncios.module");
 const tipo_urgencia_module_1 = require("./modules/tipo-urgencia/tipo-urgencia.module");
 const factor_cobro_module_1 = require("./modules/factor-cobro/factor-cobro.module");
+const material_module_1 = require("./modules/material/material.module");
+const tipo_arreglo_module_1 = require("./modules/tipo-arreglo/tipo-arreglo.module");
+const zona_module_1 = require("./modules/zona/zona.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -44,6 +47,9 @@ exports.AppModule = AppModule = __decorate([
             anuncios_module_1.AnunciosModule,
             tipo_urgencia_module_1.TipoUrgenciaModule,
             factor_cobro_module_1.FactorCobroModule,
+            material_module_1.MaterialModule,
+            tipo_arreglo_module_1.TipoArregloModule,
+            zona_module_1.ZonaModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

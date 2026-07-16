@@ -20,3 +20,6 @@ export type AuditLog = Prisma.AuditLogModel;
 export type Configuracion = Prisma.ConfiguracionModel;
 export type Anuncio = Prisma.AnuncioModel;
 export type AnuncioRespuesta = Prisma.AnuncioRespuestaModel;
+export type Material = Prisma.MaterialModel;
+export type TipoArreglo = Prisma.TipoArregloModel;
+export type Zona = Prisma.ZonaModel;

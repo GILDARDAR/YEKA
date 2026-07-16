@@ -90,6 +90,18 @@ export class AsignarServicioDto {
   @IsString()
   @IsOptional()
   observaciones?: string;
+
+  @IsInt()
+  @IsOptional()
+  materialId?: number;
+
+  @IsInt()
+  @IsOptional()
+  tipoArregloId?: number;
+
+  @IsInt()
+  @IsOptional()
+  zonaId?: number;
 }
 
 // ─── CAMBIAR ESTADO ───────────────────────────────────────────
@@ -152,5 +164,8 @@ export class PrendaServicioResponseDto {
   precioFinal: string; // Decimal serialized as string
   observaciones: string | null;
   detallesCalculo?: any;
+  materialId?: number | null;
+  tipoArregloId?: number | null;
+  zonaId?: number | null;
   createdAt: Date;
 }

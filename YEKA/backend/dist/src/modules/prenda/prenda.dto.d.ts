@@ -22,6 +22,9 @@ export declare class AsignarServicioDto {
     servicioId: number;
     medidaEntregada?: number;
     observaciones?: string;
+    materialId?: number;
+    tipoArregloId?: number;
+    zonaId?: number;
 }
 export declare class CambiarEstadoDto {
     nuevoEstado: EstadoPrenda;
@@ -64,5 +67,8 @@ export declare class PrendaServicioResponseDto {
     precioFinal: string;
     observaciones: string | null;
     detallesCalculo?: any;
+    materialId?: number | null;
+    tipoArregloId?: number | null;
+    zonaId?: number | null;
     createdAt: Date;
 }

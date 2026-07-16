@@ -89,6 +89,9 @@ let PrendaDAO = class PrendaDAO {
                 precioFinal: new client_1.Prisma.Decimal(data.precioFinal),
                 observaciones: data.observaciones || null,
                 detallesCalculo: data.detallesCalculo ? data.detallesCalculo : client_1.Prisma.JsonNull,
+                materialId: data.materialId || null,
+                tipoArregloId: data.tipoArregloId || null,
+                zonaId: data.zonaId || null,
             },
         });
     }

@@ -15,6 +15,9 @@ import { ConfiguracionModule } from './modules/configuracion/configuracion.modul
 import { AnunciosModule } from './modules/anuncios/anuncios.module';
 import { TipoUrgenciaModule } from './modules/tipo-urgencia/tipo-urgencia.module';
 import { FactorCobroModule } from './modules/factor-cobro/factor-cobro.module';
+import { MaterialModule } from './modules/material/material.module';
+import { TipoArregloModule } from './modules/tipo-arreglo/tipo-arreglo.module';
+import { ZonaModule } from './modules/zona/zona.module';
 
 @Module({
   imports: [
@@ -32,6 +35,9 @@ import { FactorCobroModule } from './modules/factor-cobro/factor-cobro.module';
     AnunciosModule,
     TipoUrgenciaModule,
     FactorCobroModule,
+    MaterialModule,
+    TipoArregloModule,
+    ZonaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

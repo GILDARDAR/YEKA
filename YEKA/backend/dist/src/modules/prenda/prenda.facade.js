@@ -54,6 +54,9 @@ function toPrendaServicioResponseDto(ps) {
         precioFinal: ps.precioFinal.toString(),
         observaciones: ps.observaciones || null,
         detallesCalculo: ps.detallesCalculo || null,
+        materialId: ps.materialId || null,
+        tipoArregloId: ps.tipoArregloId || null,
+        zonaId: ps.zonaId || null,
         createdAt: ps.createdAt,
     };
 }
@@ -442,6 +445,9 @@ let PrendaFacade = PrendaFacade_1 = class PrendaFacade {
             precioFinal: preciosCalculados.precioFinal,
             observaciones: dto.observaciones,
             detallesCalculo: preciosCalculados.detallesCalculo,
+            materialId: dto.materialId,
+            tipoArregloId: dto.tipoArregloId,
+            zonaId: dto.zonaId,
         });
         await this.facturaFacade.recalcularFactura(prenda.facturaId);
         const nuevaFecha = await this.calcularFechaCompromiso(0);

@@ -16,6 +16,9 @@ import { CatalogoPage }   from './modules/catalogo/CatalogoPage';
 import { UsuariosPage }   from './modules/usuarios/UsuariosPage';
 import { SedesPage }      from './modules/sedes/SedesPage';
 import TipoPrendaPage     from './pages/TipoPrendaPage';
+import MaterialesPage     from './pages/MaterialesPage';
+import TiposArregloPage   from './pages/TiposArregloPage';
+import ZonasPage          from './pages/ZonasPage';
 import { ParametrosCobroPage } from './modules/parametros-cobro/ParametrosCobroPage';
 import { ConfiguracionPage } from './modules/configuracion/ConfiguracionPage';
 import { AdminAnunciosPage } from './pages/admin/AdminAnunciosPage';
@@ -98,6 +101,21 @@ export default function App() {
             <Route path="/tipos-prenda" element={
               <RouteGuard allowedRoles={['ADMIN']}>
                 <TipoPrendaPage />
+              </RouteGuard>
+            }/>
+            <Route path="/materiales" element={
+              <RouteGuard allowedRoles={['ADMIN']}>
+                <MaterialesPage />
+              </RouteGuard>
+            }/>
+            <Route path="/tipos-arreglo" element={
+              <RouteGuard allowedRoles={['ADMIN']}>
+                <TiposArregloPage />
+              </RouteGuard>
+            }/>
+            <Route path="/zonas" element={
+              <RouteGuard allowedRoles={['ADMIN']}>
+                <ZonasPage />
               </RouteGuard>
             }/>
             <Route path="/parametros" element={

@@ -16,4 +16,7 @@ export type * from './models/AuditLog.js';
 export type * from './models/Configuracion.js';
 export type * from './models/Anuncio.js';
 export type * from './models/AnuncioRespuesta.js';
+export type * from './models/Material.js';
+export type * from './models/TipoArreglo.js';
+export type * from './models/Zona.js';
 export type * from './commonInputTypes.js';

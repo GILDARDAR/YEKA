@@ -29,6 +29,9 @@ export declare const ModelName: {
     readonly Configuracion: "Configuracion";
     readonly Anuncio: "Anuncio";
     readonly AnuncioRespuesta: "AnuncioRespuesta";
+    readonly Material: "Material";
+    readonly TipoArreglo: "TipoArreglo";
+    readonly Zona: "Zona";
 };
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
 export declare const TransactionIsolationLevel: {
@@ -160,6 +163,7 @@ export declare const CatalogoServicioScalarFieldEnum: {
     readonly activo: "activo";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
+    readonly zonaId: "zonaId";
 };
 export type CatalogoServicioScalarFieldEnum = (typeof CatalogoServicioScalarFieldEnum)[keyof typeof CatalogoServicioScalarFieldEnum];
 export declare const CategoriaFactorCobroScalarFieldEnum: {
@@ -196,6 +200,9 @@ export declare const PrendaServicioScalarFieldEnum: {
     readonly observaciones: "observaciones";
     readonly detallesCalculo: "detallesCalculo";
     readonly createdAt: "createdAt";
+    readonly materialId: "materialId";
+    readonly tipoArregloId: "tipoArregloId";
+    readonly zonaId: "zonaId";
 };
 export type PrendaServicioScalarFieldEnum = (typeof PrendaServicioScalarFieldEnum)[keyof typeof PrendaServicioScalarFieldEnum];
 export declare const InventarioScalarFieldEnum: {
@@ -243,6 +250,30 @@ export declare const AnuncioRespuestaScalarFieldEnum: {
     readonly leidoAt: "leidoAt";
 };
 export type AnuncioRespuestaScalarFieldEnum = (typeof AnuncioRespuestaScalarFieldEnum)[keyof typeof AnuncioRespuestaScalarFieldEnum];
+export declare const MaterialScalarFieldEnum: {
+    readonly id: "id";
+    readonly descripcion: "descripcion";
+    readonly activo: "activo";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type MaterialScalarFieldEnum = (typeof MaterialScalarFieldEnum)[keyof typeof MaterialScalarFieldEnum];
+export declare const TipoArregloScalarFieldEnum: {
+    readonly id: "id";
+    readonly descripcion: "descripcion";
+    readonly activo: "activo";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type TipoArregloScalarFieldEnum = (typeof TipoArregloScalarFieldEnum)[keyof typeof TipoArregloScalarFieldEnum];
+export declare const ZonaScalarFieldEnum: {
+    readonly id: "id";
+    readonly descripcion: "descripcion";
+    readonly activo: "activo";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type ZonaScalarFieldEnum = (typeof ZonaScalarFieldEnum)[keyof typeof ZonaScalarFieldEnum];
 export declare const SortOrder: {
     readonly asc: "asc";
     readonly desc: "desc";

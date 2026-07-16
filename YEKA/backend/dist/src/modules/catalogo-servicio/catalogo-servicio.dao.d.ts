@@ -17,6 +17,7 @@ export declare class CatalogoServicioDAO {
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
+        zonaId: number | null;
         categoria: string;
         tipoEspecifico: string;
         medidaBase: import("@prisma/client-runtime-utils").Decimal;
@@ -36,6 +37,7 @@ export declare class CatalogoServicioDAO {
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
+        zonaId: number | null;
         categoria: string;
         tipoEspecifico: string;
         medidaBase: import("@prisma/client-runtime-utils").Decimal;
@@ -55,6 +57,7 @@ export declare class CatalogoServicioDAO {
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
+        zonaId: number | null;
         categoria: string;
         tipoEspecifico: string;
         medidaBase: import("@prisma/client-runtime-utils").Decimal;
@@ -74,6 +77,7 @@ export declare class CatalogoServicioDAO {
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
+        zonaId: number | null;
         categoria: string;
         tipoEspecifico: string;
         medidaBase: import("@prisma/client-runtime-utils").Decimal;
@@ -93,6 +97,7 @@ export declare class CatalogoServicioDAO {
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
+        zonaId: number | null;
         categoria: string;
         tipoEspecifico: string;
         medidaBase: import("@prisma/client-runtime-utils").Decimal;

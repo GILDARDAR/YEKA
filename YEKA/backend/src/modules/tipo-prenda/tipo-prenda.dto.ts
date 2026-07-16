@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsBoolean, IsNumber } from 'class-validator';
+import { IsString, IsOptional, IsBoolean, IsNumber, IsArray, IsInt } from 'class-validator';
 
 export class CreateTipoPrendaDto {
   @IsString()
@@ -15,6 +15,11 @@ export class CreateTipoPrendaDto {
   @IsOptional()
   @IsNumber()
   porcentajeDificultad?: number;
+
+  @IsOptional()
+  @IsArray()
+  @IsInt({ each: true })
+  materialesIds?: number[];
 }
 
 export class UpdateTipoPrendaDto {
@@ -33,4 +38,9 @@ export class UpdateTipoPrendaDto {
   @IsOptional()
   @IsNumber()
   porcentajeDificultad?: number;
+
+  @IsOptional()
+  @IsArray()
+  @IsInt({ each: true })
+  materialesIds?: number[];
 }

@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.JsonNullValueFilter = exports.NullsOrder = exports.QueryMode = exports.NullableJsonNullValueInput = exports.SortOrder = exports.AnuncioRespuestaScalarFieldEnum = exports.AnuncioScalarFieldEnum = exports.ConfiguracionScalarFieldEnum = exports.AuditLogScalarFieldEnum = exports.InventarioScalarFieldEnum = exports.PrendaServicioScalarFieldEnum = exports.FactorCobroScalarFieldEnum = exports.CategoriaFactorCobroScalarFieldEnum = exports.CatalogoServicioScalarFieldEnum = exports.PrendaScalarFieldEnum = exports.TipoUrgenciaScalarFieldEnum = exports.TipoPrendaScalarFieldEnum = exports.AbonoScalarFieldEnum = exports.FacturaScalarFieldEnum = exports.ClienteScalarFieldEnum = exports.RegistroJornadaScalarFieldEnum = exports.UsuarioScalarFieldEnum = exports.SedeScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.Decimal = void 0;
+exports.JsonNullValueFilter = exports.NullsOrder = exports.QueryMode = exports.NullableJsonNullValueInput = exports.SortOrder = exports.ZonaScalarFieldEnum = exports.TipoArregloScalarFieldEnum = exports.MaterialScalarFieldEnum = exports.AnuncioRespuestaScalarFieldEnum = exports.AnuncioScalarFieldEnum = exports.ConfiguracionScalarFieldEnum = exports.AuditLogScalarFieldEnum = exports.InventarioScalarFieldEnum = exports.PrendaServicioScalarFieldEnum = exports.FactorCobroScalarFieldEnum = exports.CategoriaFactorCobroScalarFieldEnum = exports.CatalogoServicioScalarFieldEnum = exports.PrendaScalarFieldEnum = exports.TipoUrgenciaScalarFieldEnum = exports.TipoPrendaScalarFieldEnum = exports.AbonoScalarFieldEnum = exports.FacturaScalarFieldEnum = exports.ClienteScalarFieldEnum = exports.RegistroJornadaScalarFieldEnum = exports.UsuarioScalarFieldEnum = exports.SedeScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.Decimal = void 0;
 const runtime = __importStar(require("@prisma/client/runtime/index-browser"));
 exports.Decimal = runtime.Decimal;
 exports.NullTypes = {
@@ -62,7 +62,10 @@ exports.ModelName = {
     AuditLog: 'AuditLog',
     Configuracion: 'Configuracion',
     Anuncio: 'Anuncio',
-    AnuncioRespuesta: 'AnuncioRespuesta'
+    AnuncioRespuesta: 'AnuncioRespuesta',
+    Material: 'Material',
+    TipoArreglo: 'TipoArreglo',
+    Zona: 'Zona'
 };
 exports.TransactionIsolationLevel = runtime.makeStrictEnum({
     ReadUncommitted: 'ReadUncommitted',
@@ -182,7 +185,8 @@ exports.CatalogoServicioScalarFieldEnum = {
     tiempoBase: 'tiempoBase',
     activo: 'activo',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    zonaId: 'zonaId'
 };
 exports.CategoriaFactorCobroScalarFieldEnum = {
     id: 'id',
@@ -215,7 +219,10 @@ exports.PrendaServicioScalarFieldEnum = {
     precioFinal: 'precioFinal',
     observaciones: 'observaciones',
     detallesCalculo: 'detallesCalculo',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    materialId: 'materialId',
+    tipoArregloId: 'tipoArregloId',
+    zonaId: 'zonaId'
 };
 exports.InventarioScalarFieldEnum = {
     id: 'id',
@@ -256,6 +263,27 @@ exports.AnuncioRespuestaScalarFieldEnum = {
     usuarioId: 'usuarioId',
     respuesta: 'respuesta',
     leidoAt: 'leidoAt'
+};
+exports.MaterialScalarFieldEnum = {
+    id: 'id',
+    descripcion: 'descripcion',
+    activo: 'activo',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+};
+exports.TipoArregloScalarFieldEnum = {
+    id: 'id',
+    descripcion: 'descripcion',
+    activo: 'activo',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+};
+exports.ZonaScalarFieldEnum = {
+    id: 'id',
+    descripcion: 'descripcion',
+    activo: 'activo',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
 };
 exports.SortOrder = {
     asc: 'asc',

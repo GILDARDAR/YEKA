@@ -110,6 +110,9 @@ class AsignarServicioDto {
     servicioId;
     medidaEntregada;
     observaciones;
+    materialId;
+    tipoArregloId;
+    zonaId;
 }
 exports.AsignarServicioDto = AsignarServicioDto;
 __decorate([
@@ -128,6 +131,21 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], AsignarServicioDto.prototype, "observaciones", void 0);
+__decorate([
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], AsignarServicioDto.prototype, "materialId", void 0);
+__decorate([
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], AsignarServicioDto.prototype, "tipoArregloId", void 0);
+__decorate([
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], AsignarServicioDto.prototype, "zonaId", void 0);
 class CambiarEstadoDto {
     nuevoEstado;
     usuarioTallerId;
@@ -188,6 +206,9 @@ class PrendaServicioResponseDto {
     precioFinal;
     observaciones;
     detallesCalculo;
+    materialId;
+    tipoArregloId;
+    zonaId;
     createdAt;
 }
 exports.PrendaServicioResponseDto = PrendaServicioResponseDto;

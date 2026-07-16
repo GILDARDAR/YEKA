@@ -108,6 +108,7 @@ model TipoPrenda {
   createdAt            DateTime         @default(now())
   updatedAt            DateTime         @updatedAt
   prendas              Prenda[]
+  materiales           Material[]       @relation("TipoPrendaMaterial")
 }
 
 model TipoUrgencia {
@@ -158,6 +159,12 @@ model CatalogoServicio {
   updatedAt          DateTime                 @updatedAt
   categoriasFactores CategoriaFactorCobro[]   @relation("ServicioCategoriaFactor")
   asignaciones       PrendaServicio[]
+  
+  // Relaciones nuevas
+  materiales         Material[]               @relation("CatalogoServicioMaterial")
+  tiposArreglo       TipoArreglo[]            @relation("CatalogoServicioTipoArreglo")
+  zonaId             Int?
+  zona               Zona?                    @relation(fields: [zonaId], references: [id])
 }
 
 model CategoriaFactorCobro {
@@ -199,6 +206,14 @@ model PrendaServicio {
   createdAt          DateTime         @default(now())
   prenda             Prenda           @relation(fields: [prendaId], references: [id], onDelete: Cascade)
   servicio           CatalogoServicio @relation(fields: [servicioId], references: [id])
+
+  // Campos adicionales requeridos en Agregar Prenda
+  materialId         Int?
+  material           Material?        @relation(fields: [materialId], references: [id])
+  tipoArregloId      Int?
+  tipoArreglo        TipoArreglo?     @relation(fields: [tipoArregloId], references: [id])
+  zonaId             Int?
+  zona               Zona?            @relation(fields: [zonaId], references: [id])
 }
 
 model Inventario {
@@ -305,4 +320,38 @@ model AnuncioRespuesta {
   usuario     Usuario   @relation("AnuncioUsuario", fields: [usuarioId], references: [id])
 
   @@unique([anuncioId, usuarioId])
+}
+
+model Material {
+  id          Int                @id @default(autoincrement())
+  descripcion String             @db.VarChar(500)
+  activo      Boolean            @default(true)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  tiposPrenda TipoPrenda[]       @relation("TipoPrendaMaterial")
+  servicios   CatalogoServicio[] @relation("CatalogoServicioMaterial")
+  prendaServicios PrendaServicio[]
+}
+
+model TipoArreglo {
+  id          Int                @id @default(autoincrement())
+  descripcion String             @db.VarChar(500)
+  activo      Boolean            @default(true)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  servicios   CatalogoServicio[] @relation("CatalogoServicioTipoArreglo")
+  prendaServicios PrendaServicio[]
+}
+
+model Zona {
+  id          Int                @id @default(autoincrement())
+  descripcion String             @db.VarChar(500)
+  activo      Boolean            @default(true)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  servicios   CatalogoServicio[]
+  prendaServicios PrendaServicio[]
 }

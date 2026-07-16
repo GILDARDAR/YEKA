@@ -97,6 +97,9 @@ export class PrendaDAO {
     precioFinal: Prisma.Decimal | number;
     observaciones?: string;
     detallesCalculo?: any;
+    materialId?: number;
+    tipoArregloId?: number;
+    zonaId?: number;
   }): Promise<PrendaServicio> {
     return this.prisma.prendaServicio.create({
       data: {
@@ -110,6 +113,9 @@ export class PrendaDAO {
         precioFinal: new Prisma.Decimal(data.precioFinal),
         observaciones: data.observaciones || null,
         detallesCalculo: data.detallesCalculo ? data.detallesCalculo : Prisma.JsonNull,
+        materialId: data.materialId || null,
+        tipoArregloId: data.tipoArregloId || null,
+        zonaId: data.zonaId || null,
       },
     });
   }

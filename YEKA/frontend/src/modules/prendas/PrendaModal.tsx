@@ -218,10 +218,13 @@ export function PrendaModal({
     if (!servicioSeleccionado || !activePrenda) return;
     try {
       setIsCalculando(true);
-      await prendasService.asignarServicio(activePrenda.id, {
+await prendasService.asignarServicio(activePrenda.id, {
         servicioId: Number(servicioSeleccionado),
         medidaEntregada: medidaEntregada !== '' ? Number(medidaEntregada) : undefined,
         observaciones: observacionesServicio ? observacionesServicio : undefined,
+        materialId: materialSeleccionado ? Number(materialSeleccionado) : undefined,
+        tipoArregloId: tipoArregloSeleccionado ? Number(tipoArregloSeleccionado) : undefined,
+        zonaId: zonaSeleccionada ? Number(zonaSeleccionada) : undefined,
       });
       
       const updated = await prendasService.getById(activePrenda.id);
@@ -229,6 +232,9 @@ export function PrendaModal({
       setServicioSeleccionado('');
       setMedidaEntregada('');
       setObservacionesServicio('');
+      setMaterialSeleccionado('');
+      setTipoArregloSeleccionado('');
+      setZonaSeleccionada('');
       onSaved();
     } catch (err: any) {
       alert(err.response?.data?.message || 'Error al añadir servicio');
@@ -258,9 +264,12 @@ export function PrendaModal({
       const updated = await prendasService.getById(activePrenda.id);
       setActivePrenda(updated);
       
-      setServicioSeleccionado(s.servicioId.toString());
+setServicioSeleccionado(s.servicioId.toString());
       setMedidaEntregada(s.medidaEntregada !== null && s.medidaEntregada !== undefined ? Number(s.medidaEntregada) : '');
       setObservacionesServicio(s.observaciones || '');
+      setMaterialSeleccionado(s.materialId?.toString() || '');
+      setTipoArregloSeleccionado(s.tipoArregloId?.toString() || '');
+      setZonaSeleccionada(s.zonaId?.toString() || '');
       onSaved();
     } catch (err: any) {
       alert(err.response?.data?.message || 'Error al preparar la modificación');
@@ -614,52 +623,81 @@ export function PrendaModal({
                                   </div>
                                 </button>
 
-                                {/* Panel de ajuste cuando está seleccionado */}
+{/* Panel de ajuste cuando está seleccionado */}
                                 {isSelected && (
                                   <div style={{
                                     borderTop: '1px solid var(--color-primary)',
                                     padding: 'var(--space-3) var(--space-4)',
-                                    display: 'flex', alignItems: 'center', gap: 'var(--space-4)',
+                                    display: 'flex', flexDirection: 'column', gap: 'var(--space-4)',
                                     background: 'var(--bg)',
                                   }}>
-                                    <div style={{ flex: 1 }}>
-                                      <label style={{ fontSize: '11px', color: 'var(--color-text-muted)', display: 'block', marginBottom: '4px' }}>
-                                        Longitud entregada (cm) — opcional
-                                      </label>
-                                      <input
-                                        type="number" min="0"
-                                        className="form-input"
-                                        style={{ padding: '6px 10px', fontSize: '13px', maxWidth: '160px' }}
-                                        value={medidaEntregada}
-                                        onChange={e => setMedidaEntregada(e.target.value ? Number(e.target.value) : '')}
-                                        placeholder="Sin medida"
-                                      />
+                                    <div style={{ display: 'flex', gap: 'var(--space-4)', flexWrap: 'wrap' }}>
+                                      <div style={{ flex: 1, minWidth: '150px' }}>
+                                        <label style={{ fontSize: '11px', color: 'var(--color-text-muted)', display: 'block', marginBottom: '4px' }}>
+                                          Material <a href="/materiales" target="_blank" style={{ float: 'right', color: 'var(--color-primary)' }}>+ Crear</a>
+                                        </label>
+                                        <select className="form-select" style={{ padding: '6px 10px', fontSize: '13px' }} value={materialSeleccionado} onChange={e => setMaterialSeleccionado(e.target.value)}>
+                                          <option value="">Seleccione...</option>
+                                          {materiales.map(m => <option key={m.id} value={m.id}>{m.descripcion}</option>)}
+                                        </select>
+                                      </div>
+                                      <div style={{ flex: 1, minWidth: '150px' }}>
+                                        <label style={{ fontSize: '11px', color: 'var(--color-text-muted)', display: 'block', marginBottom: '4px' }}>
+                                          Tipo Arreglo <a href="/tipos-arreglo" target="_blank" style={{ float: 'right', color: 'var(--color-primary)' }}>+ Crear</a>
+                                        </label>
+                                        <select className="form-select" style={{ padding: '6px 10px', fontSize: '13px' }} value={tipoArregloSeleccionado} onChange={e => setTipoArregloSeleccionado(e.target.value)}>
+                                          <option value="">Seleccione...</option>
+                                          {tiposArreglo.map(m => <option key={m.id} value={m.id}>{m.descripcion}</option>)}
+                                        </select>
+                                      </div>
+                                      <div style={{ flex: 1, minWidth: '150px' }}>
+                                        <label style={{ fontSize: '11px', color: 'var(--color-text-muted)', display: 'block', marginBottom: '4px' }}>
+                                          Zona <a href="/zonas" target="_blank" style={{ float: 'right', color: 'var(--color-primary)' }}>+ Crear</a>
+                                        </label>
+                                        <select className="form-select" style={{ padding: '6px 10px', fontSize: '13px' }} value={zonaSeleccionada} onChange={e => setZonaSeleccionada(e.target.value)}>
+                                          <option value="">Seleccione...</option>
+                                          {zonas.map(m => <option key={m.id} value={m.id}>{m.descripcion}</option>)}
+                                        </select>
+                                      </div>
                                     </div>
-                                    <div style={{ flex: 2 }}>
-                                      <label style={{ fontSize: '11px', color: 'var(--color-text-muted)', display: 'block', marginBottom: '4px' }}>
-                                        Observaciones (máx 500 palabras)
-                                      </label>
-                                      <textarea
-                                        className="form-input"
-                                        style={{ padding: '6px 10px', fontSize: '13px', width: '100%', resize: 'vertical' }}
-                                        rows={2}
-                                        value={observacionesServicio}
-                                        onChange={e => setObservacionesServicio(e.target.value)}
-                                        placeholder="Escribe observaciones para el servicio..."
-                                      />
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
+                                      <div style={{ flex: 1 }}>
+                                        <label style={{ fontSize: '11px', color: 'var(--color-text-muted)', display: 'block', marginBottom: '4px' }}>
+                                          Longitud entregada (cm) — opcional
+                                        </label>
+                                        <input
+                                          type="number" min="0"
+                                          className="form-input"
+                                          style={{ padding: '6px 10px', fontSize: '13px', maxWidth: '160px' }}
+                                          value={medidaEntregada}
+                                          onChange={e => setMedidaEntregada(e.target.value ? Number(e.target.value) : '')}
+                                          placeholder="Sin medida"
+                                        />
+                                      </div>
+                                      <div style={{ flex: 2 }}>
+                                        <label style={{ fontSize: '11px', color: 'var(--color-text-muted)', display: 'block', marginBottom: '4px' }}>
+                                          Observaciones
+                                        </label>
+                                        <textarea
+                                          className="form-input"
+                                          style={{ padding: '6px 10px', fontSize: '13px', width: '100%', resize: 'vertical' }}
+                                          rows={2}
+                                          value={observacionesServicio}
+                                          onChange={e => setObservacionesServicio(e.target.value)}
+                                          placeholder="Escribe observaciones para el servicio..."
+                                        />
+                                      </div>
+                                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center' }}>
+                                        <button
+                                          type="button"
+                                          className="btn btn-primary"
+                                          disabled={isCalculando}
+                                          onClick={handleAddServicio}
+                                        >
+                                          {isCalculando ? 'Agregando...' : <><Check size={15} /> Agregar</>}
+                                        </button>
+                                      </div>
                                     </div>
-                                    <div style={{ textAlign: 'right', minWidth: '100px' }}>
-                                      <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Precio calculado al guardar</p>
-                                    </div>
-                                    <button
-                                      type="button"
-                                      className="btn btn-primary"
-                                      disabled={isCalculando}
-                                      onClick={handleAddServicio}
-                                      style={{ alignSelf: 'flex-end' }}
-                                    >
-                                      {isCalculando ? 'Agregando...' : <><Check size={15} /> Agregar</>}
-                                    </button>
                                   </div>
                                 )}
                               </div>

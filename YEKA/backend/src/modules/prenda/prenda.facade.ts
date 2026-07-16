@@ -61,6 +61,9 @@ function toPrendaServicioResponseDto(ps: PrendaServicio): PrendaServicioResponse
     precioFinal: ps.precioFinal.toString(),
     observaciones: (ps as any).observaciones || null,
     detallesCalculo: (ps as any).detallesCalculo || null,
+    materialId: (ps as any).materialId || null,
+    tipoArregloId: (ps as any).tipoArregloId || null,
+    zonaId: (ps as any).zonaId || null,
     createdAt: ps.createdAt,
   };
 }
@@ -527,6 +530,9 @@ export class PrendaFacade {
       precioFinal: preciosCalculados.precioFinal,
       observaciones: dto.observaciones,
       detallesCalculo: preciosCalculados.detallesCalculo as any,
+      materialId: dto.materialId,
+      tipoArregloId: dto.tipoArregloId,
+      zonaId: dto.zonaId,
     });
 
     await this.facturaFacade.recalcularFactura(prenda.facturaId);

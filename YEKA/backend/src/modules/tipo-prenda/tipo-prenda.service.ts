@@ -7,7 +7,12 @@ export class TipoPrendaService {
   constructor(private readonly tipoPrendaDao: TipoPrendaDao) {}
 
   async create(dto: CreateTipoPrendaDto) {
-    return this.tipoPrendaDao.create(dto);
+    const { materialesIds, ...rest } = dto;
+    const data: any = { ...rest };
+    if (materialesIds && materialesIds.length > 0) {
+      data.materiales = { connect: materialesIds.map((id) => ({ id })) };
+    }
+    return this.tipoPrendaDao.create(data);
   }
 
   async findAll() {
@@ -22,7 +27,13 @@ export class TipoPrendaService {
 
   async update(id: number, dto: UpdateTipoPrendaDto) {
     await this.findOne(id);
-    return this.tipoPrendaDao.update(id, dto);
+    const { materialesIds, ...rest } = dto;
+    const data: any = { ...rest };
+    if (materialesIds !== undefined) {
+      // "set" reemplaza completamente la lista de materiales asociados
+      data.materiales = { set: materialesIds.map((mid) => ({ id: mid })) };
+    }
+    return this.tipoPrendaDao.update(id, data);
   }
 
   async remove(id: number) {
