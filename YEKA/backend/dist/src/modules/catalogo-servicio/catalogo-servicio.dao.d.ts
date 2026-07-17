@@ -17,11 +17,11 @@ export declare class CatalogoServicioDAO {
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
-        zonaId: number | null;
         categoria: string;
         tipoEspecifico: string;
         medidaBase: import("@prisma/client-runtime-utils").Decimal;
         tiempoBase: number;
+        zonaId: number | null;
     })[]>;
     findById(id: number): Promise<({
         categoriasFactores: {
@@ -37,11 +37,11 @@ export declare class CatalogoServicioDAO {
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
-        zonaId: number | null;
         categoria: string;
         tipoEspecifico: string;
         medidaBase: import("@prisma/client-runtime-utils").Decimal;
         tiempoBase: number;
+        zonaId: number | null;
     }) | null>;
     create(data: CreateCatalogoServicioDto): Promise<{
         categoriasFactores: {
@@ -57,11 +57,11 @@ export declare class CatalogoServicioDAO {
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
-        zonaId: number | null;
         categoria: string;
         tipoEspecifico: string;
         medidaBase: import("@prisma/client-runtime-utils").Decimal;
         tiempoBase: number;
+        zonaId: number | null;
     }>;
     update(id: number, data: UpdateCatalogoServicioDto): Promise<{
         categoriasFactores: {
@@ -77,11 +77,11 @@ export declare class CatalogoServicioDAO {
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
-        zonaId: number | null;
         categoria: string;
         tipoEspecifico: string;
         medidaBase: import("@prisma/client-runtime-utils").Decimal;
         tiempoBase: number;
+        zonaId: number | null;
     }>;
     softDelete(id: number): Promise<{
         categoriasFactores: {
@@ -97,10 +97,10 @@ export declare class CatalogoServicioDAO {
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
-        zonaId: number | null;
         categoria: string;
         tipoEspecifico: string;
         medidaBase: import("@prisma/client-runtime-utils").Decimal;
         tiempoBase: number;
+        zonaId: number | null;
     }>;
 }

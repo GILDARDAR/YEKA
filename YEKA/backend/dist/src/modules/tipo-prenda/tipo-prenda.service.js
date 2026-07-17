@@ -18,7 +18,12 @@ let TipoPrendaService = class TipoPrendaService {
         this.tipoPrendaDao = tipoPrendaDao;
     }
     async create(dto) {
-        return this.tipoPrendaDao.create(dto);
+        const { materialesIds, ...rest } = dto;
+        const data = { ...rest };
+        if (materialesIds && materialesIds.length > 0) {
+            data.materiales = { connect: materialesIds.map((id) => ({ id })) };
+        }
+        return this.tipoPrendaDao.create(data);
     }
     async findAll() {
         return this.tipoPrendaDao.findAll();
@@ -31,7 +36,12 @@ let TipoPrendaService = class TipoPrendaService {
     }
     async update(id, dto) {
         await this.findOne(id);
-        return this.tipoPrendaDao.update(id, dto);
+        const { materialesIds, ...rest } = dto;
+        const data = { ...rest };
+        if (materialesIds !== undefined) {
+            data.materiales = { set: materialesIds.map((mid) => ({ id: mid })) };
+        }
+        return this.tipoPrendaDao.update(id, data);
     }
     async remove(id) {
         await this.findOne(id);

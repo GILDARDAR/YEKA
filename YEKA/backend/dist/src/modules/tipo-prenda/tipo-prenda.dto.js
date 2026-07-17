@@ -16,6 +16,7 @@ class CreateTipoPrendaDto {
     descripcion;
     activo;
     porcentajeDificultad;
+    materialesIds;
 }
 exports.CreateTipoPrendaDto = CreateTipoPrendaDto;
 __decorate([
@@ -37,11 +38,18 @@ __decorate([
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateTipoPrendaDto.prototype, "porcentajeDificultad", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsInt)({ each: true }),
+    __metadata("design:type", Array)
+], CreateTipoPrendaDto.prototype, "materialesIds", void 0);
 class UpdateTipoPrendaDto {
     nombre;
     descripcion;
     activo;
     porcentajeDificultad;
+    materialesIds;
 }
 exports.UpdateTipoPrendaDto = UpdateTipoPrendaDto;
 __decorate([
@@ -64,4 +72,10 @@ __decorate([
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], UpdateTipoPrendaDto.prototype, "porcentajeDificultad", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsInt)({ each: true }),
+    __metadata("design:type", Array)
+], UpdateTipoPrendaDto.prototype, "materialesIds", void 0);
 //# sourceMappingURL=tipo-prenda.dto.js.map

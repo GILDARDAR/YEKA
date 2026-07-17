@@ -2,39 +2,35 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Prisma, TipoPrenda } from '../../../generated/prisma/client';
 
-const tipoPrendaWithMateriales = Prisma.validator<Prisma.TipoPrendaDefaultArgs>()({
-  include: { materiales: true },
-});
-
-export type TipoPrendaWithMateriales = Prisma.TipoPrendaGetPayload<typeof tipoPrendaWithMateriales>;
+const materialesInclude = { include: { materiales: true } } as const;
 
 @Injectable()
 export class TipoPrendaDao {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: Prisma.TipoPrendaCreateInput): Promise<TipoPrendaWithMateriales> {
-    return this.prisma.tipoPrenda.create({ data, include: { materiales: true } });
+  async create(data: Prisma.TipoPrendaCreateInput) {
+    return this.prisma.tipoPrenda.create({ data, ...materialesInclude });
   }
 
-  async findAll(): Promise<TipoPrendaWithMateriales[]> {
+  async findAll() {
     return this.prisma.tipoPrenda.findMany({
       orderBy: { nombre: 'asc' },
-      include: { materiales: true },
+      ...materialesInclude,
     });
   }
 
-  async findById(id: number): Promise<TipoPrendaWithMateriales | null> {
+  async findById(id: number) {
     return this.prisma.tipoPrenda.findUnique({
       where: { id },
-      include: { materiales: true },
+      ...materialesInclude,
     });
   }
 
-  async update(id: number, data: Prisma.TipoPrendaUpdateInput): Promise<TipoPrendaWithMateriales> {
+  async update(id: number, data: Prisma.TipoPrendaUpdateInput) {
     return this.prisma.tipoPrenda.update({
       where: { id },
       data,
-      include: { materiales: true },
+      ...materialesInclude,
     });
   }
 

@@ -3,7 +3,15 @@ import { CreateTipoPrendaDto, UpdateTipoPrendaDto } from './tipo-prenda.dto';
 export declare class TipoPrendaController {
     private readonly tipoPrendaService;
     constructor(tipoPrendaService: TipoPrendaService);
-    findAll(): Promise<{
+    findAll(): Promise<({
+        materiales: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            activo: boolean;
+            descripcion: string;
+        }[];
+    } & {
         id: number;
         nombre: string;
         createdAt: Date;
@@ -11,8 +19,16 @@ export declare class TipoPrendaController {
         activo: boolean;
         descripcion: string | null;
         porcentajeDificultad: import("@prisma/client-runtime-utils").Decimal;
-    }[]>;
+    })[]>;
     findOne(id: number): Promise<{
+        materiales: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            activo: boolean;
+            descripcion: string;
+        }[];
+    } & {
         id: number;
         nombre: string;
         createdAt: Date;
@@ -22,6 +38,14 @@ export declare class TipoPrendaController {
         porcentajeDificultad: import("@prisma/client-runtime-utils").Decimal;
     }>;
     create(dto: CreateTipoPrendaDto): Promise<{
+        materiales: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            activo: boolean;
+            descripcion: string;
+        }[];
+    } & {
         id: number;
         nombre: string;
         createdAt: Date;
@@ -31,6 +55,14 @@ export declare class TipoPrendaController {
         porcentajeDificultad: import("@prisma/client-runtime-utils").Decimal;
     }>;
     update(id: number, dto: UpdateTipoPrendaDto): Promise<{
+        materiales: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            activo: boolean;
+            descripcion: string;
+        }[];
+    } & {
         id: number;
         nombre: string;
         createdAt: Date;

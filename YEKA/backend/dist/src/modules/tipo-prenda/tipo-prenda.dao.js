@@ -12,26 +12,32 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TipoPrendaDao = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../prisma/prisma.service");
+const materialesInclude = { include: { materiales: true } };
 let TipoPrendaDao = class TipoPrendaDao {
     prisma;
     constructor(prisma) {
         this.prisma = prisma;
     }
     async create(data) {
-        return this.prisma.tipoPrenda.create({ data });
+        return this.prisma.tipoPrenda.create({ data, ...materialesInclude });
     }
     async findAll() {
         return this.prisma.tipoPrenda.findMany({
-            orderBy: { nombre: 'asc' }
+            orderBy: { nombre: 'asc' },
+            ...materialesInclude,
         });
     }
     async findById(id) {
-        return this.prisma.tipoPrenda.findUnique({ where: { id } });
+        return this.prisma.tipoPrenda.findUnique({
+            where: { id },
+            ...materialesInclude,
+        });
     }
     async update(id, data) {
         return this.prisma.tipoPrenda.update({
             where: { id },
             data,
+            ...materialesInclude,
         });
     }
     async delete(id) {
