@@ -204,6 +204,8 @@ export interface CatalogoServicio {
   tiempoBase: number;
   activo: boolean;
   categoriasFactores: { id: number; nombre: string }[];
+  materiales?: { id: number; descripcion: string }[];
+  tiposArreglo?: { id: number; descripcion: string }[];
   createdAt: string;
   updatedAt: string;
 }
@@ -215,6 +217,8 @@ export interface CreateCatalogoServicioDto {
   medidaBase?: number;
   tiempoBase?: number;
   categoriasFactoresIds?: number[];
+  materialesIds?: number[];
+  tiposArregloIds?: number[];
 }
 
 export interface UpdateCatalogoServicioDto {
@@ -225,6 +229,8 @@ export interface UpdateCatalogoServicioDto {
   tiempoBase?: number;
   activo?: boolean;
   categoriasFactoresIds?: number[];
+  materialesIds?: number[];
+  tiposArregloIds?: number[];
 }
 
 // ─── Abono ──────────────────────────────────────────────────────────

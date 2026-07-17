@@ -5,6 +5,8 @@ export declare class CreateCatalogoServicioDto {
     medidaBase: number;
     tiempoBase: number;
     categoriasFactoresIds?: number[];
+    materialesIds?: number[];
+    tiposArregloIds?: number[];
 }
 export declare class UpdateCatalogoServicioDto {
     nombre?: string;
@@ -14,6 +16,8 @@ export declare class UpdateCatalogoServicioDto {
     tiempoBase?: number;
     activo?: boolean;
     categoriasFactoresIds?: number[];
+    materialesIds?: number[];
+    tiposArregloIds?: number[];
 }
 export declare class CatalogoServicioResponseDto {
     id: number;

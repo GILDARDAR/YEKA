@@ -11,6 +11,20 @@ export declare class CatalogoServicioDAO {
             createdAt: Date;
             updatedAt: Date;
         }[];
+        materiales: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            activo: boolean;
+            descripcion: string;
+        }[];
+        tiposArreglo: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            activo: boolean;
+            descripcion: string;
+        }[];
     } & {
         id: number;
         nombre: string;
@@ -30,6 +44,20 @@ export declare class CatalogoServicioDAO {
             activa: boolean;
             createdAt: Date;
             updatedAt: Date;
+        }[];
+        materiales: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            activo: boolean;
+            descripcion: string;
+        }[];
+        tiposArreglo: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            activo: boolean;
+            descripcion: string;
         }[];
     } & {
         id: number;
@@ -51,6 +79,20 @@ export declare class CatalogoServicioDAO {
             createdAt: Date;
             updatedAt: Date;
         }[];
+        materiales: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            activo: boolean;
+            descripcion: string;
+        }[];
+        tiposArreglo: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            activo: boolean;
+            descripcion: string;
+        }[];
     } & {
         id: number;
         nombre: string;
@@ -71,6 +113,20 @@ export declare class CatalogoServicioDAO {
             createdAt: Date;
             updatedAt: Date;
         }[];
+        materiales: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            activo: boolean;
+            descripcion: string;
+        }[];
+        tiposArreglo: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            activo: boolean;
+            descripcion: string;
+        }[];
     } & {
         id: number;
         nombre: string;
@@ -90,6 +146,20 @@ export declare class CatalogoServicioDAO {
             activa: boolean;
             createdAt: Date;
             updatedAt: Date;
+        }[];
+        materiales: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            activo: boolean;
+            descripcion: string;
+        }[];
+        tiposArreglo: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            activo: boolean;
+            descripcion: string;
         }[];
     } & {
         id: number;

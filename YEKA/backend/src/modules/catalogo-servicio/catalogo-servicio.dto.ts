@@ -34,6 +34,16 @@ export class CreateCatalogoServicioDto {
   @IsInt({ each: true })
   @IsOptional()
   categoriasFactoresIds?: number[];
+
+  @IsArray()
+  @IsInt({ each: true })
+  @IsOptional()
+  materialesIds?: number[];
+
+  @IsArray()
+  @IsInt({ each: true })
+  @IsOptional()
+  tiposArregloIds?: number[];
 }
 
 export class UpdateCatalogoServicioDto {
@@ -67,6 +77,16 @@ export class UpdateCatalogoServicioDto {
   @IsInt({ each: true })
   @IsOptional()
   categoriasFactoresIds?: number[];
+
+  @IsArray()
+  @IsInt({ each: true })
+  @IsOptional()
+  materialesIds?: number[];
+
+  @IsArray()
+  @IsInt({ each: true })
+  @IsOptional()
+  tiposArregloIds?: number[];
 }
 
 export class CatalogoServicioResponseDto {

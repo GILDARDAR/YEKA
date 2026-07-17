@@ -12,6 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CatalogoServicioDAO = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../prisma/prisma.service");
+const servicioInclude = {
+    categoriasFactores: true,
+    materiales: true,
+    tiposArreglo: true,
+};
 let CatalogoServicioDAO = class CatalogoServicioDAO {
     prisma;
     constructor(prisma) {
@@ -23,9 +28,7 @@ let CatalogoServicioDAO = class CatalogoServicioDAO {
                 activo: true,
                 ...(categoria ? { categoria } : {}),
             },
-            include: {
-                categoriasFactores: true,
-            },
+            include: servicioInclude,
             orderBy: [
                 { categoria: 'asc' },
                 { tipoEspecifico: 'asc' },
@@ -35,9 +38,7 @@ let CatalogoServicioDAO = class CatalogoServicioDAO {
     async findById(id) {
         return this.prisma.catalogoServicio.findUnique({
             where: { id },
-            include: {
-                categoriasFactores: true,
-            },
+            include: servicioInclude,
         });
     }
     async create(data) {
@@ -49,13 +50,17 @@ let CatalogoServicioDAO = class CatalogoServicioDAO {
                 medidaBase: data.medidaBase,
                 tiempoBase: data.tiempoBase,
                 activo: true,
-                ...(data.categoriasFactoresIds ? {
-                    categoriasFactores: {
-                        connect: data.categoriasFactoresIds.map(id => ({ id }))
-                    }
-                } : {})
+                ...(data.categoriasFactoresIds?.length ? {
+                    categoriasFactores: { connect: data.categoriasFactoresIds.map(id => ({ id })) }
+                } : {}),
+                ...(data.materialesIds?.length ? {
+                    materiales: { connect: data.materialesIds.map(id => ({ id })) }
+                } : {}),
+                ...(data.tiposArregloIds?.length ? {
+                    tiposArreglo: { connect: data.tiposArregloIds.map(id => ({ id })) }
+                } : {}),
             },
-            include: { categoriasFactores: true }
+            include: servicioInclude,
         });
     }
     async update(id, data) {
@@ -68,20 +73,24 @@ let CatalogoServicioDAO = class CatalogoServicioDAO {
                 ...(data.medidaBase !== undefined ? { medidaBase: data.medidaBase } : {}),
                 ...(data.tiempoBase !== undefined ? { tiempoBase: data.tiempoBase } : {}),
                 ...(data.activo !== undefined ? { activo: data.activo } : {}),
-                ...(data.categoriasFactoresIds ? {
-                    categoriasFactores: {
-                        set: data.categoriasFactoresIds.map(id => ({ id }))
-                    }
-                } : {})
+                ...(data.categoriasFactoresIds !== undefined ? {
+                    categoriasFactores: { set: data.categoriasFactoresIds.map(id => ({ id })) }
+                } : {}),
+                ...(data.materialesIds !== undefined ? {
+                    materiales: { set: data.materialesIds.map(id => ({ id })) }
+                } : {}),
+                ...(data.tiposArregloIds !== undefined ? {
+                    tiposArreglo: { set: data.tiposArregloIds.map(id => ({ id })) }
+                } : {}),
             },
-            include: { categoriasFactores: true }
+            include: servicioInclude,
         });
     }
     async softDelete(id) {
         return this.prisma.catalogoServicio.update({
             where: { id },
             data: { activo: false },
-            include: { categoriasFactores: true }
+            include: servicioInclude,
         });
     }
 };

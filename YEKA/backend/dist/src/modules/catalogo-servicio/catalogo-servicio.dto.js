@@ -18,6 +18,8 @@ class CreateCatalogoServicioDto {
     medidaBase;
     tiempoBase;
     categoriasFactoresIds;
+    materialesIds;
+    tiposArregloIds;
 }
 exports.CreateCatalogoServicioDto = CreateCatalogoServicioDto;
 __decorate([
@@ -51,6 +53,18 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Array)
 ], CreateCatalogoServicioDto.prototype, "categoriasFactoresIds", void 0);
+__decorate([
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsInt)({ each: true }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], CreateCatalogoServicioDto.prototype, "materialesIds", void 0);
+__decorate([
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsInt)({ each: true }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], CreateCatalogoServicioDto.prototype, "tiposArregloIds", void 0);
 class UpdateCatalogoServicioDto {
     nombre;
     categoria;
@@ -59,6 +73,8 @@ class UpdateCatalogoServicioDto {
     tiempoBase;
     activo;
     categoriasFactoresIds;
+    materialesIds;
+    tiposArregloIds;
 }
 exports.UpdateCatalogoServicioDto = UpdateCatalogoServicioDto;
 __decorate([
@@ -99,6 +115,18 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Array)
 ], UpdateCatalogoServicioDto.prototype, "categoriasFactoresIds", void 0);
+__decorate([
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsInt)({ each: true }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], UpdateCatalogoServicioDto.prototype, "materialesIds", void 0);
+__decorate([
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsInt)({ each: true }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], UpdateCatalogoServicioDto.prototype, "tiposArregloIds", void 0);
 class CatalogoServicioResponseDto {
     id;
     nombre;
