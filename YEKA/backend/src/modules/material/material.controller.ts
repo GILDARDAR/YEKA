@@ -1,9 +1,8 @@
-import { Controller, UseGuards, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, UseGuards, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { MaterialService } from './material.service';
-import { CreateMaterialDto } from './dto/create-material.dto';
-import { UpdateMaterialDto } from './dto/update-material.dto';
+import { CreateMaterialDto, UpdateMaterialDto } from './material.dto';
 
 @Controller('material')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -11,8 +10,8 @@ export class MaterialController {
   constructor(private readonly materialService: MaterialService) {}
 
   @Post()
-  create(@Body() createMaterialDto: CreateMaterialDto) {
-    return this.materialService.create(createMaterialDto);
+  create(@Body() dto: CreateMaterialDto) {
+    return this.materialService.create(dto);
   }
 
   @Get()
@@ -21,17 +20,17 @@ export class MaterialController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.materialService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.materialService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMaterialDto: UpdateMaterialDto) {
-    return this.materialService.update(+id, updateMaterialDto);
+  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateMaterialDto) {
+    return this.materialService.update(id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.materialService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.materialService.remove(id);
   }
 }
