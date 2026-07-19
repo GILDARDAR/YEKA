@@ -19,7 +19,6 @@ const tipo_prenda_dto_1 = require("./tipo-prenda.dto");
 const jwt_auth_guard_1 = require("../../auth/jwt-auth.guard");
 const roles_guard_1 = require("../../common/guards/roles.guard");
 let TipoPrendaController = class TipoPrendaController {
-    tipoPrendaService;
     constructor(tipoPrendaService) {
         this.tipoPrendaService = tipoPrendaService;
     }

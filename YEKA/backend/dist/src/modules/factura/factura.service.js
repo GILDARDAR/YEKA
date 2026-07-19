@@ -13,7 +13,6 @@ exports.FacturaService = void 0;
 const common_1 = require("@nestjs/common");
 const factura_facade_1 = require("./factura.facade");
 let FacturaService = class FacturaService {
-    facturaFacade;
     constructor(facturaFacade) {
         this.facturaFacade = facturaFacade;
     }

@@ -30,7 +30,6 @@ function toResponseDto(item) {
     };
 }
 let CatalogoServicioFacade = class CatalogoServicioFacade {
-    dao;
     constructor(dao) {
         this.dao = dao;
     }

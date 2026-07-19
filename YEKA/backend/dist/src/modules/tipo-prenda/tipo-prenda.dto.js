@@ -12,11 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateTipoPrendaDto = exports.CreateTipoPrendaDto = void 0;
 const class_validator_1 = require("class-validator");
 class CreateTipoPrendaDto {
-    nombre;
-    descripcion;
-    activo;
-    porcentajeDificultad;
-    materialesIds;
 }
 exports.CreateTipoPrendaDto = CreateTipoPrendaDto;
 __decorate([
@@ -45,11 +40,6 @@ __decorate([
     __metadata("design:type", Array)
 ], CreateTipoPrendaDto.prototype, "materialesIds", void 0);
 class UpdateTipoPrendaDto {
-    nombre;
-    descripcion;
-    activo;
-    porcentajeDificultad;
-    materialesIds;
 }
 exports.UpdateTipoPrendaDto = UpdateTipoPrendaDto;
 __decorate([

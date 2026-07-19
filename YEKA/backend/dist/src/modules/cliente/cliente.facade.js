@@ -30,7 +30,6 @@ function toResponseDto(cliente, facturasCount) {
     };
 }
 let ClienteFacade = class ClienteFacade {
-    clienteDAO;
     constructor(clienteDAO) {
         this.clienteDAO = clienteDAO;
     }

@@ -12,13 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClienteResponseDto = exports.BuscarClienteDto = exports.UpdateClienteDto = exports.CreateClienteDto = void 0;
 const class_validator_1 = require("class-validator");
 class CreateClienteDto {
-    sedeOrigenId;
-    nombre;
-    dni;
-    celular;
-    email;
-    tallasMedidas;
-    preferenciasHistorial;
 }
 exports.CreateClienteDto = CreateClienteDto;
 __decorate([
@@ -59,14 +52,6 @@ __decorate([
     __metadata("design:type", Object)
 ], CreateClienteDto.prototype, "preferenciasHistorial", void 0);
 class UpdateClienteDto {
-    sedeOrigenId;
-    nombre;
-    dni;
-    celular;
-    email;
-    tallasMedidas;
-    preferenciasHistorial;
-    activo;
 }
 exports.UpdateClienteDto = UpdateClienteDto;
 __decorate([
@@ -113,7 +98,6 @@ __decorate([
     __metadata("design:type", Boolean)
 ], UpdateClienteDto.prototype, "activo", void 0);
 class BuscarClienteDto {
-    q;
 }
 exports.BuscarClienteDto = BuscarClienteDto;
 __decorate([
@@ -122,19 +106,6 @@ __decorate([
     __metadata("design:type", String)
 ], BuscarClienteDto.prototype, "q", void 0);
 class ClienteResponseDto {
-    id;
-    sedeOrigenId;
-    nombre;
-    dni;
-    celular;
-    email;
-    nivelPremium;
-    tallasMedidas;
-    preferenciasHistorial;
-    activo;
-    createdAt;
-    updatedAt;
-    facturasCount;
 }
 exports.ClienteResponseDto = ClienteResponseDto;
 //# sourceMappingURL=cliente.dto.js.map

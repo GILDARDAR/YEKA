@@ -19,7 +19,6 @@ const cliente_dto_1 = require("./cliente.dto");
 const jwt_auth_guard_1 = require("../../auth/jwt-auth.guard");
 const roles_guard_1 = require("../../common/guards/roles.guard");
 let ClienteController = class ClienteController {
-    clienteService;
     constructor(clienteService) {
         this.clienteService = clienteService;
     }

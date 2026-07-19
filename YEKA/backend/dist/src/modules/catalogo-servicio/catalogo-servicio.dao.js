@@ -18,7 +18,6 @@ const servicioInclude = {
     tiposArreglo: true,
 };
 let CatalogoServicioDAO = class CatalogoServicioDAO {
-    prisma;
     constructor(prisma) {
         this.prisma = prisma;
     }

@@ -13,7 +13,6 @@ exports.CatalogoServicioService = void 0;
 const common_1 = require("@nestjs/common");
 const catalogo_servicio_facade_1 = require("./catalogo-servicio.facade");
 let CatalogoServicioService = class CatalogoServicioService {
-    facade;
     constructor(facade) {
         this.facade = facade;
     }

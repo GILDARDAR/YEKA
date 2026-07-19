@@ -13,9 +13,6 @@ exports.FacturaResponseDto = exports.AbonoResponseDto = exports.UpdateAbonoDto =
 const class_validator_1 = require("class-validator");
 const client_1 = require("../../../generated/prisma/client");
 class CreateFacturaDto {
-    clienteId;
-    sedeId;
-    notas;
 }
 exports.CreateFacturaDto = CreateFacturaDto;
 __decorate([
@@ -34,9 +31,6 @@ __decorate([
     __metadata("design:type", String)
 ], CreateFacturaDto.prototype, "notas", void 0);
 class AddAbonoDto {
-    monto;
-    metodoPago;
-    notas;
 }
 exports.AddAbonoDto = AddAbonoDto;
 __decorate([
@@ -54,7 +48,6 @@ __decorate([
     __metadata("design:type", String)
 ], AddAbonoDto.prototype, "notas", void 0);
 class UpdateFacturaDto {
-    notas;
 }
 exports.UpdateFacturaDto = UpdateFacturaDto;
 __decorate([
@@ -63,9 +56,6 @@ __decorate([
     __metadata("design:type", String)
 ], UpdateFacturaDto.prototype, "notas", void 0);
 class UpdateAbonoDto {
-    monto;
-    metodoPago;
-    notas;
 }
 exports.UpdateAbonoDto = UpdateAbonoDto;
 __decorate([
@@ -85,30 +75,9 @@ __decorate([
     __metadata("design:type", String)
 ], UpdateAbonoDto.prototype, "notas", void 0);
 class AbonoResponseDto {
-    id;
-    facturaId;
-    monto;
-    metodoPago;
-    notas;
-    fecha;
 }
 exports.AbonoResponseDto = AbonoResponseDto;
 class FacturaResponseDto {
-    id;
-    numero;
-    clienteId;
-    usuarioCreadorId;
-    sedeId;
-    subtotal;
-    impuestosJson;
-    total;
-    estadoPago;
-    notas;
-    createdAt;
-    updatedAt;
-    abonos;
-    cliente;
-    prendas;
 }
 exports.FacturaResponseDto = FacturaResponseDto;
 //# sourceMappingURL=factura.dto.js.map

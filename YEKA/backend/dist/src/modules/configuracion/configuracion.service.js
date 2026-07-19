@@ -26,7 +26,6 @@ const DEFAULT_CONFIG = {
     IVA_PORCENTAJE: '21.00',
 };
 let ConfiguracionService = class ConfiguracionService {
-    prisma;
     constructor(prisma) {
         this.prisma = prisma;
     }

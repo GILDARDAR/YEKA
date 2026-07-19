@@ -61,18 +61,13 @@ function toPrendaServicioResponseDto(ps) {
     };
 }
 let PrendaFacade = PrendaFacade_1 = class PrendaFacade {
-    prendaDAO;
-    prismaService;
-    facturaFacade;
-    configService;
-    configuracionService;
-    logger = new common_1.Logger(PrendaFacade_1.name);
     constructor(prendaDAO, prismaService, facturaFacade, configService, configuracionService) {
         this.prendaDAO = prendaDAO;
         this.prismaService = prismaService;
         this.facturaFacade = facturaFacade;
         this.configService = configService;
         this.configuracionService = configuracionService;
+        this.logger = new common_1.Logger(PrendaFacade_1.name);
     }
     async createPrenda(dto) {
         const factura = await this.prismaService.factura.findUnique({

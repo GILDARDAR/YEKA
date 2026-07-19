@@ -20,7 +20,6 @@ const roles_guard_1 = require("../../common/guards/roles.guard");
 const roles_decorator_1 = require("../../common/decorators/roles.decorator");
 const client_1 = require("../../../generated/prisma/client");
 let ConfiguracionController = class ConfiguracionController {
-    configuracionService;
     constructor(configuracionService) {
         this.configuracionService = configuracionService;
     }

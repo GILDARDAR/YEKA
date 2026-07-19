@@ -18,7 +18,6 @@ const factor_cobro_service_1 = require("./factor-cobro.service");
 const jwt_auth_guard_1 = require("../../auth/jwt-auth.guard");
 const roles_guard_1 = require("../../common/guards/roles.guard");
 let FactorCobroController = class FactorCobroController {
-    service;
     constructor(service) {
         this.service = service;
     }

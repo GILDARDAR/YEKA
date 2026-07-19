@@ -18,7 +18,6 @@ const tipo_urgencia_service_1 = require("./tipo-urgencia.service");
 const jwt_auth_guard_1 = require("../../auth/jwt-auth.guard");
 const roles_guard_1 = require("../../common/guards/roles.guard");
 let TipoUrgenciaController = class TipoUrgenciaController {
-    service;
     constructor(service) {
         this.service = service;
     }

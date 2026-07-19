@@ -13,14 +13,6 @@ exports.UsuarioResponseDto = exports.RegistrarJornadaDto = exports.UpdateUsuario
 const class_validator_1 = require("class-validator");
 const client_1 = require("../../../generated/prisma/client");
 class CreateUsuarioDto {
-    sedeId;
-    nombre;
-    dni;
-    telefono;
-    email;
-    password;
-    pinAcceso;
-    rol;
 }
 exports.CreateUsuarioDto = CreateUsuarioDto;
 __decorate([
@@ -68,15 +60,6 @@ __decorate([
     __metadata("design:type", String)
 ], CreateUsuarioDto.prototype, "rol", void 0);
 class UpdateUsuarioDto {
-    sedeId;
-    nombre;
-    dni;
-    telefono;
-    email;
-    password;
-    pinAcceso;
-    rol;
-    activo;
 }
 exports.UpdateUsuarioDto = UpdateUsuarioDto;
 __decorate([
@@ -129,7 +112,6 @@ __decorate([
     __metadata("design:type", Boolean)
 ], UpdateUsuarioDto.prototype, "activo", void 0);
 class RegistrarJornadaDto {
-    tipo;
 }
 exports.RegistrarJornadaDto = RegistrarJornadaDto;
 __decorate([
@@ -138,16 +120,6 @@ __decorate([
     __metadata("design:type", String)
 ], RegistrarJornadaDto.prototype, "tipo", void 0);
 class UsuarioResponseDto {
-    id;
-    sedeId;
-    nombre;
-    dni;
-    telefono;
-    email;
-    rol;
-    activo;
-    createdAt;
-    updatedAt;
 }
 exports.UsuarioResponseDto = UsuarioResponseDto;
 //# sourceMappingURL=usuario.dto.js.map

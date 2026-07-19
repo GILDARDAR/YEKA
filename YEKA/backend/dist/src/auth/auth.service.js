@@ -49,8 +49,6 @@ const prisma_service_1 = require("../prisma/prisma.service");
 const bcrypt = __importStar(require("bcrypt"));
 const client_1 = require("../../generated/prisma/client");
 let AuthService = class AuthService {
-    prisma;
-    jwtService;
     constructor(prisma, jwtService) {
         this.prisma = prisma;
         this.jwtService = jwtService;

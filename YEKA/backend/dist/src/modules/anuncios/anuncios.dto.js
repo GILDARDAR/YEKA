@@ -12,8 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ResponderAnuncioDto = exports.CreateAnuncioDto = void 0;
 const class_validator_1 = require("class-validator");
 class CreateAnuncioDto {
-    sedeId;
-    mensaje;
 }
 exports.CreateAnuncioDto = CreateAnuncioDto;
 __decorate([
@@ -26,7 +24,6 @@ __decorate([
     __metadata("design:type", String)
 ], CreateAnuncioDto.prototype, "mensaje", void 0);
 class ResponderAnuncioDto {
-    respuesta;
 }
 exports.ResponderAnuncioDto = ResponderAnuncioDto;
 __decorate([

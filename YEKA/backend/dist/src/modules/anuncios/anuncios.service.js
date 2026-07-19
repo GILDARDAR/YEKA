@@ -13,7 +13,6 @@ exports.AnunciosService = void 0;
 const common_1 = require("@nestjs/common");
 const anuncios_facade_1 = require("./anuncios.facade");
 let AnunciosService = class AnunciosService {
-    facade;
     constructor(facade) {
         this.facade = facade;
     }

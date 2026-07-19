@@ -78,10 +78,6 @@ function toResponseDto(factura) {
     };
 }
 let FacturaFacade = class FacturaFacade {
-    facturaDAO;
-    prismaService;
-    SedeFacade;
-    clienteFacade;
     constructor(facturaDAO, prismaService, SedeFacade, clienteFacade) {
         this.facturaDAO = facturaDAO;
         this.prismaService = prismaService;

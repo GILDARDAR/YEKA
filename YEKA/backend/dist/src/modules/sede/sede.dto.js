@@ -12,10 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CapacidadResponseDto = exports.SedeResponseDto = exports.UpdateSedeDto = exports.CreateSedeDto = void 0;
 const class_validator_1 = require("class-validator");
 class CreateSedeDto {
-    codigoSede;
-    nombre;
-    direccion;
-    capacidadDiariaMax;
 }
 exports.CreateSedeDto = CreateSedeDto;
 __decorate([
@@ -41,11 +37,6 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateSedeDto.prototype, "capacidadDiariaMax", void 0);
 class UpdateSedeDto {
-    codigoSede;
-    nombre;
-    direccion;
-    capacidadDiariaMax;
-    activa;
 }
 exports.UpdateSedeDto = UpdateSedeDto;
 __decorate([
@@ -78,23 +69,9 @@ __decorate([
     __metadata("design:type", Boolean)
 ], UpdateSedeDto.prototype, "activa", void 0);
 class SedeResponseDto {
-    id;
-    codigoSede;
-    nombre;
-    direccion;
-    capacidadDiariaMax;
-    activa;
-    createdAt;
-    updatedAt;
 }
 exports.SedeResponseDto = SedeResponseDto;
 class CapacidadResponseDto {
-    sedeId;
-    fecha;
-    capacidadDiariaMax;
-    usado;
-    disponible;
-    porcentaje;
 }
 exports.CapacidadResponseDto = CapacidadResponseDto;
 //# sourceMappingURL=sede.dto.js.map

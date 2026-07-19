@@ -13,7 +13,6 @@ exports.TipoPrendaService = void 0;
 const common_1 = require("@nestjs/common");
 const tipo_prenda_dao_1 = require("./tipo-prenda.dao");
 let TipoPrendaService = class TipoPrendaService {
-    tipoPrendaDao;
     constructor(tipoPrendaDao) {
         this.tipoPrendaDao = tipoPrendaDao;
     }

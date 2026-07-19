@@ -13,7 +13,6 @@ exports.UsuarioService = void 0;
 const common_1 = require("@nestjs/common");
 const usuario_facade_1 = require("./usuario.facade");
 let UsuarioService = class UsuarioService {
-    usuarioFacade;
     constructor(usuarioFacade) {
         this.usuarioFacade = usuarioFacade;
     }

@@ -12,14 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CatalogoServicioResponseDto = exports.UpdateCatalogoServicioDto = exports.CreateCatalogoServicioDto = void 0;
 const class_validator_1 = require("class-validator");
 class CreateCatalogoServicioDto {
-    nombre;
-    categoria;
-    tipoEspecifico;
-    medidaBase;
-    tiempoBase;
-    categoriasFactoresIds;
-    materialesIds;
-    tiposArregloIds;
 }
 exports.CreateCatalogoServicioDto = CreateCatalogoServicioDto;
 __decorate([
@@ -66,15 +58,6 @@ __decorate([
     __metadata("design:type", Array)
 ], CreateCatalogoServicioDto.prototype, "tiposArregloIds", void 0);
 class UpdateCatalogoServicioDto {
-    nombre;
-    categoria;
-    tipoEspecifico;
-    medidaBase;
-    tiempoBase;
-    activo;
-    categoriasFactoresIds;
-    materialesIds;
-    tiposArregloIds;
 }
 exports.UpdateCatalogoServicioDto = UpdateCatalogoServicioDto;
 __decorate([
@@ -128,16 +111,6 @@ __decorate([
     __metadata("design:type", Array)
 ], UpdateCatalogoServicioDto.prototype, "tiposArregloIds", void 0);
 class CatalogoServicioResponseDto {
-    id;
-    nombre;
-    categoria;
-    tipoEspecifico;
-    medidaBase;
-    tiempoBase;
-    activo;
-    categoriasFactores;
-    createdAt;
-    updatedAt;
 }
 exports.CatalogoServicioResponseDto = CatalogoServicioResponseDto;
 //# sourceMappingURL=catalogo-servicio.dto.js.map

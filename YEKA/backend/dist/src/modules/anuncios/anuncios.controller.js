@@ -22,7 +22,6 @@ const roles_decorator_1 = require("../../common/decorators/roles.decorator");
 const current_user_decorator_1 = require("../../common/decorators/current-user.decorator");
 const client_1 = require("../../../generated/prisma/client");
 let AnunciosController = class AnunciosController {
-    anunciosService;
     constructor(anunciosService) {
         this.anunciosService = anunciosService;
     }

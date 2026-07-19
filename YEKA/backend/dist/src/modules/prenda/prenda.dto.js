@@ -13,14 +13,6 @@ exports.PrendaServicioResponseDto = exports.PrendaResponseDto = exports.SubirFot
 const class_validator_1 = require("class-validator");
 const client_1 = require("../../../generated/prisma/client");
 class CreatePrendaDto {
-    facturaId;
-    tipoPrendaId;
-    talla;
-    color;
-    esLujo;
-    marca;
-    notas;
-    tipoUrgenciaId;
 }
 exports.CreatePrendaDto = CreatePrendaDto;
 __decorate([
@@ -62,13 +54,6 @@ __decorate([
     __metadata("design:type", Number)
 ], CreatePrendaDto.prototype, "tipoUrgenciaId", void 0);
 class UpdatePrendaDto {
-    tipoPrendaId;
-    talla;
-    color;
-    esLujo;
-    marca;
-    notas;
-    tipoUrgenciaId;
 }
 exports.UpdatePrendaDto = UpdatePrendaDto;
 __decorate([
@@ -107,12 +92,6 @@ __decorate([
     __metadata("design:type", Number)
 ], UpdatePrendaDto.prototype, "tipoUrgenciaId", void 0);
 class AsignarServicioDto {
-    servicioId;
-    medidaEntregada;
-    observaciones;
-    materialId;
-    tipoArregloId;
-    zonaId;
 }
 exports.AsignarServicioDto = AsignarServicioDto;
 __decorate([
@@ -147,8 +126,6 @@ __decorate([
     __metadata("design:type", Number)
 ], AsignarServicioDto.prototype, "zonaId", void 0);
 class CambiarEstadoDto {
-    nuevoEstado;
-    usuarioTallerId;
 }
 exports.CambiarEstadoDto = CambiarEstadoDto;
 __decorate([
@@ -162,7 +139,6 @@ __decorate([
     __metadata("design:type", Number)
 ], CambiarEstadoDto.prototype, "usuarioTallerId", void 0);
 class SubirFotoDto {
-    fotoUrl;
 }
 exports.SubirFotoDto = SubirFotoDto;
 __decorate([
@@ -172,44 +148,9 @@ __decorate([
     __metadata("design:type", String)
 ], SubirFotoDto.prototype, "fotoUrl", void 0);
 class PrendaResponseDto {
-    id;
-    facturaId;
-    codigoQR;
-    tipoPrendaId;
-    talla;
-    color;
-    marca;
-    estadoActual;
-    fechaCompromiso;
-    esLujo;
-    fotoUrl;
-    usuarioTallerId;
-    fechaUltimaNotificacion;
-    notas;
-    createdAt;
-    updatedAt;
-    tipoUrgenciaId;
-    tipoUrgencia;
-    porcentajeAtencionAplicado;
-    factura;
 }
 exports.PrendaResponseDto = PrendaResponseDto;
 class PrendaServicioResponseDto {
-    id;
-    prendaId;
-    servicioId;
-    medidaEntregada;
-    tiempoCalculado;
-    valorPorTiempo;
-    valorFactoresCobro;
-    precioBruto;
-    precioFinal;
-    observaciones;
-    detallesCalculo;
-    materialId;
-    tipoArregloId;
-    zonaId;
-    createdAt;
 }
 exports.PrendaServicioResponseDto = PrendaServicioResponseDto;
 //# sourceMappingURL=prenda.dto.js.map

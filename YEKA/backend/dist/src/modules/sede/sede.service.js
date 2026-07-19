@@ -13,7 +13,6 @@ exports.SedeService = void 0;
 const common_1 = require("@nestjs/common");
 const sede_facade_1 = require("./sede.facade");
 let SedeService = class SedeService {
-    SedeFacade;
     constructor(SedeFacade) {
         this.SedeFacade = SedeFacade;
     }

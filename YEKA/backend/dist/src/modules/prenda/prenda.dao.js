@@ -14,7 +14,6 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../prisma/prisma.service");
 const client_1 = require("../../../generated/prisma/client");
 let PrendaDAO = class PrendaDAO {
-    prisma;
     constructor(prisma) {
         this.prisma = prisma;
     }

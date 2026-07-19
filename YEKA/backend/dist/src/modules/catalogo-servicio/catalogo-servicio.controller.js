@@ -19,7 +19,6 @@ const catalogo_servicio_dto_1 = require("./catalogo-servicio.dto");
 const jwt_auth_guard_1 = require("../../auth/jwt-auth.guard");
 const roles_guard_1 = require("../../common/guards/roles.guard");
 let CatalogoServicioController = class CatalogoServicioController {
-    service;
     constructor(service) {
         this.service = service;
     }

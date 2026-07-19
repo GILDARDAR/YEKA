@@ -13,7 +13,6 @@ exports.PrendaService = void 0;
 const common_1 = require("@nestjs/common");
 const prenda_facade_1 = require("./prenda.facade");
 let PrendaService = class PrendaService {
-    prendaFacade;
     constructor(prendaFacade) {
         this.prendaFacade = prendaFacade;
     }

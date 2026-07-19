@@ -62,7 +62,6 @@ function toResponseDto(user) {
     };
 }
 let UsuarioFacade = class UsuarioFacade {
-    usuarioDAO;
     constructor(usuarioDAO) {
         this.usuarioDAO = usuarioDAO;
     }

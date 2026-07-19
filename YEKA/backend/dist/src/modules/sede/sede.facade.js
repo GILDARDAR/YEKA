@@ -25,7 +25,6 @@ function toResponseDto(sede) {
     };
 }
 let SedeFacade = class SedeFacade {
-    sedeDAO;
     constructor(sedeDAO) {
         this.sedeDAO = sedeDAO;
     }

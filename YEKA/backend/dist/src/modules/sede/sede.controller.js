@@ -19,7 +19,6 @@ const sede_dto_1 = require("./sede.dto");
 const jwt_auth_guard_1 = require("../../auth/jwt-auth.guard");
 const roles_guard_1 = require("../../common/guards/roles.guard");
 let SedeController = class SedeController {
-    SedeService;
     constructor(SedeService) {
         this.SedeService = SedeService;
     }

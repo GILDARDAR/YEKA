@@ -13,7 +13,6 @@ exports.AnunciosFacade = void 0;
 const common_1 = require("@nestjs/common");
 const anuncios_dao_1 = require("./anuncios.dao");
 let AnunciosFacade = class AnunciosFacade {
-    dao;
     constructor(dao) {
         this.dao = dao;
     }
