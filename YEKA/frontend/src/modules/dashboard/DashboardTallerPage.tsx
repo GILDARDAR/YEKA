@@ -234,6 +234,24 @@ export function DashboardTallerPage() {
     }
   };
 
+  const loadFacturaIntoDraft = async (facturaId: number) => {
+    try {
+      setCreatingDraft(true);
+      const fullFactura = await facturasService.getById(facturaId);
+      setDraftFactura(fullFactura);
+      if (fullFactura.cliente) {
+        setClienteSearch(`${fullFactura.cliente.nombre} ${fullFactura.cliente.celular ? `(${fullFactura.cliente.celular})` : ''}`);
+      } else {
+        setClienteSearch('');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Error al cargar la factura');
+    } finally {
+      setCreatingDraft(false);
+    }
+  };
+
   const filteredClientesList = useMemo(() => {
     if (!clienteSearch) return [];
     const term = clienteSearch.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -425,7 +443,7 @@ export function DashboardTallerPage() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '7fr 3fr', gap: 'var(--space-6)', alignItems: 'start' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '6fr 4fr', gap: 'var(--space-6)', alignItems: 'start' }}>
         {/* COLUMNA IZQUIERDA: FORMULARIO FACTURA */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
           <div className="card" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -721,8 +739,41 @@ export function DashboardTallerPage() {
           </div>
         </div>
 
-        {/* COLUMNA DERECHA: KPIs */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+        {/* COLUMNA DERECHA: FORMULARIO PRENDA INLINE */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)', height: '100%' }}>
+          {draftFactura ? (
+            isPrendaModalOpen ? (
+              <PrendaModal
+                inline={true}
+                facturaId={draftFactura.id}
+                prendaToEdit={prendaToEdit}
+                tiposPrenda={tiposPrenda}
+                catalogoServicios={catalogoServicios}
+                onClose={() => setIsPrendaModalOpen(false)}
+                onSaved={refreshDraftInvoice}
+              />
+            ) : (
+              <div className="card" style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
+                <Shirt size={48} style={{ opacity: 0.2, margin: '0 auto var(--space-4)' }} />
+                <h3 style={{ fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)' }}>No hay prenda seleccionada</h3>
+                <p style={{ fontSize: 'var(--text-sm)', marginTop: 'var(--space-2)' }}>Haz clic en "Agregar Prenda" o edita una existente para comenzar.</p>
+                <button className="btn btn-primary" style={{ marginTop: 'var(--space-4)' }} onClick={handleOpenAddPrenda}>
+                  Agregar Prenda
+                </button>
+              </div>
+            )
+          ) : (
+            <div className="card" style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
+              <FileText size={48} style={{ opacity: 0.2, margin: '0 auto var(--space-4)' }} />
+              <h3 style={{ fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)' }}>Crea una factura</h3>
+              <p style={{ fontSize: 'var(--text-sm)', marginTop: 'var(--space-2)' }}>Busca o selecciona un cliente a la izquierda para poder agregar prendas.</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* KPIs AHORA EN LA PARTE INFERIOR */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-6)', marginTop: 'var(--space-6)' }}>
           
           {/* Buscar Facturas */}
           <div className="card">
@@ -762,7 +813,7 @@ export function DashboardTallerPage() {
                           style={{ padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.1)' }}
                           onClick={() => {
                             setIsNroFacturaDropdownOpen(false);
-                            navigate(`/facturas/${f.id}`);
+                            loadFacturaIntoDraft(f.id);
                           }}
                           className="hover-bg"
                           onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
@@ -813,8 +864,9 @@ export function DashboardTallerPage() {
                           style={{ padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.1)' }}
                           onClick={() => {
                             setIsPrendaDropdownOpen(false);
-                            setSearchPrendaToEdit(p);
-                            setShowSearchPrendaModal(true);
+                            if (p.facturaId) {
+                              loadFacturaIntoDraft(p.facturaId);
+                            }
                           }}
                           className="hover-bg"
                           onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
@@ -965,7 +1017,6 @@ export function DashboardTallerPage() {
             )}
           </div>
 
-        </div>
       </div>
 
       {/* Tabla Resumen de Prendas con Compromiso Hoy */}
@@ -1053,17 +1104,6 @@ export function DashboardTallerPage() {
         <ClienteModal 
           onClose={handleCreateClienteClose}
           onSaved={handleClienteSaved}
-        />
-      )}
-
-      {isPrendaModalOpen && draftFactura && (
-        <PrendaModal
-          facturaId={draftFactura.id}
-          prendaToEdit={prendaToEdit}
-          tiposPrenda={tiposPrenda}
-          catalogoServicios={catalogoServicios}
-          onClose={() => setIsPrendaModalOpen(false)}
-          onSaved={refreshDraftInvoice}
         />
       )}
 

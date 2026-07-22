@@ -174,12 +174,13 @@ exports.PrendaScalarFieldEnum = {
     marca: 'marca',
     talla: 'talla',
     tipoUrgenciaId: 'tipoUrgenciaId',
-    porcentajeAtencionAplicado: 'porcentajeAtencionAplicado'
+    porcentajeAtencionAplicado: 'porcentajeAtencionAplicado',
+    materialId: 'materialId'
 };
 exports.CatalogoServicioScalarFieldEnum = {
     id: 'id',
     nombre: 'nombre',
-    categoria: 'categoria',
+    tipoPrendaId: 'tipoPrendaId',
     tipoEspecifico: 'tipoEspecifico',
     medidaBase: 'medidaBase',
     tiempoBase: 'tiempoBase',

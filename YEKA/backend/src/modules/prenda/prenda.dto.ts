@@ -43,6 +43,10 @@ export class CreatePrendaDto {
   @IsOptional()
   @IsInt()
   tipoUrgenciaId?: number;
+
+  @IsOptional()
+  @IsInt()
+  materialId?: number;
 }
 
 export class UpdatePrendaDto {
@@ -73,6 +77,10 @@ export class UpdatePrendaDto {
   @IsOptional()
   @IsInt()
   tipoUrgenciaId?: number;
+
+  @IsOptional()
+  @IsInt()
+  materialId?: number;
 }
 
 // ─── ASIGNAR SERVICIO ─────────────────────────────────────────

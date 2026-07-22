@@ -109,6 +109,7 @@ model TipoPrenda {
   updatedAt            DateTime         @updatedAt
   prendas              Prenda[]
   materiales           Material[]       @relation("TipoPrendaMaterial")
+  servicios            CatalogoServicio[] @relation("TipoPrendaServicio")
 }
 
 model TipoUrgencia {
@@ -140,17 +141,19 @@ model Prenda {
   talla                   String
   tipoUrgenciaId          Int?
   porcentajeAtencionAplicado Decimal?      @db.Decimal(5, 2)
+  materialId              Int?
   factura                 Factura          @relation(fields: [facturaId], references: [id], onDelete: Cascade)
   tipoPrenda              TipoPrenda       @relation(fields: [tipoPrendaId], references: [id])
   tipoUrgencia            TipoUrgencia?    @relation(fields: [tipoUrgenciaId], references: [id])
   usuarioTaller           Usuario?         @relation("OperariaPrenda", fields: [usuarioTallerId], references: [id])
+  material                Material?        @relation("PrendaMaterial", fields: [materialId], references: [id])
   servicios               PrendaServicio[]
 }
 
 model CatalogoServicio {
   id                 Int                      @id @default(autoincrement())
   nombre             String                   @default("")
-  categoria          String
+  tipoPrendaId       Int?
   tipoEspecifico     String
   medidaBase         Decimal                  @default(1) @db.Decimal(10, 2)
   tiempoBase         Int                      @default(60) // En minutos
@@ -165,6 +168,7 @@ model CatalogoServicio {
   tiposArreglo       TipoArreglo[]            @relation("CatalogoServicioTipoArreglo")
   zonaId             Int?
   zona               Zona?                    @relation(fields: [zonaId], references: [id])
+  tipoPrenda         TipoPrenda?              @relation("TipoPrendaServicio", fields: [tipoPrendaId], references: [id])
 }
 
 model CategoriaFactorCobro {
@@ -332,6 +336,7 @@ model Material {
   tiposPrenda TipoPrenda[]       @relation("TipoPrendaMaterial")
   servicios   CatalogoServicio[] @relation("CatalogoServicioMaterial")
   prendaServicios PrendaServicio[]
+  prendas     Prenda[]           @relation("PrendaMaterial")
 }
 
 model TipoArreglo {
@@ -343,6 +348,7 @@ model TipoArreglo {
 
   servicios   CatalogoServicio[] @relation("CatalogoServicioTipoArreglo")
   prendaServicios PrendaServicio[]
+  zonas       Zona[]             @relation("TipoArregloZona")
 }
 
 model Zona {
@@ -354,4 +360,5 @@ model Zona {
 
   servicios   CatalogoServicio[]
   prendaServicios PrendaServicio[]
+  tiposArreglo TipoArreglo[]     @relation("TipoArregloZona")
 }

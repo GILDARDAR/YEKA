@@ -198,7 +198,8 @@ export interface CategoriaFactorCobro {
 export interface CatalogoServicio {
   id: number;
   nombre: string;
-  categoria: string;
+  tipoPrendaId?: number;
+  tipoPrenda?: any;
   tipoEspecifico: string;
   medidaBase: number;
   tiempoBase: number;
@@ -212,7 +213,7 @@ export interface CatalogoServicio {
 
 export interface CreateCatalogoServicioDto {
   nombre: string;
-  categoria: string;
+  tipoPrendaId?: number;
   tipoEspecifico: string;
   medidaBase?: number;
   tiempoBase?: number;
@@ -223,7 +224,7 @@ export interface CreateCatalogoServicioDto {
 
 export interface UpdateCatalogoServicioDto {
   nombre?: string;
-  categoria?: string;
+  tipoPrendaId?: number;
   tipoEspecifico?: string;
   medidaBase?: number;
   tiempoBase?: number;
@@ -264,6 +265,8 @@ export interface Prenda {
   tipoUrgenciaId: number | null;
   tipoUrgencia?: TipoUrgencia | null;
   porcentajeAtencionAplicado?: string | null;
+  materialId?: number | null;
+  material?: any | null;
 
   servicios?: PrendaServicio[];
   factura?: Factura;
@@ -280,6 +283,9 @@ export interface PrendaServicio {
   precioBruto: string | null;
   precioFinal: string;
   observaciones: string | null;
+  materialId?: number | null;
+  tipoArregloId?: number | null;
+  zonaId?: number | null;
   detallesCalculo?: any;
   createdAt: string;
 
@@ -295,6 +301,7 @@ export interface CreatePrendaDto {
   marca?: string;
   esLujo?: boolean;
   notas?: string;
+  materialId?: number;
 }
 
 export interface UpdatePrendaDto {
@@ -305,12 +312,16 @@ export interface UpdatePrendaDto {
   marca?: string;
   esLujo?: boolean;
   notas?: string;
+  materialId?: number;
 }
 
 export interface AsignarServicioDto {
   servicioId: number;
   medidaEntregada?: number;
   observaciones?: string;
+  materialId?: number;
+  tipoArregloId?: number;
+  zonaId?: number;
 }
 
 export interface CambiarEstadoDto {

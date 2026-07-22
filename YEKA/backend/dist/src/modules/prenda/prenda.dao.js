@@ -26,6 +26,7 @@ let PrendaDAO = class PrendaDAO {
             },
             include: {
                 factura: true,
+                material: true,
             },
             orderBy: { createdAt: 'desc' },
         });
@@ -39,6 +40,7 @@ let PrendaDAO = class PrendaDAO {
                         servicio: true,
                     },
                 },
+                material: true,
             },
         });
     }
@@ -61,6 +63,7 @@ let PrendaDAO = class PrendaDAO {
                 tipoUrgenciaId: data.tipoUrgenciaId || null,
                 porcentajeAtencionAplicado: data.porcentajeAtencionAplicado !== undefined ? new client_1.Prisma.Decimal(data.porcentajeAtencionAplicado) : null,
                 fechaCompromiso: data.fechaCompromiso || null,
+                materialId: data.materialId || null,
             },
         });
     }

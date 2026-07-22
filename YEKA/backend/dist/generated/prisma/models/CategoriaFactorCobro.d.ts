@@ -1,5 +1,5 @@
 import type * as runtime from "@prisma/client/runtime/client";
-import type * as Prisma from "../internal/prismaNamespace.js";
+import type * as Prisma from "../internal/prismaNamespace";
 export type CategoriaFactorCobroModel = runtime.Types.Result.DefaultSelection<Prisma.$CategoriaFactorCobroPayload>;
 export type AggregateCategoriaFactorCobro = {
     _count: CategoriaFactorCobroCountAggregateOutputType | null;

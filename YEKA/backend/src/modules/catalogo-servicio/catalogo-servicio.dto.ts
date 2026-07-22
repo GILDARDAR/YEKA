@@ -14,9 +14,9 @@ export class CreateCatalogoServicioDto {
   @IsOptional()
   nombre?: string;
 
-  @IsString()
-  @IsNotEmpty()
-  categoria: string;
+  @IsInt()
+  @IsOptional()
+  tipoPrendaId?: number;
 
   @IsString()
   @IsNotEmpty()
@@ -51,9 +51,9 @@ export class UpdateCatalogoServicioDto {
   @IsOptional()
   nombre?: string;
 
-  @IsString()
+  @IsInt()
   @IsOptional()
-  categoria?: string;
+  tipoPrendaId?: number;
 
   @IsString()
   @IsOptional()
@@ -92,12 +92,15 @@ export class UpdateCatalogoServicioDto {
 export class CatalogoServicioResponseDto {
   id: number;
   nombre: string;
-  categoria: string;
+  tipoPrendaId?: number;
+  tipoPrenda?: any;
   tipoEspecifico: string;
   medidaBase: number;
   tiempoBase: number;
   activo: boolean;
   categoriasFactores: any[];
+  materiales?: any[];
+  tiposArreglo?: any[];
   createdAt: Date;
   updatedAt: Date;
 }

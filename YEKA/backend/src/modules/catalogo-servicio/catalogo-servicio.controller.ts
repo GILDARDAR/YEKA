@@ -27,8 +27,9 @@ export class CatalogoServicioController {
   constructor(private readonly service: CatalogoServicioService) {}
 
   @Get()
-  async getServicios(@Query('categoria') categoria?: string): Promise<CatalogoServicioResponseDto[]> {
-    return this.service.getServicios(categoria);
+  async getServicios(@Query('tipoPrendaId') tipoPrendaId?: string): Promise<CatalogoServicioResponseDto[]> {
+    const parsedId = tipoPrendaId ? parseInt(tipoPrendaId, 10) : undefined;
+    return this.service.getServicios(parsedId);
   }
 
   @Get(':id')

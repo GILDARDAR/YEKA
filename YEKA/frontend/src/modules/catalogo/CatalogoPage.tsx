@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { catalogoService } from './catalogo.service';
-import type { CatalogoServicio, CreateCatalogoServicioDto, CategoriaFactorCobro } from '../../shared/types';
+import type { CatalogoServicio, CreateCatalogoServicioDto, CategoriaFactorCobro, TipoPrenda } from '../../shared/types';
 import { Plus, Pencil, Tag, PackageOpen, Wrench, X } from 'lucide-react';
 import api from '../../shared/api';
 
@@ -13,15 +13,16 @@ export function CatalogoPage() {
   const [categoriasFactores, setCategoriasFactores] = useState<CategoriaFactorCobro[]>([]);
   const [allMateriales, setAllMateriales] = useState<Material[]>([]);
   const [allTiposArreglo, setAllTiposArreglo] = useState<TipoArreglo[]>([]);
+  const [tiposPrenda, setTiposPrenda] = useState<TipoPrenda[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
 
-  const [formData, setFormData] = useState<CreateCatalogoServicioDto & { activa?: boolean }>({
+  const [formData, setFormData] = useState<CreateCatalogoServicioDto & { activa?: boolean; tipoPrendaId: number | '' }>({
     nombre: '',
-    categoria: '',
+    tipoPrendaId: '',
     tipoEspecifico: '',
     medidaBase: 0,
     tiempoBase: 0,
@@ -51,16 +52,18 @@ export function CatalogoPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [serviciosData, catFactoresData, materialesData, tiposArregloData] = await Promise.all([
+      const [serviciosData, catFactoresData, materialesData, tiposArregloData, tiposPrendaData] = await Promise.all([
         catalogoService.getAll(),
         api.get('/factores-cobro/categorias').then(res => res.data),
         api.get<Material[]>('/material').then(res => res.data),
         api.get<TipoArreglo[]>('/tipo-arreglo').then(res => res.data),
+        api.get<TipoPrenda[]>('/tipos-prenda').then(res => res.data),
       ]);
       setServicios(serviciosData);
       setCategoriasFactores(catFactoresData);
       setAllMateriales(materialesData);
       setAllTiposArreglo(tiposArregloData);
+      setTiposPrenda(tiposPrendaData);
     } catch (e) {
       console.error(e);
     } finally {
@@ -75,7 +78,7 @@ export function CatalogoPage() {
       setEditingId(servicio.id);
       setFormData({
         nombre: servicio.nombre,
-        categoria: servicio.categoria,
+        tipoPrendaId: servicio.tipoPrendaId || '',
         tipoEspecifico: servicio.tipoEspecifico,
         medidaBase: servicio.medidaBase,
         tiempoBase: servicio.tiempoBase,
@@ -88,7 +91,7 @@ export function CatalogoPage() {
       setSelectedTiposArreglo(servicio.tiposArreglo?.map(t => ({ id: t.id, descripcion: t.descripcion, activo: true })) || []);
     } else {
       setEditingId(null);
-      setFormData({ nombre: '', categoria: '', tipoEspecifico: '', medidaBase: 0, tiempoBase: 0, categoriasFactoresIds: [], materialesIds: [], tiposArregloIds: [], activa: true });
+      setFormData({ nombre: '', tipoPrendaId: '', tipoEspecifico: '', medidaBase: 0, tiempoBase: 0, categoriasFactoresIds: [], materialesIds: [], tiposArregloIds: [], activa: true });
       setSelectedMateriales([]);
       setSelectedTiposArreglo([]);
     }
@@ -171,7 +174,7 @@ export function CatalogoPage() {
     try {
       const payload: any = {
         nombre: formData.nombre,
-        categoria: formData.categoria,
+        tipoPrendaId: typeof formData.tipoPrendaId === 'string' ? undefined : formData.tipoPrendaId,
         tipoEspecifico: formData.tipoEspecifico,
         medidaBase: formData.medidaBase,
         tiempoBase: formData.tiempoBase,
@@ -192,7 +195,7 @@ export function CatalogoPage() {
     }
   };
 
-  const categorias = [...new Set(servicios.map(s => s.categoria))].sort();
+  const categorias = [...new Set(servicios.map(s => s.tipoPrenda?.nombre || 'Sin Tipo de Prenda'))].sort();
 
   // Estilos reutilizables
   const chipStyle: React.CSSProperties = {
@@ -228,7 +231,7 @@ export function CatalogoPage() {
             </div>
           ) : (
             categorias.map(cat => {
-              const items = servicios.filter(s => s.categoria === cat && s.activo);
+              const items = servicios.filter(s => (s.tipoPrenda?.nombre || 'Sin Tipo de Prenda') === cat && s.activo);
               if (items.length === 0) return null;
               return (
                 <div key={cat}>
@@ -310,8 +313,19 @@ export function CatalogoPage() {
                   <input type="text" name="nombre" required value={formData.nombre} onChange={handleBasicChange} className="form-input" placeholder="Ej. Dobladillo Pantalón" />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Categoría</label>
-                  <input type="text" name="categoria" required value={formData.categoria} onChange={handleBasicChange} className="form-input" placeholder="Ej. Arreglos, Tintorería..." />
+                  <label className="form-label">Tipo de Prenda</label>
+                  <select
+                    name="tipoPrendaId"
+                    required
+                    value={formData.tipoPrendaId}
+                    onChange={(e) => setFormData(prev => ({ ...prev, tipoPrendaId: Number(e.target.value) || '' }))}
+                    className="form-select"
+                  >
+                    <option value="">Seleccione...</option>
+                    {tiposPrenda.map(t => (
+                      <option key={t.id} value={t.id}>{t.nombre}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
 

@@ -3,7 +3,7 @@ import { CreateCatalogoServicioDto, UpdateCatalogoServicioDto, CatalogoServicioR
 export declare class CatalogoServicioService {
     private readonly facade;
     constructor(facade: CatalogoServicioFacade);
-    getServicios(categoria?: string): Promise<CatalogoServicioResponseDto[]>;
+    getServicios(tipoPrendaId?: number): Promise<CatalogoServicioResponseDto[]>;
     getServicioById(id: number): Promise<CatalogoServicioResponseDto>;
     createServicio(dto: CreateCatalogoServicioDto): Promise<CatalogoServicioResponseDto>;
     updateServicio(id: number, dto: UpdateCatalogoServicioDto): Promise<CatalogoServicioResponseDto>;

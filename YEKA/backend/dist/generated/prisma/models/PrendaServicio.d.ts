@@ -1,5 +1,5 @@
 import type * as runtime from "@prisma/client/runtime/client";
-import type * as Prisma from "../internal/prismaNamespace.js";
+import type * as Prisma from "../internal/prismaNamespace";
 export type PrendaServicioModel = runtime.Types.Result.DefaultSelection<Prisma.$PrendaServicioPayload>;
 export type AggregatePrendaServicio = {
     _count: PrendaServicioCountAggregateOutputType | null;

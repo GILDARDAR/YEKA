@@ -1,7 +1,7 @@
-import * as Prisma from './internal/prismaNamespaceBrowser.js';
+import * as Prisma from './internal/prismaNamespaceBrowser';
 export { Prisma };
-export * as $Enums from './enums.js';
-export * from './enums.js';
+export * as $Enums from './enums';
+export * from './enums';
 export type Sede = Prisma.SedeModel;
 export type Usuario = Prisma.UsuarioModel;
 export type RegistroJornada = Prisma.RegistroJornadaModel;

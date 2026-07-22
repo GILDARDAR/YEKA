@@ -1,5 +1,5 @@
 import type * as runtime from "@prisma/client/runtime/client";
-import type * as Prisma from "../internal/prismaNamespace.js";
+import type * as Prisma from "../internal/prismaNamespace";
 export type SedeModel = runtime.Types.Result.DefaultSelection<Prisma.$SedePayload>;
 export type AggregateSede = {
     _count: SedeCountAggregateOutputType | null;

@@ -26,6 +26,7 @@ export declare class PrendaDAO {
         tipoUrgenciaId?: number;
         porcentajeAtencionAplicado?: Prisma.Decimal | number;
         fechaCompromiso?: Date | string | null;
+        materialId?: number;
     }): Promise<Prenda>;
     update(id: number, data: Partial<Prenda>): Promise<Prenda>;
     delete(id: number): Promise<Prenda>;

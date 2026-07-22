@@ -3,7 +3,16 @@ import { CreateCatalogoServicioDto, UpdateCatalogoServicioDto } from './catalogo
 export declare class CatalogoServicioDAO {
     private readonly prisma;
     constructor(prisma: PrismaService);
-    findAll(categoria?: string): Promise<({
+    findAll(tipoPrendaId?: number): Promise<({
+        tipoPrenda: {
+            id: number;
+            nombre: string;
+            createdAt: Date;
+            updatedAt: Date;
+            activo: boolean;
+            descripcion: string | null;
+            porcentajeDificultad: import("@prisma/client-runtime-utils").Decimal;
+        } | null;
         categoriasFactores: {
             id: number;
             nombre: string;
@@ -31,13 +40,22 @@ export declare class CatalogoServicioDAO {
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
-        categoria: string;
+        zonaId: number | null;
+        tipoPrendaId: number | null;
         tipoEspecifico: string;
         medidaBase: import("@prisma/client-runtime-utils").Decimal;
         tiempoBase: number;
-        zonaId: number | null;
     })[]>;
     findById(id: number): Promise<({
+        tipoPrenda: {
+            id: number;
+            nombre: string;
+            createdAt: Date;
+            updatedAt: Date;
+            activo: boolean;
+            descripcion: string | null;
+            porcentajeDificultad: import("@prisma/client-runtime-utils").Decimal;
+        } | null;
         categoriasFactores: {
             id: number;
             nombre: string;
@@ -65,13 +83,22 @@ export declare class CatalogoServicioDAO {
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
-        categoria: string;
+        zonaId: number | null;
+        tipoPrendaId: number | null;
         tipoEspecifico: string;
         medidaBase: import("@prisma/client-runtime-utils").Decimal;
         tiempoBase: number;
-        zonaId: number | null;
     }) | null>;
     create(data: CreateCatalogoServicioDto): Promise<{
+        tipoPrenda: {
+            id: number;
+            nombre: string;
+            createdAt: Date;
+            updatedAt: Date;
+            activo: boolean;
+            descripcion: string | null;
+            porcentajeDificultad: import("@prisma/client-runtime-utils").Decimal;
+        } | null;
         categoriasFactores: {
             id: number;
             nombre: string;
@@ -99,13 +126,22 @@ export declare class CatalogoServicioDAO {
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
-        categoria: string;
+        zonaId: number | null;
+        tipoPrendaId: number | null;
         tipoEspecifico: string;
         medidaBase: import("@prisma/client-runtime-utils").Decimal;
         tiempoBase: number;
-        zonaId: number | null;
     }>;
     update(id: number, data: UpdateCatalogoServicioDto): Promise<{
+        tipoPrenda: {
+            id: number;
+            nombre: string;
+            createdAt: Date;
+            updatedAt: Date;
+            activo: boolean;
+            descripcion: string | null;
+            porcentajeDificultad: import("@prisma/client-runtime-utils").Decimal;
+        } | null;
         categoriasFactores: {
             id: number;
             nombre: string;
@@ -133,13 +169,22 @@ export declare class CatalogoServicioDAO {
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
-        categoria: string;
+        zonaId: number | null;
+        tipoPrendaId: number | null;
         tipoEspecifico: string;
         medidaBase: import("@prisma/client-runtime-utils").Decimal;
         tiempoBase: number;
-        zonaId: number | null;
     }>;
     softDelete(id: number): Promise<{
+        tipoPrenda: {
+            id: number;
+            nombre: string;
+            createdAt: Date;
+            updatedAt: Date;
+            activo: boolean;
+            descripcion: string | null;
+            porcentajeDificultad: import("@prisma/client-runtime-utils").Decimal;
+        } | null;
         categoriasFactores: {
             id: number;
             nombre: string;
@@ -167,10 +212,10 @@ export declare class CatalogoServicioDAO {
         createdAt: Date;
         updatedAt: Date;
         activo: boolean;
-        categoria: string;
+        zonaId: number | null;
+        tipoPrendaId: number | null;
         tipoEspecifico: string;
         medidaBase: import("@prisma/client-runtime-utils").Decimal;
         tiempoBase: number;
-        zonaId: number | null;
     }>;
 }

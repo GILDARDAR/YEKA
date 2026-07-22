@@ -1,4 +1,11 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateZonaDto } from './create-zona.dto';
+import { IsString, IsBoolean, IsOptional } from 'class-validator';
 
-export class UpdateZonaDto extends PartialType(CreateZonaDto) {}
+export class UpdateZonaDto {
+  @IsOptional()
+  @IsString()
+  descripcion?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  activo?: boolean;
+}

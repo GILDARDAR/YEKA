@@ -22,8 +22,9 @@ let CatalogoServicioController = class CatalogoServicioController {
     constructor(service) {
         this.service = service;
     }
-    async getServicios(categoria) {
-        return this.service.getServicios(categoria);
+    async getServicios(tipoPrendaId) {
+        const parsedId = tipoPrendaId ? parseInt(tipoPrendaId, 10) : undefined;
+        return this.service.getServicios(parsedId);
     }
     async getServicioById(id) {
         return this.service.getServicioById(id);
@@ -41,7 +42,7 @@ let CatalogoServicioController = class CatalogoServicioController {
 exports.CatalogoServicioController = CatalogoServicioController;
 __decorate([
     (0, common_1.Get)(),
-    __param(0, (0, common_1.Query)('categoria')),
+    __param(0, (0, common_1.Query)('tipoPrendaId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)

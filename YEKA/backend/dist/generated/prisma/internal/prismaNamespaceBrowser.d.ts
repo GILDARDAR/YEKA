@@ -1,6 +1,6 @@
 import * as runtime from "@prisma/client/runtime/index-browser";
-export type * from '../models.js';
-export type * from './prismaNamespace.js';
+export type * from '../models';
+export type * from './prismaNamespace';
 export declare const Decimal: typeof runtime.Decimal;
 export declare const NullTypes: {
     DbNull: (new (secret: never) => typeof runtime.DbNull);
@@ -151,12 +151,13 @@ export declare const PrendaScalarFieldEnum: {
     readonly talla: "talla";
     readonly tipoUrgenciaId: "tipoUrgenciaId";
     readonly porcentajeAtencionAplicado: "porcentajeAtencionAplicado";
+    readonly materialId: "materialId";
 };
 export type PrendaScalarFieldEnum = (typeof PrendaScalarFieldEnum)[keyof typeof PrendaScalarFieldEnum];
 export declare const CatalogoServicioScalarFieldEnum: {
     readonly id: "id";
     readonly nombre: "nombre";
-    readonly categoria: "categoria";
+    readonly tipoPrendaId: "tipoPrendaId";
     readonly tipoEspecifico: "tipoEspecifico";
     readonly medidaBase: "medidaBase";
     readonly tiempoBase: "tiempoBase";

@@ -1,5 +1,5 @@
 import type * as runtime from "@prisma/client/runtime/client";
-import type * as Prisma from "../internal/prismaNamespace.js";
+import type * as Prisma from "../internal/prismaNamespace";
 export type AnuncioModel = runtime.Types.Result.DefaultSelection<Prisma.$AnuncioPayload>;
 export type AggregateAnuncio = {
     _count: AnuncioCountAggregateOutputType | null;

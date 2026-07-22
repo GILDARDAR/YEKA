@@ -9,7 +9,7 @@ echo.
 cd /d "C:\Users\gilda\PROYECTOS\YEKA"
 
 echo [1/3] Levantando Base de Datos (PostgreSQL en Docker)...
-docker-compose up -d
+docker-compose up -d postgres
 echo.
 
 echo [2/3] Iniciando el Backend (NestJS)...

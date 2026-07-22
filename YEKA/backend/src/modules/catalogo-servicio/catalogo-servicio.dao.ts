@@ -6,21 +6,22 @@ const servicioInclude = {
   categoriasFactores: true,
   materiales: true,
   tiposArreglo: true,
+  tipoPrenda: true,
 } as const;
 
 @Injectable()
 export class CatalogoServicioDAO {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(categoria?: string) {
+  async findAll(tipoPrendaId?: number) {
     return this.prisma.catalogoServicio.findMany({
       where: {
         activo: true,
-        ...(categoria ? { categoria } : {}),
+        ...(tipoPrendaId ? { tipoPrendaId } : {}),
       },
       include: servicioInclude,
       orderBy: [
-        { categoria: 'asc' },
+        { tipoPrendaId: 'asc' },
         { tipoEspecifico: 'asc' },
       ],
     });
@@ -37,7 +38,7 @@ export class CatalogoServicioDAO {
     return this.prisma.catalogoServicio.create({
       data: {
         nombre: data.nombre ?? '',
-        categoria: data.categoria,
+        tipoPrendaId: data.tipoPrendaId ?? null,
         tipoEspecifico: data.tipoEspecifico,
         medidaBase: data.medidaBase,
         tiempoBase: data.tiempoBase,
@@ -61,7 +62,7 @@ export class CatalogoServicioDAO {
       where: { id },
       data: {
         ...(data.nombre !== undefined ? { nombre: data.nombre } : {}),
-        ...(data.categoria ? { categoria: data.categoria } : {}),
+        ...(data.tipoPrendaId !== undefined ? { tipoPrendaId: data.tipoPrendaId } : {}),
         ...(data.tipoEspecifico ? { tipoEspecifico: data.tipoEspecifico } : {}),
         ...(data.medidaBase !== undefined ? { medidaBase: data.medidaBase } : {}),
         ...(data.tiempoBase !== undefined ? { tiempoBase: data.tiempoBase } : {}),

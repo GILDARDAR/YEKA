@@ -16,8 +16,8 @@ let CatalogoServicioService = class CatalogoServicioService {
     constructor(facade) {
         this.facade = facade;
     }
-    async getServicios(categoria) {
-        return this.facade.getServicios(categoria);
+    async getServicios(tipoPrendaId) {
+        return this.facade.getServicios(tipoPrendaId);
     }
     async getServicioById(id) {
         return this.facade.getServicioById(id);

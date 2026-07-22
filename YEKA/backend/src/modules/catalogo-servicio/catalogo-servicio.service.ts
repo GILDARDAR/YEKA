@@ -10,8 +10,8 @@ import {
 export class CatalogoServicioService {
   constructor(private readonly facade: CatalogoServicioFacade) {}
 
-  async getServicios(categoria?: string): Promise<CatalogoServicioResponseDto[]> {
-    return this.facade.getServicios(categoria);
+  async getServicios(tipoPrendaId?: number): Promise<CatalogoServicioResponseDto[]> {
+    return this.facade.getServicios(tipoPrendaId);
   }
 
   async getServicioById(id: number): Promise<CatalogoServicioResponseDto> {

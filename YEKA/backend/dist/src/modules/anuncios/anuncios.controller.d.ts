@@ -20,10 +20,10 @@ export declare class AnunciosController {
             nombre: string;
             createdAt: Date;
             updatedAt: Date;
-            sedeId: number;
             dni: string | null;
-            telefono: string | null;
             email: string;
+            sedeId: number;
+            telefono: string | null;
             password: string;
             pinAcceso: string | null;
             rol: Rol;
@@ -33,8 +33,8 @@ export declare class AnunciosController {
         id: number;
         createdAt: Date;
         sedeId: number;
-        adminId: number;
         mensaje: string;
+        adminId: number;
     }>;
     getPendientes(usuarioId: number, sedeId: number): Promise<({
         admin: {
@@ -45,8 +45,8 @@ export declare class AnunciosController {
         id: number;
         createdAt: Date;
         sedeId: number;
-        adminId: number;
         mensaje: string;
+        adminId: number;
     })[]>;
     responderAnuncio(anuncioId: number, usuarioId: number, dto: ResponderAnuncioDto): Promise<{
         id: number;
@@ -80,7 +80,7 @@ export declare class AnunciosController {
         id: number;
         createdAt: Date;
         sedeId: number;
-        adminId: number;
         mensaje: string;
+        adminId: number;
     })[]>;
 }

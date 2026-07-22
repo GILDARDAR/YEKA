@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsBoolean } from 'class-validator';
+import { IsString, IsOptional, IsBoolean, IsArray, IsInt } from 'class-validator';
 
 export class CreateTipoArregloDto {
   @IsString()
@@ -7,6 +7,11 @@ export class CreateTipoArregloDto {
   @IsOptional()
   @IsBoolean()
   activo?: boolean;
+
+  @IsOptional()
+  @IsArray()
+  @IsInt({ each: true })
+  zonasIds?: number[];
 }
 
 export class UpdateTipoArregloDto {
@@ -17,4 +22,9 @@ export class UpdateTipoArregloDto {
   @IsOptional()
   @IsBoolean()
   activo?: boolean;
+
+  @IsOptional()
+  @IsArray()
+  @IsInt({ each: true })
+  zonasIds?: number[];
 }

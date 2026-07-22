@@ -16,20 +16,21 @@ const servicioInclude = {
     categoriasFactores: true,
     materiales: true,
     tiposArreglo: true,
+    tipoPrenda: true,
 };
 let CatalogoServicioDAO = class CatalogoServicioDAO {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async findAll(categoria) {
+    async findAll(tipoPrendaId) {
         return this.prisma.catalogoServicio.findMany({
             where: {
                 activo: true,
-                ...(categoria ? { categoria } : {}),
+                ...(tipoPrendaId ? { tipoPrendaId } : {}),
             },
             include: servicioInclude,
             orderBy: [
-                { categoria: 'asc' },
+                { tipoPrendaId: 'asc' },
                 { tipoEspecifico: 'asc' },
             ],
         });
@@ -44,7 +45,7 @@ let CatalogoServicioDAO = class CatalogoServicioDAO {
         return this.prisma.catalogoServicio.create({
             data: {
                 nombre: data.nombre ?? '',
-                categoria: data.categoria,
+                tipoPrendaId: data.tipoPrendaId ?? null,
                 tipoEspecifico: data.tipoEspecifico,
                 medidaBase: data.medidaBase,
                 tiempoBase: data.tiempoBase,
@@ -67,7 +68,7 @@ let CatalogoServicioDAO = class CatalogoServicioDAO {
             where: { id },
             data: {
                 ...(data.nombre !== undefined ? { nombre: data.nombre } : {}),
-                ...(data.categoria ? { categoria: data.categoria } : {}),
+                ...(data.tipoPrendaId !== undefined ? { tipoPrendaId: data.tipoPrendaId } : {}),
                 ...(data.tipoEspecifico ? { tipoEspecifico: data.tipoEspecifico } : {}),
                 ...(data.medidaBase !== undefined ? { medidaBase: data.medidaBase } : {}),
                 ...(data.tiempoBase !== undefined ? { tiempoBase: data.tiempoBase } : {}),

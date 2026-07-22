@@ -1,5 +1,5 @@
 import type * as runtime from "@prisma/client/runtime/client";
-import type * as Prisma from "../internal/prismaNamespace.js";
+import type * as Prisma from "../internal/prismaNamespace";
 export type CatalogoServicioModel = runtime.Types.Result.DefaultSelection<Prisma.$CatalogoServicioPayload>;
 export type AggregateCatalogoServicio = {
     _count: CatalogoServicioCountAggregateOutputType | null;
@@ -10,12 +10,14 @@ export type AggregateCatalogoServicio = {
 };
 export type CatalogoServicioAvgAggregateOutputType = {
     id: number | null;
+    tipoPrendaId: number | null;
     medidaBase: runtime.Decimal | null;
     tiempoBase: number | null;
     zonaId: number | null;
 };
 export type CatalogoServicioSumAggregateOutputType = {
     id: number | null;
+    tipoPrendaId: number | null;
     medidaBase: runtime.Decimal | null;
     tiempoBase: number | null;
     zonaId: number | null;
@@ -23,7 +25,7 @@ export type CatalogoServicioSumAggregateOutputType = {
 export type CatalogoServicioMinAggregateOutputType = {
     id: number | null;
     nombre: string | null;
-    categoria: string | null;
+    tipoPrendaId: number | null;
     tipoEspecifico: string | null;
     medidaBase: runtime.Decimal | null;
     tiempoBase: number | null;
@@ -35,7 +37,7 @@ export type CatalogoServicioMinAggregateOutputType = {
 export type CatalogoServicioMaxAggregateOutputType = {
     id: number | null;
     nombre: string | null;
-    categoria: string | null;
+    tipoPrendaId: number | null;
     tipoEspecifico: string | null;
     medidaBase: runtime.Decimal | null;
     tiempoBase: number | null;
@@ -47,7 +49,7 @@ export type CatalogoServicioMaxAggregateOutputType = {
 export type CatalogoServicioCountAggregateOutputType = {
     id: number;
     nombre: number;
-    categoria: number;
+    tipoPrendaId: number;
     tipoEspecifico: number;
     medidaBase: number;
     tiempoBase: number;
@@ -59,12 +61,14 @@ export type CatalogoServicioCountAggregateOutputType = {
 };
 export type CatalogoServicioAvgAggregateInputType = {
     id?: true;
+    tipoPrendaId?: true;
     medidaBase?: true;
     tiempoBase?: true;
     zonaId?: true;
 };
 export type CatalogoServicioSumAggregateInputType = {
     id?: true;
+    tipoPrendaId?: true;
     medidaBase?: true;
     tiempoBase?: true;
     zonaId?: true;
@@ -72,7 +76,7 @@ export type CatalogoServicioSumAggregateInputType = {
 export type CatalogoServicioMinAggregateInputType = {
     id?: true;
     nombre?: true;
-    categoria?: true;
+    tipoPrendaId?: true;
     tipoEspecifico?: true;
     medidaBase?: true;
     tiempoBase?: true;
@@ -84,7 +88,7 @@ export type CatalogoServicioMinAggregateInputType = {
 export type CatalogoServicioMaxAggregateInputType = {
     id?: true;
     nombre?: true;
-    categoria?: true;
+    tipoPrendaId?: true;
     tipoEspecifico?: true;
     medidaBase?: true;
     tiempoBase?: true;
@@ -96,7 +100,7 @@ export type CatalogoServicioMaxAggregateInputType = {
 export type CatalogoServicioCountAggregateInputType = {
     id?: true;
     nombre?: true;
-    categoria?: true;
+    tipoPrendaId?: true;
     tipoEspecifico?: true;
     medidaBase?: true;
     tiempoBase?: true;
@@ -137,7 +141,7 @@ export type CatalogoServicioGroupByArgs<ExtArgs extends runtime.Types.Extensions
 export type CatalogoServicioGroupByOutputType = {
     id: number;
     nombre: string;
-    categoria: string;
+    tipoPrendaId: number | null;
     tipoEspecifico: string;
     medidaBase: runtime.Decimal;
     tiempoBase: number;
@@ -160,7 +164,7 @@ export type CatalogoServicioWhereInput = {
     NOT?: Prisma.CatalogoServicioWhereInput | Prisma.CatalogoServicioWhereInput[];
     id?: Prisma.IntFilter<"CatalogoServicio"> | number;
     nombre?: Prisma.StringFilter<"CatalogoServicio"> | string;
-    categoria?: Prisma.StringFilter<"CatalogoServicio"> | string;
+    tipoPrendaId?: Prisma.IntNullableFilter<"CatalogoServicio"> | number | null;
     tipoEspecifico?: Prisma.StringFilter<"CatalogoServicio"> | string;
     medidaBase?: Prisma.DecimalFilter<"CatalogoServicio"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFilter<"CatalogoServicio"> | number;
@@ -173,11 +177,12 @@ export type CatalogoServicioWhereInput = {
     materiales?: Prisma.MaterialListRelationFilter;
     tiposArreglo?: Prisma.TipoArregloListRelationFilter;
     zona?: Prisma.XOR<Prisma.ZonaNullableScalarRelationFilter, Prisma.ZonaWhereInput> | null;
+    tipoPrenda?: Prisma.XOR<Prisma.TipoPrendaNullableScalarRelationFilter, Prisma.TipoPrendaWhereInput> | null;
 };
 export type CatalogoServicioOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
     nombre?: Prisma.SortOrder;
-    categoria?: Prisma.SortOrder;
+    tipoPrendaId?: Prisma.SortOrderInput | Prisma.SortOrder;
     tipoEspecifico?: Prisma.SortOrder;
     medidaBase?: Prisma.SortOrder;
     tiempoBase?: Prisma.SortOrder;
@@ -190,6 +195,7 @@ export type CatalogoServicioOrderByWithRelationInput = {
     materiales?: Prisma.MaterialOrderByRelationAggregateInput;
     tiposArreglo?: Prisma.TipoArregloOrderByRelationAggregateInput;
     zona?: Prisma.ZonaOrderByWithRelationInput;
+    tipoPrenda?: Prisma.TipoPrendaOrderByWithRelationInput;
 };
 export type CatalogoServicioWhereUniqueInput = Prisma.AtLeast<{
     id?: number;
@@ -197,7 +203,7 @@ export type CatalogoServicioWhereUniqueInput = Prisma.AtLeast<{
     OR?: Prisma.CatalogoServicioWhereInput[];
     NOT?: Prisma.CatalogoServicioWhereInput | Prisma.CatalogoServicioWhereInput[];
     nombre?: Prisma.StringFilter<"CatalogoServicio"> | string;
-    categoria?: Prisma.StringFilter<"CatalogoServicio"> | string;
+    tipoPrendaId?: Prisma.IntNullableFilter<"CatalogoServicio"> | number | null;
     tipoEspecifico?: Prisma.StringFilter<"CatalogoServicio"> | string;
     medidaBase?: Prisma.DecimalFilter<"CatalogoServicio"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFilter<"CatalogoServicio"> | number;
@@ -210,11 +216,12 @@ export type CatalogoServicioWhereUniqueInput = Prisma.AtLeast<{
     materiales?: Prisma.MaterialListRelationFilter;
     tiposArreglo?: Prisma.TipoArregloListRelationFilter;
     zona?: Prisma.XOR<Prisma.ZonaNullableScalarRelationFilter, Prisma.ZonaWhereInput> | null;
+    tipoPrenda?: Prisma.XOR<Prisma.TipoPrendaNullableScalarRelationFilter, Prisma.TipoPrendaWhereInput> | null;
 }, "id">;
 export type CatalogoServicioOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
     nombre?: Prisma.SortOrder;
-    categoria?: Prisma.SortOrder;
+    tipoPrendaId?: Prisma.SortOrderInput | Prisma.SortOrder;
     tipoEspecifico?: Prisma.SortOrder;
     medidaBase?: Prisma.SortOrder;
     tiempoBase?: Prisma.SortOrder;
@@ -234,7 +241,7 @@ export type CatalogoServicioScalarWhereWithAggregatesInput = {
     NOT?: Prisma.CatalogoServicioScalarWhereWithAggregatesInput | Prisma.CatalogoServicioScalarWhereWithAggregatesInput[];
     id?: Prisma.IntWithAggregatesFilter<"CatalogoServicio"> | number;
     nombre?: Prisma.StringWithAggregatesFilter<"CatalogoServicio"> | string;
-    categoria?: Prisma.StringWithAggregatesFilter<"CatalogoServicio"> | string;
+    tipoPrendaId?: Prisma.IntNullableWithAggregatesFilter<"CatalogoServicio"> | number | null;
     tipoEspecifico?: Prisma.StringWithAggregatesFilter<"CatalogoServicio"> | string;
     medidaBase?: Prisma.DecimalWithAggregatesFilter<"CatalogoServicio"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntWithAggregatesFilter<"CatalogoServicio"> | number;
@@ -245,7 +252,6 @@ export type CatalogoServicioScalarWhereWithAggregatesInput = {
 };
 export type CatalogoServicioCreateInput = {
     nombre?: string;
-    categoria: string;
     tipoEspecifico: string;
     medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: number;
@@ -257,11 +263,12 @@ export type CatalogoServicioCreateInput = {
     materiales?: Prisma.MaterialCreateNestedManyWithoutServiciosInput;
     tiposArreglo?: Prisma.TipoArregloCreateNestedManyWithoutServiciosInput;
     zona?: Prisma.ZonaCreateNestedOneWithoutServiciosInput;
+    tipoPrenda?: Prisma.TipoPrendaCreateNestedOneWithoutServiciosInput;
 };
 export type CatalogoServicioUncheckedCreateInput = {
     id?: number;
     nombre?: string;
-    categoria: string;
+    tipoPrendaId?: number | null;
     tipoEspecifico: string;
     medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: number;
@@ -276,7 +283,6 @@ export type CatalogoServicioUncheckedCreateInput = {
 };
 export type CatalogoServicioUpdateInput = {
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
     medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -288,11 +294,12 @@ export type CatalogoServicioUpdateInput = {
     materiales?: Prisma.MaterialUpdateManyWithoutServiciosNestedInput;
     tiposArreglo?: Prisma.TipoArregloUpdateManyWithoutServiciosNestedInput;
     zona?: Prisma.ZonaUpdateOneWithoutServiciosNestedInput;
+    tipoPrenda?: Prisma.TipoPrendaUpdateOneWithoutServiciosNestedInput;
 };
 export type CatalogoServicioUncheckedUpdateInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoPrendaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
     medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -308,7 +315,7 @@ export type CatalogoServicioUncheckedUpdateInput = {
 export type CatalogoServicioCreateManyInput = {
     id?: number;
     nombre?: string;
-    categoria: string;
+    tipoPrendaId?: number | null;
     tipoEspecifico: string;
     medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: number;
@@ -319,7 +326,6 @@ export type CatalogoServicioCreateManyInput = {
 };
 export type CatalogoServicioUpdateManyMutationInput = {
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
     medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -330,7 +336,7 @@ export type CatalogoServicioUpdateManyMutationInput = {
 export type CatalogoServicioUncheckedUpdateManyInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoPrendaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
     medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -339,10 +345,18 @@ export type CatalogoServicioUncheckedUpdateManyInput = {
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     zonaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
 };
+export type CatalogoServicioListRelationFilter = {
+    every?: Prisma.CatalogoServicioWhereInput;
+    some?: Prisma.CatalogoServicioWhereInput;
+    none?: Prisma.CatalogoServicioWhereInput;
+};
+export type CatalogoServicioOrderByRelationAggregateInput = {
+    _count?: Prisma.SortOrder;
+};
 export type CatalogoServicioCountOrderByAggregateInput = {
     id?: Prisma.SortOrder;
     nombre?: Prisma.SortOrder;
-    categoria?: Prisma.SortOrder;
+    tipoPrendaId?: Prisma.SortOrder;
     tipoEspecifico?: Prisma.SortOrder;
     medidaBase?: Prisma.SortOrder;
     tiempoBase?: Prisma.SortOrder;
@@ -353,6 +367,7 @@ export type CatalogoServicioCountOrderByAggregateInput = {
 };
 export type CatalogoServicioAvgOrderByAggregateInput = {
     id?: Prisma.SortOrder;
+    tipoPrendaId?: Prisma.SortOrder;
     medidaBase?: Prisma.SortOrder;
     tiempoBase?: Prisma.SortOrder;
     zonaId?: Prisma.SortOrder;
@@ -360,7 +375,7 @@ export type CatalogoServicioAvgOrderByAggregateInput = {
 export type CatalogoServicioMaxOrderByAggregateInput = {
     id?: Prisma.SortOrder;
     nombre?: Prisma.SortOrder;
-    categoria?: Prisma.SortOrder;
+    tipoPrendaId?: Prisma.SortOrder;
     tipoEspecifico?: Prisma.SortOrder;
     medidaBase?: Prisma.SortOrder;
     tiempoBase?: Prisma.SortOrder;
@@ -372,7 +387,7 @@ export type CatalogoServicioMaxOrderByAggregateInput = {
 export type CatalogoServicioMinOrderByAggregateInput = {
     id?: Prisma.SortOrder;
     nombre?: Prisma.SortOrder;
-    categoria?: Prisma.SortOrder;
+    tipoPrendaId?: Prisma.SortOrder;
     tipoEspecifico?: Prisma.SortOrder;
     medidaBase?: Prisma.SortOrder;
     tiempoBase?: Prisma.SortOrder;
@@ -383,21 +398,52 @@ export type CatalogoServicioMinOrderByAggregateInput = {
 };
 export type CatalogoServicioSumOrderByAggregateInput = {
     id?: Prisma.SortOrder;
+    tipoPrendaId?: Prisma.SortOrder;
     medidaBase?: Prisma.SortOrder;
     tiempoBase?: Prisma.SortOrder;
     zonaId?: Prisma.SortOrder;
 };
-export type CatalogoServicioListRelationFilter = {
-    every?: Prisma.CatalogoServicioWhereInput;
-    some?: Prisma.CatalogoServicioWhereInput;
-    none?: Prisma.CatalogoServicioWhereInput;
-};
-export type CatalogoServicioOrderByRelationAggregateInput = {
-    _count?: Prisma.SortOrder;
-};
 export type CatalogoServicioScalarRelationFilter = {
     is?: Prisma.CatalogoServicioWhereInput;
     isNot?: Prisma.CatalogoServicioWhereInput;
+};
+export type CatalogoServicioCreateNestedManyWithoutTipoPrendaInput = {
+    create?: Prisma.XOR<Prisma.CatalogoServicioCreateWithoutTipoPrendaInput, Prisma.CatalogoServicioUncheckedCreateWithoutTipoPrendaInput> | Prisma.CatalogoServicioCreateWithoutTipoPrendaInput[] | Prisma.CatalogoServicioUncheckedCreateWithoutTipoPrendaInput[];
+    connectOrCreate?: Prisma.CatalogoServicioCreateOrConnectWithoutTipoPrendaInput | Prisma.CatalogoServicioCreateOrConnectWithoutTipoPrendaInput[];
+    createMany?: Prisma.CatalogoServicioCreateManyTipoPrendaInputEnvelope;
+    connect?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
+};
+export type CatalogoServicioUncheckedCreateNestedManyWithoutTipoPrendaInput = {
+    create?: Prisma.XOR<Prisma.CatalogoServicioCreateWithoutTipoPrendaInput, Prisma.CatalogoServicioUncheckedCreateWithoutTipoPrendaInput> | Prisma.CatalogoServicioCreateWithoutTipoPrendaInput[] | Prisma.CatalogoServicioUncheckedCreateWithoutTipoPrendaInput[];
+    connectOrCreate?: Prisma.CatalogoServicioCreateOrConnectWithoutTipoPrendaInput | Prisma.CatalogoServicioCreateOrConnectWithoutTipoPrendaInput[];
+    createMany?: Prisma.CatalogoServicioCreateManyTipoPrendaInputEnvelope;
+    connect?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
+};
+export type CatalogoServicioUpdateManyWithoutTipoPrendaNestedInput = {
+    create?: Prisma.XOR<Prisma.CatalogoServicioCreateWithoutTipoPrendaInput, Prisma.CatalogoServicioUncheckedCreateWithoutTipoPrendaInput> | Prisma.CatalogoServicioCreateWithoutTipoPrendaInput[] | Prisma.CatalogoServicioUncheckedCreateWithoutTipoPrendaInput[];
+    connectOrCreate?: Prisma.CatalogoServicioCreateOrConnectWithoutTipoPrendaInput | Prisma.CatalogoServicioCreateOrConnectWithoutTipoPrendaInput[];
+    upsert?: Prisma.CatalogoServicioUpsertWithWhereUniqueWithoutTipoPrendaInput | Prisma.CatalogoServicioUpsertWithWhereUniqueWithoutTipoPrendaInput[];
+    createMany?: Prisma.CatalogoServicioCreateManyTipoPrendaInputEnvelope;
+    set?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
+    disconnect?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
+    delete?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
+    connect?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
+    update?: Prisma.CatalogoServicioUpdateWithWhereUniqueWithoutTipoPrendaInput | Prisma.CatalogoServicioUpdateWithWhereUniqueWithoutTipoPrendaInput[];
+    updateMany?: Prisma.CatalogoServicioUpdateManyWithWhereWithoutTipoPrendaInput | Prisma.CatalogoServicioUpdateManyWithWhereWithoutTipoPrendaInput[];
+    deleteMany?: Prisma.CatalogoServicioScalarWhereInput | Prisma.CatalogoServicioScalarWhereInput[];
+};
+export type CatalogoServicioUncheckedUpdateManyWithoutTipoPrendaNestedInput = {
+    create?: Prisma.XOR<Prisma.CatalogoServicioCreateWithoutTipoPrendaInput, Prisma.CatalogoServicioUncheckedCreateWithoutTipoPrendaInput> | Prisma.CatalogoServicioCreateWithoutTipoPrendaInput[] | Prisma.CatalogoServicioUncheckedCreateWithoutTipoPrendaInput[];
+    connectOrCreate?: Prisma.CatalogoServicioCreateOrConnectWithoutTipoPrendaInput | Prisma.CatalogoServicioCreateOrConnectWithoutTipoPrendaInput[];
+    upsert?: Prisma.CatalogoServicioUpsertWithWhereUniqueWithoutTipoPrendaInput | Prisma.CatalogoServicioUpsertWithWhereUniqueWithoutTipoPrendaInput[];
+    createMany?: Prisma.CatalogoServicioCreateManyTipoPrendaInputEnvelope;
+    set?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
+    disconnect?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
+    delete?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
+    connect?: Prisma.CatalogoServicioWhereUniqueInput | Prisma.CatalogoServicioWhereUniqueInput[];
+    update?: Prisma.CatalogoServicioUpdateWithWhereUniqueWithoutTipoPrendaInput | Prisma.CatalogoServicioUpdateWithWhereUniqueWithoutTipoPrendaInput[];
+    updateMany?: Prisma.CatalogoServicioUpdateManyWithWhereWithoutTipoPrendaInput | Prisma.CatalogoServicioUpdateManyWithWhereWithoutTipoPrendaInput[];
+    deleteMany?: Prisma.CatalogoServicioScalarWhereInput | Prisma.CatalogoServicioScalarWhereInput[];
 };
 export type CatalogoServicioCreateNestedManyWithoutCategoriasFactoresInput = {
     create?: Prisma.XOR<Prisma.CatalogoServicioCreateWithoutCategoriasFactoresInput, Prisma.CatalogoServicioUncheckedCreateWithoutCategoriasFactoresInput> | Prisma.CatalogoServicioCreateWithoutCategoriasFactoresInput[] | Prisma.CatalogoServicioUncheckedCreateWithoutCategoriasFactoresInput[];
@@ -551,9 +597,73 @@ export type CatalogoServicioUncheckedUpdateManyWithoutZonaNestedInput = {
     updateMany?: Prisma.CatalogoServicioUpdateManyWithWhereWithoutZonaInput | Prisma.CatalogoServicioUpdateManyWithWhereWithoutZonaInput[];
     deleteMany?: Prisma.CatalogoServicioScalarWhereInput | Prisma.CatalogoServicioScalarWhereInput[];
 };
+export type CatalogoServicioCreateWithoutTipoPrendaInput = {
+    nombre?: string;
+    tipoEspecifico: string;
+    medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: number;
+    activo?: boolean;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    categoriasFactores?: Prisma.CategoriaFactorCobroCreateNestedManyWithoutServiciosInput;
+    asignaciones?: Prisma.PrendaServicioCreateNestedManyWithoutServicioInput;
+    materiales?: Prisma.MaterialCreateNestedManyWithoutServiciosInput;
+    tiposArreglo?: Prisma.TipoArregloCreateNestedManyWithoutServiciosInput;
+    zona?: Prisma.ZonaCreateNestedOneWithoutServiciosInput;
+};
+export type CatalogoServicioUncheckedCreateWithoutTipoPrendaInput = {
+    id?: number;
+    nombre?: string;
+    tipoEspecifico: string;
+    medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: number;
+    activo?: boolean;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    zonaId?: number | null;
+    categoriasFactores?: Prisma.CategoriaFactorCobroUncheckedCreateNestedManyWithoutServiciosInput;
+    asignaciones?: Prisma.PrendaServicioUncheckedCreateNestedManyWithoutServicioInput;
+    materiales?: Prisma.MaterialUncheckedCreateNestedManyWithoutServiciosInput;
+    tiposArreglo?: Prisma.TipoArregloUncheckedCreateNestedManyWithoutServiciosInput;
+};
+export type CatalogoServicioCreateOrConnectWithoutTipoPrendaInput = {
+    where: Prisma.CatalogoServicioWhereUniqueInput;
+    create: Prisma.XOR<Prisma.CatalogoServicioCreateWithoutTipoPrendaInput, Prisma.CatalogoServicioUncheckedCreateWithoutTipoPrendaInput>;
+};
+export type CatalogoServicioCreateManyTipoPrendaInputEnvelope = {
+    data: Prisma.CatalogoServicioCreateManyTipoPrendaInput | Prisma.CatalogoServicioCreateManyTipoPrendaInput[];
+    skipDuplicates?: boolean;
+};
+export type CatalogoServicioUpsertWithWhereUniqueWithoutTipoPrendaInput = {
+    where: Prisma.CatalogoServicioWhereUniqueInput;
+    update: Prisma.XOR<Prisma.CatalogoServicioUpdateWithoutTipoPrendaInput, Prisma.CatalogoServicioUncheckedUpdateWithoutTipoPrendaInput>;
+    create: Prisma.XOR<Prisma.CatalogoServicioCreateWithoutTipoPrendaInput, Prisma.CatalogoServicioUncheckedCreateWithoutTipoPrendaInput>;
+};
+export type CatalogoServicioUpdateWithWhereUniqueWithoutTipoPrendaInput = {
+    where: Prisma.CatalogoServicioWhereUniqueInput;
+    data: Prisma.XOR<Prisma.CatalogoServicioUpdateWithoutTipoPrendaInput, Prisma.CatalogoServicioUncheckedUpdateWithoutTipoPrendaInput>;
+};
+export type CatalogoServicioUpdateManyWithWhereWithoutTipoPrendaInput = {
+    where: Prisma.CatalogoServicioScalarWhereInput;
+    data: Prisma.XOR<Prisma.CatalogoServicioUpdateManyMutationInput, Prisma.CatalogoServicioUncheckedUpdateManyWithoutTipoPrendaInput>;
+};
+export type CatalogoServicioScalarWhereInput = {
+    AND?: Prisma.CatalogoServicioScalarWhereInput | Prisma.CatalogoServicioScalarWhereInput[];
+    OR?: Prisma.CatalogoServicioScalarWhereInput[];
+    NOT?: Prisma.CatalogoServicioScalarWhereInput | Prisma.CatalogoServicioScalarWhereInput[];
+    id?: Prisma.IntFilter<"CatalogoServicio"> | number;
+    nombre?: Prisma.StringFilter<"CatalogoServicio"> | string;
+    tipoPrendaId?: Prisma.IntNullableFilter<"CatalogoServicio"> | number | null;
+    tipoEspecifico?: Prisma.StringFilter<"CatalogoServicio"> | string;
+    medidaBase?: Prisma.DecimalFilter<"CatalogoServicio"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: Prisma.IntFilter<"CatalogoServicio"> | number;
+    activo?: Prisma.BoolFilter<"CatalogoServicio"> | boolean;
+    createdAt?: Prisma.DateTimeFilter<"CatalogoServicio"> | Date | string;
+    updatedAt?: Prisma.DateTimeFilter<"CatalogoServicio"> | Date | string;
+    zonaId?: Prisma.IntNullableFilter<"CatalogoServicio"> | number | null;
+};
 export type CatalogoServicioCreateWithoutCategoriasFactoresInput = {
     nombre?: string;
-    categoria: string;
     tipoEspecifico: string;
     medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: number;
@@ -564,11 +674,12 @@ export type CatalogoServicioCreateWithoutCategoriasFactoresInput = {
     materiales?: Prisma.MaterialCreateNestedManyWithoutServiciosInput;
     tiposArreglo?: Prisma.TipoArregloCreateNestedManyWithoutServiciosInput;
     zona?: Prisma.ZonaCreateNestedOneWithoutServiciosInput;
+    tipoPrenda?: Prisma.TipoPrendaCreateNestedOneWithoutServiciosInput;
 };
 export type CatalogoServicioUncheckedCreateWithoutCategoriasFactoresInput = {
     id?: number;
     nombre?: string;
-    categoria: string;
+    tipoPrendaId?: number | null;
     tipoEspecifico: string;
     medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: number;
@@ -597,24 +708,8 @@ export type CatalogoServicioUpdateManyWithWhereWithoutCategoriasFactoresInput = 
     where: Prisma.CatalogoServicioScalarWhereInput;
     data: Prisma.XOR<Prisma.CatalogoServicioUpdateManyMutationInput, Prisma.CatalogoServicioUncheckedUpdateManyWithoutCategoriasFactoresInput>;
 };
-export type CatalogoServicioScalarWhereInput = {
-    AND?: Prisma.CatalogoServicioScalarWhereInput | Prisma.CatalogoServicioScalarWhereInput[];
-    OR?: Prisma.CatalogoServicioScalarWhereInput[];
-    NOT?: Prisma.CatalogoServicioScalarWhereInput | Prisma.CatalogoServicioScalarWhereInput[];
-    id?: Prisma.IntFilter<"CatalogoServicio"> | number;
-    nombre?: Prisma.StringFilter<"CatalogoServicio"> | string;
-    categoria?: Prisma.StringFilter<"CatalogoServicio"> | string;
-    tipoEspecifico?: Prisma.StringFilter<"CatalogoServicio"> | string;
-    medidaBase?: Prisma.DecimalFilter<"CatalogoServicio"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
-    tiempoBase?: Prisma.IntFilter<"CatalogoServicio"> | number;
-    activo?: Prisma.BoolFilter<"CatalogoServicio"> | boolean;
-    createdAt?: Prisma.DateTimeFilter<"CatalogoServicio"> | Date | string;
-    updatedAt?: Prisma.DateTimeFilter<"CatalogoServicio"> | Date | string;
-    zonaId?: Prisma.IntNullableFilter<"CatalogoServicio"> | number | null;
-};
 export type CatalogoServicioCreateWithoutAsignacionesInput = {
     nombre?: string;
-    categoria: string;
     tipoEspecifico: string;
     medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: number;
@@ -625,11 +720,12 @@ export type CatalogoServicioCreateWithoutAsignacionesInput = {
     materiales?: Prisma.MaterialCreateNestedManyWithoutServiciosInput;
     tiposArreglo?: Prisma.TipoArregloCreateNestedManyWithoutServiciosInput;
     zona?: Prisma.ZonaCreateNestedOneWithoutServiciosInput;
+    tipoPrenda?: Prisma.TipoPrendaCreateNestedOneWithoutServiciosInput;
 };
 export type CatalogoServicioUncheckedCreateWithoutAsignacionesInput = {
     id?: number;
     nombre?: string;
-    categoria: string;
+    tipoPrendaId?: number | null;
     tipoEspecifico: string;
     medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: number;
@@ -656,7 +752,6 @@ export type CatalogoServicioUpdateToOneWithWhereWithoutAsignacionesInput = {
 };
 export type CatalogoServicioUpdateWithoutAsignacionesInput = {
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
     medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -667,11 +762,12 @@ export type CatalogoServicioUpdateWithoutAsignacionesInput = {
     materiales?: Prisma.MaterialUpdateManyWithoutServiciosNestedInput;
     tiposArreglo?: Prisma.TipoArregloUpdateManyWithoutServiciosNestedInput;
     zona?: Prisma.ZonaUpdateOneWithoutServiciosNestedInput;
+    tipoPrenda?: Prisma.TipoPrendaUpdateOneWithoutServiciosNestedInput;
 };
 export type CatalogoServicioUncheckedUpdateWithoutAsignacionesInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoPrendaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
     medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -685,7 +781,6 @@ export type CatalogoServicioUncheckedUpdateWithoutAsignacionesInput = {
 };
 export type CatalogoServicioCreateWithoutMaterialesInput = {
     nombre?: string;
-    categoria: string;
     tipoEspecifico: string;
     medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: number;
@@ -696,11 +791,12 @@ export type CatalogoServicioCreateWithoutMaterialesInput = {
     asignaciones?: Prisma.PrendaServicioCreateNestedManyWithoutServicioInput;
     tiposArreglo?: Prisma.TipoArregloCreateNestedManyWithoutServiciosInput;
     zona?: Prisma.ZonaCreateNestedOneWithoutServiciosInput;
+    tipoPrenda?: Prisma.TipoPrendaCreateNestedOneWithoutServiciosInput;
 };
 export type CatalogoServicioUncheckedCreateWithoutMaterialesInput = {
     id?: number;
     nombre?: string;
-    categoria: string;
+    tipoPrendaId?: number | null;
     tipoEspecifico: string;
     medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: number;
@@ -731,7 +827,6 @@ export type CatalogoServicioUpdateManyWithWhereWithoutMaterialesInput = {
 };
 export type CatalogoServicioCreateWithoutTiposArregloInput = {
     nombre?: string;
-    categoria: string;
     tipoEspecifico: string;
     medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: number;
@@ -742,11 +837,12 @@ export type CatalogoServicioCreateWithoutTiposArregloInput = {
     asignaciones?: Prisma.PrendaServicioCreateNestedManyWithoutServicioInput;
     materiales?: Prisma.MaterialCreateNestedManyWithoutServiciosInput;
     zona?: Prisma.ZonaCreateNestedOneWithoutServiciosInput;
+    tipoPrenda?: Prisma.TipoPrendaCreateNestedOneWithoutServiciosInput;
 };
 export type CatalogoServicioUncheckedCreateWithoutTiposArregloInput = {
     id?: number;
     nombre?: string;
-    categoria: string;
+    tipoPrendaId?: number | null;
     tipoEspecifico: string;
     medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: number;
@@ -777,7 +873,6 @@ export type CatalogoServicioUpdateManyWithWhereWithoutTiposArregloInput = {
 };
 export type CatalogoServicioCreateWithoutZonaInput = {
     nombre?: string;
-    categoria: string;
     tipoEspecifico: string;
     medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: number;
@@ -788,11 +883,12 @@ export type CatalogoServicioCreateWithoutZonaInput = {
     asignaciones?: Prisma.PrendaServicioCreateNestedManyWithoutServicioInput;
     materiales?: Prisma.MaterialCreateNestedManyWithoutServiciosInput;
     tiposArreglo?: Prisma.TipoArregloCreateNestedManyWithoutServiciosInput;
+    tipoPrenda?: Prisma.TipoPrendaCreateNestedOneWithoutServiciosInput;
 };
 export type CatalogoServicioUncheckedCreateWithoutZonaInput = {
     id?: number;
     nombre?: string;
-    categoria: string;
+    tipoPrendaId?: number | null;
     tipoEspecifico: string;
     medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: number;
@@ -825,9 +921,59 @@ export type CatalogoServicioUpdateManyWithWhereWithoutZonaInput = {
     where: Prisma.CatalogoServicioScalarWhereInput;
     data: Prisma.XOR<Prisma.CatalogoServicioUpdateManyMutationInput, Prisma.CatalogoServicioUncheckedUpdateManyWithoutZonaInput>;
 };
+export type CatalogoServicioCreateManyTipoPrendaInput = {
+    id?: number;
+    nombre?: string;
+    tipoEspecifico: string;
+    medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: number;
+    activo?: boolean;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    zonaId?: number | null;
+};
+export type CatalogoServicioUpdateWithoutTipoPrendaInput = {
+    nombre?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
+    medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
+    activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    categoriasFactores?: Prisma.CategoriaFactorCobroUpdateManyWithoutServiciosNestedInput;
+    asignaciones?: Prisma.PrendaServicioUpdateManyWithoutServicioNestedInput;
+    materiales?: Prisma.MaterialUpdateManyWithoutServiciosNestedInput;
+    tiposArreglo?: Prisma.TipoArregloUpdateManyWithoutServiciosNestedInput;
+    zona?: Prisma.ZonaUpdateOneWithoutServiciosNestedInput;
+};
+export type CatalogoServicioUncheckedUpdateWithoutTipoPrendaInput = {
+    id?: Prisma.IntFieldUpdateOperationsInput | number;
+    nombre?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
+    medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
+    activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    zonaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
+    categoriasFactores?: Prisma.CategoriaFactorCobroUncheckedUpdateManyWithoutServiciosNestedInput;
+    asignaciones?: Prisma.PrendaServicioUncheckedUpdateManyWithoutServicioNestedInput;
+    materiales?: Prisma.MaterialUncheckedUpdateManyWithoutServiciosNestedInput;
+    tiposArreglo?: Prisma.TipoArregloUncheckedUpdateManyWithoutServiciosNestedInput;
+};
+export type CatalogoServicioUncheckedUpdateManyWithoutTipoPrendaInput = {
+    id?: Prisma.IntFieldUpdateOperationsInput | number;
+    nombre?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
+    medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
+    activo?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    zonaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
+};
 export type CatalogoServicioUpdateWithoutCategoriasFactoresInput = {
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
     medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -838,11 +984,12 @@ export type CatalogoServicioUpdateWithoutCategoriasFactoresInput = {
     materiales?: Prisma.MaterialUpdateManyWithoutServiciosNestedInput;
     tiposArreglo?: Prisma.TipoArregloUpdateManyWithoutServiciosNestedInput;
     zona?: Prisma.ZonaUpdateOneWithoutServiciosNestedInput;
+    tipoPrenda?: Prisma.TipoPrendaUpdateOneWithoutServiciosNestedInput;
 };
 export type CatalogoServicioUncheckedUpdateWithoutCategoriasFactoresInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoPrendaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
     medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -857,7 +1004,7 @@ export type CatalogoServicioUncheckedUpdateWithoutCategoriasFactoresInput = {
 export type CatalogoServicioUncheckedUpdateManyWithoutCategoriasFactoresInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoPrendaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
     medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -868,7 +1015,6 @@ export type CatalogoServicioUncheckedUpdateManyWithoutCategoriasFactoresInput = 
 };
 export type CatalogoServicioUpdateWithoutMaterialesInput = {
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
     medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -879,11 +1025,12 @@ export type CatalogoServicioUpdateWithoutMaterialesInput = {
     asignaciones?: Prisma.PrendaServicioUpdateManyWithoutServicioNestedInput;
     tiposArreglo?: Prisma.TipoArregloUpdateManyWithoutServiciosNestedInput;
     zona?: Prisma.ZonaUpdateOneWithoutServiciosNestedInput;
+    tipoPrenda?: Prisma.TipoPrendaUpdateOneWithoutServiciosNestedInput;
 };
 export type CatalogoServicioUncheckedUpdateWithoutMaterialesInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoPrendaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
     medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -898,7 +1045,7 @@ export type CatalogoServicioUncheckedUpdateWithoutMaterialesInput = {
 export type CatalogoServicioUncheckedUpdateManyWithoutMaterialesInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoPrendaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
     medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -909,7 +1056,6 @@ export type CatalogoServicioUncheckedUpdateManyWithoutMaterialesInput = {
 };
 export type CatalogoServicioUpdateWithoutTiposArregloInput = {
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
     medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -920,11 +1066,12 @@ export type CatalogoServicioUpdateWithoutTiposArregloInput = {
     asignaciones?: Prisma.PrendaServicioUpdateManyWithoutServicioNestedInput;
     materiales?: Prisma.MaterialUpdateManyWithoutServiciosNestedInput;
     zona?: Prisma.ZonaUpdateOneWithoutServiciosNestedInput;
+    tipoPrenda?: Prisma.TipoPrendaUpdateOneWithoutServiciosNestedInput;
 };
 export type CatalogoServicioUncheckedUpdateWithoutTiposArregloInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoPrendaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
     medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -939,7 +1086,7 @@ export type CatalogoServicioUncheckedUpdateWithoutTiposArregloInput = {
 export type CatalogoServicioUncheckedUpdateManyWithoutTiposArregloInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoPrendaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
     medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -951,7 +1098,7 @@ export type CatalogoServicioUncheckedUpdateManyWithoutTiposArregloInput = {
 export type CatalogoServicioCreateManyZonaInput = {
     id?: number;
     nombre?: string;
-    categoria: string;
+    tipoPrendaId?: number | null;
     tipoEspecifico: string;
     medidaBase?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: number;
@@ -961,7 +1108,6 @@ export type CatalogoServicioCreateManyZonaInput = {
 };
 export type CatalogoServicioUpdateWithoutZonaInput = {
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
     medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -972,11 +1118,12 @@ export type CatalogoServicioUpdateWithoutZonaInput = {
     asignaciones?: Prisma.PrendaServicioUpdateManyWithoutServicioNestedInput;
     materiales?: Prisma.MaterialUpdateManyWithoutServiciosNestedInput;
     tiposArreglo?: Prisma.TipoArregloUpdateManyWithoutServiciosNestedInput;
+    tipoPrenda?: Prisma.TipoPrendaUpdateOneWithoutServiciosNestedInput;
 };
 export type CatalogoServicioUncheckedUpdateWithoutZonaInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoPrendaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
     medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -991,7 +1138,7 @@ export type CatalogoServicioUncheckedUpdateWithoutZonaInput = {
 export type CatalogoServicioUncheckedUpdateManyWithoutZonaInput = {
     id?: Prisma.IntFieldUpdateOperationsInput | number;
     nombre?: Prisma.StringFieldUpdateOperationsInput | string;
-    categoria?: Prisma.StringFieldUpdateOperationsInput | string;
+    tipoPrendaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
     tipoEspecifico?: Prisma.StringFieldUpdateOperationsInput | string;
     medidaBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     tiempoBase?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1029,7 +1176,7 @@ export type CatalogoServicioCountOutputTypeCountTiposArregloArgs<ExtArgs extends
 export type CatalogoServicioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
     nombre?: boolean;
-    categoria?: boolean;
+    tipoPrendaId?: boolean;
     tipoEspecifico?: boolean;
     medidaBase?: boolean;
     tiempoBase?: boolean;
@@ -1042,12 +1189,13 @@ export type CatalogoServicioSelect<ExtArgs extends runtime.Types.Extensions.Inte
     materiales?: boolean | Prisma.CatalogoServicio$materialesArgs<ExtArgs>;
     tiposArreglo?: boolean | Prisma.CatalogoServicio$tiposArregloArgs<ExtArgs>;
     zona?: boolean | Prisma.CatalogoServicio$zonaArgs<ExtArgs>;
+    tipoPrenda?: boolean | Prisma.CatalogoServicio$tipoPrendaArgs<ExtArgs>;
     _count?: boolean | Prisma.CatalogoServicioCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["catalogoServicio"]>;
 export type CatalogoServicioSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
     nombre?: boolean;
-    categoria?: boolean;
+    tipoPrendaId?: boolean;
     tipoEspecifico?: boolean;
     medidaBase?: boolean;
     tiempoBase?: boolean;
@@ -1056,11 +1204,12 @@ export type CatalogoServicioSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
     updatedAt?: boolean;
     zonaId?: boolean;
     zona?: boolean | Prisma.CatalogoServicio$zonaArgs<ExtArgs>;
+    tipoPrenda?: boolean | Prisma.CatalogoServicio$tipoPrendaArgs<ExtArgs>;
 }, ExtArgs["result"]["catalogoServicio"]>;
 export type CatalogoServicioSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
     nombre?: boolean;
-    categoria?: boolean;
+    tipoPrendaId?: boolean;
     tipoEspecifico?: boolean;
     medidaBase?: boolean;
     tiempoBase?: boolean;
@@ -1069,11 +1218,12 @@ export type CatalogoServicioSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
     updatedAt?: boolean;
     zonaId?: boolean;
     zona?: boolean | Prisma.CatalogoServicio$zonaArgs<ExtArgs>;
+    tipoPrenda?: boolean | Prisma.CatalogoServicio$tipoPrendaArgs<ExtArgs>;
 }, ExtArgs["result"]["catalogoServicio"]>;
 export type CatalogoServicioSelectScalar = {
     id?: boolean;
     nombre?: boolean;
-    categoria?: boolean;
+    tipoPrendaId?: boolean;
     tipoEspecifico?: boolean;
     medidaBase?: boolean;
     tiempoBase?: boolean;
@@ -1082,20 +1232,23 @@ export type CatalogoServicioSelectScalar = {
     updatedAt?: boolean;
     zonaId?: boolean;
 };
-export type CatalogoServicioOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nombre" | "categoria" | "tipoEspecifico" | "medidaBase" | "tiempoBase" | "activo" | "createdAt" | "updatedAt" | "zonaId", ExtArgs["result"]["catalogoServicio"]>;
+export type CatalogoServicioOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nombre" | "tipoPrendaId" | "tipoEspecifico" | "medidaBase" | "tiempoBase" | "activo" | "createdAt" | "updatedAt" | "zonaId", ExtArgs["result"]["catalogoServicio"]>;
 export type CatalogoServicioInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     categoriasFactores?: boolean | Prisma.CatalogoServicio$categoriasFactoresArgs<ExtArgs>;
     asignaciones?: boolean | Prisma.CatalogoServicio$asignacionesArgs<ExtArgs>;
     materiales?: boolean | Prisma.CatalogoServicio$materialesArgs<ExtArgs>;
     tiposArreglo?: boolean | Prisma.CatalogoServicio$tiposArregloArgs<ExtArgs>;
     zona?: boolean | Prisma.CatalogoServicio$zonaArgs<ExtArgs>;
+    tipoPrenda?: boolean | Prisma.CatalogoServicio$tipoPrendaArgs<ExtArgs>;
     _count?: boolean | Prisma.CatalogoServicioCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type CatalogoServicioIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     zona?: boolean | Prisma.CatalogoServicio$zonaArgs<ExtArgs>;
+    tipoPrenda?: boolean | Prisma.CatalogoServicio$tipoPrendaArgs<ExtArgs>;
 };
 export type CatalogoServicioIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     zona?: boolean | Prisma.CatalogoServicio$zonaArgs<ExtArgs>;
+    tipoPrenda?: boolean | Prisma.CatalogoServicio$tipoPrendaArgs<ExtArgs>;
 };
 export type $CatalogoServicioPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     name: "CatalogoServicio";
@@ -1105,11 +1258,12 @@ export type $CatalogoServicioPayload<ExtArgs extends runtime.Types.Extensions.In
         materiales: Prisma.$MaterialPayload<ExtArgs>[];
         tiposArreglo: Prisma.$TipoArregloPayload<ExtArgs>[];
         zona: Prisma.$ZonaPayload<ExtArgs> | null;
+        tipoPrenda: Prisma.$TipoPrendaPayload<ExtArgs> | null;
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: number;
         nombre: string;
-        categoria: string;
+        tipoPrendaId: number | null;
         tipoEspecifico: string;
         medidaBase: runtime.Decimal;
         tiempoBase: number;
@@ -1174,6 +1328,7 @@ export interface Prisma__CatalogoServicioClient<T, Null = never, ExtArgs extends
     materiales<T extends Prisma.CatalogoServicio$materialesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CatalogoServicio$materialesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MaterialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     tiposArreglo<T extends Prisma.CatalogoServicio$tiposArregloArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CatalogoServicio$tiposArregloArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TipoArregloPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     zona<T extends Prisma.CatalogoServicio$zonaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CatalogoServicio$zonaArgs<ExtArgs>>): Prisma.Prisma__ZonaClient<runtime.Types.Result.GetResult<Prisma.$ZonaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
+    tipoPrenda<T extends Prisma.CatalogoServicio$tipoPrendaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CatalogoServicio$tipoPrendaArgs<ExtArgs>>): Prisma.Prisma__TipoPrendaClient<runtime.Types.Result.GetResult<Prisma.$TipoPrendaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): runtime.Types.Utils.JsPromise<TResult1 | TResult2>;
     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): runtime.Types.Utils.JsPromise<T | TResult>;
     finally(onfinally?: (() => void) | undefined | null): runtime.Types.Utils.JsPromise<T>;
@@ -1181,7 +1336,7 @@ export interface Prisma__CatalogoServicioClient<T, Null = never, ExtArgs extends
 export interface CatalogoServicioFieldRefs {
     readonly id: Prisma.FieldRef<"CatalogoServicio", 'Int'>;
     readonly nombre: Prisma.FieldRef<"CatalogoServicio", 'String'>;
-    readonly categoria: Prisma.FieldRef<"CatalogoServicio", 'String'>;
+    readonly tipoPrendaId: Prisma.FieldRef<"CatalogoServicio", 'Int'>;
     readonly tipoEspecifico: Prisma.FieldRef<"CatalogoServicio", 'String'>;
     readonly medidaBase: Prisma.FieldRef<"CatalogoServicio", 'Decimal'>;
     readonly tiempoBase: Prisma.FieldRef<"CatalogoServicio", 'Int'>;
@@ -1339,6 +1494,12 @@ export type CatalogoServicio$zonaArgs<ExtArgs extends runtime.Types.Extensions.I
     omit?: Prisma.ZonaOmit<ExtArgs> | null;
     include?: Prisma.ZonaInclude<ExtArgs> | null;
     where?: Prisma.ZonaWhereInput;
+};
+export type CatalogoServicio$tipoPrendaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.TipoPrendaSelect<ExtArgs> | null;
+    omit?: Prisma.TipoPrendaOmit<ExtArgs> | null;
+    include?: Prisma.TipoPrendaInclude<ExtArgs> | null;
+    where?: Prisma.TipoPrendaWhereInput;
 };
 export type CatalogoServicioDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.CatalogoServicioSelect<ExtArgs> | null;

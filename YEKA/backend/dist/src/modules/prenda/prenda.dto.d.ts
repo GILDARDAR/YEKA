@@ -8,6 +8,7 @@ export declare class CreatePrendaDto {
     marca?: string;
     notas?: string;
     tipoUrgenciaId?: number;
+    materialId?: number;
 }
 export declare class UpdatePrendaDto {
     tipoPrendaId?: number;
@@ -17,6 +18,7 @@ export declare class UpdatePrendaDto {
     marca?: string;
     notas?: string;
     tipoUrgenciaId?: number;
+    materialId?: number;
 }
 export declare class AsignarServicioDto {
     servicioId: number;

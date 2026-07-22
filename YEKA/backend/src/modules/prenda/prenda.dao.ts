@@ -19,6 +19,7 @@ export class PrendaDAO {
       },
       include: {
         factura: true,
+        material: true,
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -33,6 +34,7 @@ export class PrendaDAO {
             servicio: true,
           },
         },
+        material: true,
       },
     });
   }
@@ -55,6 +57,7 @@ export class PrendaDAO {
     tipoUrgenciaId?: number;
     porcentajeAtencionAplicado?: Prisma.Decimal | number;
     fechaCompromiso?: Date | string | null;
+    materialId?: number;
   }): Promise<Prenda> {
     return this.prisma.prenda.create({
       data: {
@@ -69,6 +72,7 @@ export class PrendaDAO {
         tipoUrgenciaId: data.tipoUrgenciaId || null,
         porcentajeAtencionAplicado: data.porcentajeAtencionAplicado !== undefined ? new Prisma.Decimal(data.porcentajeAtencionAplicado) : null,
         fechaCompromiso: data.fechaCompromiso || null,
+        materialId: data.materialId || null,
       },
     });
   }

@@ -1,5 +1,5 @@
 import type * as runtime from "@prisma/client/runtime/client";
-import type * as Prisma from "../internal/prismaNamespace.js";
+import type * as Prisma from "../internal/prismaNamespace";
 export type InventarioModel = runtime.Types.Result.DefaultSelection<Prisma.$InventarioPayload>;
 export type AggregateInventario = {
     _count: InventarioCountAggregateOutputType | null;

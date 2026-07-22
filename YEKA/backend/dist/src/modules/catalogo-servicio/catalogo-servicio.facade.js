@@ -16,7 +16,8 @@ function toResponseDto(item) {
     return {
         id: item.id,
         nombre: item.nombre,
-        categoria: item.categoria,
+        tipoPrendaId: item.tipoPrendaId,
+        tipoPrenda: item.tipoPrenda,
         tipoEspecifico: item.tipoEspecifico,
         medidaBase: item.medidaBase?.toNumber() ?? 0,
         tiempoBase: item.tiempoBase,
@@ -24,6 +25,16 @@ function toResponseDto(item) {
         categoriasFactores: item.categoriasFactores?.map((c) => ({
             id: c.id,
             nombre: c.nombre,
+        })) || [],
+        materiales: item.materiales?.map((m) => ({
+            id: m.id,
+            descripcion: m.descripcion,
+            activo: m.activo,
+        })) || [],
+        tiposArreglo: item.tiposArreglo?.map((t) => ({
+            id: t.id,
+            descripcion: t.descripcion,
+            activo: t.activo,
         })) || [],
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
@@ -33,8 +44,8 @@ let CatalogoServicioFacade = class CatalogoServicioFacade {
     constructor(dao) {
         this.dao = dao;
     }
-    async getServicios(categoria) {
-        const list = await this.dao.findAll(categoria);
+    async getServicios(tipoPrendaId) {
+        const list = await this.dao.findAll(tipoPrendaId);
         return list.map(toResponseDto);
     }
     async getServicioById(id) {

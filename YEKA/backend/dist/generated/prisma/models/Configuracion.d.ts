@@ -1,5 +1,5 @@
 import type * as runtime from "@prisma/client/runtime/client";
-import type * as Prisma from "../internal/prismaNamespace.js";
+import type * as Prisma from "../internal/prismaNamespace";
 export type ConfiguracionModel = runtime.Types.Result.DefaultSelection<Prisma.$ConfiguracionPayload>;
 export type AggregateConfiguracion = {
     _count: ConfiguracionCountAggregateOutputType | null;

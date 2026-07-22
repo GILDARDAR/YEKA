@@ -6,7 +6,8 @@ function toResponseDto(item: any): CatalogoServicioResponseDto {
   return {
     id: item.id,
     nombre: item.nombre,
-    categoria: item.categoria,
+    tipoPrendaId: item.tipoPrendaId,
+    tipoPrenda: item.tipoPrenda,
     tipoEspecifico: item.tipoEspecifico,
     medidaBase: item.medidaBase?.toNumber() ?? 0,
     tiempoBase: item.tiempoBase,
@@ -14,6 +15,16 @@ function toResponseDto(item: any): CatalogoServicioResponseDto {
     categoriasFactores: item.categoriasFactores?.map((c: any) => ({
       id: c.id,
       nombre: c.nombre,
+    })) || [],
+    materiales: item.materiales?.map((m: any) => ({
+      id: m.id,
+      descripcion: m.descripcion,
+      activo: m.activo,
+    })) || [],
+    tiposArreglo: item.tiposArreglo?.map((t: any) => ({
+      id: t.id,
+      descripcion: t.descripcion,
+      activo: t.activo,
     })) || [],
     createdAt: item.createdAt,
     updatedAt: item.updatedAt,
@@ -24,8 +35,8 @@ function toResponseDto(item: any): CatalogoServicioResponseDto {
 export class CatalogoServicioFacade {
   constructor(private readonly dao: CatalogoServicioDAO) {}
 
-  async getServicios(categoria?: string): Promise<CatalogoServicioResponseDto[]> {
-    const list = await this.dao.findAll(categoria);
+  async getServicios(tipoPrendaId?: number): Promise<CatalogoServicioResponseDto[]> {
+    const list = await this.dao.findAll(tipoPrendaId);
     return list.map(toResponseDto);
   }
 

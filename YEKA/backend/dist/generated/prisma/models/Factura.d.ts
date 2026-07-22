@@ -1,6 +1,6 @@
 import type * as runtime from "@prisma/client/runtime/client";
-import type * as $Enums from "../enums.js";
-import type * as Prisma from "../internal/prismaNamespace.js";
+import type * as $Enums from "../enums";
+import type * as Prisma from "../internal/prismaNamespace";
 export type FacturaModel = runtime.Types.Result.DefaultSelection<Prisma.$FacturaPayload>;
 export type AggregateFactura = {
     _count: FacturaCountAggregateOutputType | null;

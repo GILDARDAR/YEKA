@@ -11,8 +11,8 @@ export declare class FactorCobroService {
             updatedAt: Date;
             activo: boolean;
             tipo: TipoFactor;
-            categoriaId: number;
             valor: import("@prisma/client-runtime-utils").Decimal;
+            categoriaId: number;
             fechaInicio: Date | null;
             fechaFin: Date | null;
         }[];
@@ -54,8 +54,8 @@ export declare class FactorCobroService {
         updatedAt: Date;
         activo: boolean;
         tipo: TipoFactor;
-        categoriaId: number;
         valor: import("@prisma/client-runtime-utils").Decimal;
+        categoriaId: number;
         fechaInicio: Date | null;
         fechaFin: Date | null;
     }>;
@@ -71,8 +71,8 @@ export declare class FactorCobroService {
         updatedAt: Date;
         activo: boolean;
         tipo: TipoFactor;
-        categoriaId: number;
         valor: import("@prisma/client-runtime-utils").Decimal;
+        categoriaId: number;
         fechaInicio: Date | null;
         fechaFin: Date | null;
     }>;

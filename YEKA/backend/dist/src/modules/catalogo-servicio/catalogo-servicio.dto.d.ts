@@ -1,6 +1,6 @@
 export declare class CreateCatalogoServicioDto {
     nombre?: string;
-    categoria: string;
+    tipoPrendaId?: number;
     tipoEspecifico: string;
     medidaBase: number;
     tiempoBase: number;
@@ -10,7 +10,7 @@ export declare class CreateCatalogoServicioDto {
 }
 export declare class UpdateCatalogoServicioDto {
     nombre?: string;
-    categoria?: string;
+    tipoPrendaId?: number;
     tipoEspecifico?: string;
     medidaBase?: number;
     tiempoBase?: number;
@@ -22,12 +22,15 @@ export declare class UpdateCatalogoServicioDto {
 export declare class CatalogoServicioResponseDto {
     id: number;
     nombre: string;
-    categoria: string;
+    tipoPrendaId?: number;
+    tipoPrenda?: any;
     tipoEspecifico: string;
     medidaBase: number;
     tiempoBase: number;
     activo: boolean;
     categoriasFactores: any[];
+    materiales?: any[];
+    tiposArreglo?: any[];
     createdAt: Date;
     updatedAt: Date;
 }

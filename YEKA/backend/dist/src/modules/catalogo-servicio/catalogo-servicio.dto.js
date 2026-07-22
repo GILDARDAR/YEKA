@@ -20,10 +20,10 @@ __decorate([
     __metadata("design:type", String)
 ], CreateCatalogoServicioDto.prototype, "nombre", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], CreateCatalogoServicioDto.prototype, "categoria", void 0);
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], CreateCatalogoServicioDto.prototype, "tipoPrendaId", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
@@ -66,10 +66,10 @@ __decorate([
     __metadata("design:type", String)
 ], UpdateCatalogoServicioDto.prototype, "nombre", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsInt)(),
     (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], UpdateCatalogoServicioDto.prototype, "categoria", void 0);
+    __metadata("design:type", Number)
+], UpdateCatalogoServicioDto.prototype, "tipoPrendaId", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),

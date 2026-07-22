@@ -53,6 +53,11 @@ __decorate([
     (0, class_validator_1.IsInt)(),
     __metadata("design:type", Number)
 ], CreatePrendaDto.prototype, "tipoUrgenciaId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsInt)(),
+    __metadata("design:type", Number)
+], CreatePrendaDto.prototype, "materialId", void 0);
 class UpdatePrendaDto {
 }
 exports.UpdatePrendaDto = UpdatePrendaDto;
@@ -91,6 +96,11 @@ __decorate([
     (0, class_validator_1.IsInt)(),
     __metadata("design:type", Number)
 ], UpdatePrendaDto.prototype, "tipoUrgenciaId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsInt)(),
+    __metadata("design:type", Number)
+], UpdatePrendaDto.prototype, "materialId", void 0);
 class AsignarServicioDto {
 }
 exports.AsignarServicioDto = AsignarServicioDto;
