@@ -38,6 +38,8 @@ function toResponseDto(prenda) {
         updatedAt: prenda.updatedAt,
         tipoUrgenciaId: prenda.tipoUrgenciaId || null,
         porcentajeAtencionAplicado: prenda.porcentajeAtencionAplicado ? prenda.porcentajeAtencionAplicado.toString() : null,
+        materialId: prenda.materialId || null,
+        material: prenda.material || null,
         factura: prenda.factura,
     };
 }
@@ -119,6 +121,7 @@ let PrendaFacade = PrendaFacade_1 = class PrendaFacade {
             tipoUrgenciaId: dto.tipoUrgenciaId,
             porcentajeAtencionAplicado,
             fechaCompromiso: defaultFecha,
+            materialId: dto.materialId,
         });
         const qrCode = `PR-${codigoSede}-${year}-${String(created.id).padStart(5, '0')}`;
         const updated = await this.prendaDAO.update(created.id, {

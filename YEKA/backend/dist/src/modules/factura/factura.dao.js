@@ -40,6 +40,8 @@ let FacturaDAO = class FacturaDAO {
                         servicios: {
                             include: {
                                 servicio: true,
+                                tipoArreglo: true,
+                                zona: true,
                             },
                         },
                     },

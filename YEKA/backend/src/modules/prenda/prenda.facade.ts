@@ -44,6 +44,8 @@ function toResponseDto(prenda: Prenda): PrendaResponseDto {
     updatedAt: prenda.updatedAt,
     tipoUrgenciaId: (prenda as any).tipoUrgenciaId || null,
     porcentajeAtencionAplicado: (prenda as any).porcentajeAtencionAplicado ? (prenda as any).porcentajeAtencionAplicado.toString() : null,
+    materialId: (prenda as any).materialId || null,
+    material: (prenda as any).material || null,
     factura: (prenda as any).factura,
   };
 }
@@ -137,6 +139,7 @@ export class PrendaFacade {
       tipoUrgenciaId: dto.tipoUrgenciaId,
       porcentajeAtencionAplicado,
       fechaCompromiso: defaultFecha,
+      materialId: dto.materialId,
     });
 
     const qrCode = `PR-${codigoSede}-${year}-${String(created.id).padStart(5, '0')}`;

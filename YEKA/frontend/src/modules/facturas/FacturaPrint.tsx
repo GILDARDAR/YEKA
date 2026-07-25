@@ -4,16 +4,20 @@ interface FacturaPrintProps {
   factura: Factura;
   tiposPrenda: TipoPrenda[];
   configuracion?: any;
+  tiposArreglo?: any[];
+  zonas?: any[];
 }
 
 interface EtiquetasPrintProps {
   factura: Factura;
   tiposPrenda: TipoPrenda[];
   configuracion?: any;
+  tiposArreglo?: any[];
+  zonas?: any[];
 }
 
 /** Opens the browser print dialog with a styled invoice for a 58mm thermal printer */
-export function imprimirFactura({ factura, tiposPrenda, configuracion }: FacturaPrintProps) {
+export function imprimirFactura({ factura, tiposPrenda, configuracion, tiposArreglo = [], zonas = [] }: FacturaPrintProps) {
   let conf = configuracion;
   if (!conf || !conf.EMPRESA_NOMBRE) {
     try {
@@ -36,33 +40,51 @@ export function imprimirFactura({ factura, tiposPrenda, configuracion }: Factura
   const prendasHtml = (factura.prendas || []).map((prenda, idx) => {
     const tipoPrenda = getTipoPrendaNombre(prenda.tipoPrendaId);
     let urgencia = prenda.tipoUrgencia?.nombre || '';
-    if (urgencia && (urgencia.includes('24') || urgencia.includes('48'))) {
-      // keep it, or format it
+
+    const infoArr = [];
+    if (prenda.color) infoArr.push(`Color: <strong>${prenda.color}</strong>`);
+    if (prenda.marca) infoArr.push(`Marca: <strong>${prenda.marca}</strong>`);
+    if (prenda.talla) infoArr.push(`Talla: <strong>${prenda.talla}</strong>`);
+    const infoAdicional = infoArr.length > 0 ? `<div class="info-adicional">${infoArr.join(' &nbsp; ')}</div>` : '';
+
+    const codigoId = prenda.codigoQR ? `<div class="codigo">ID: ${prenda.codigoQR}</div>` : '';
+    const fechaCompromiso = prenda.fechaCompromiso ? `<div class="fecha">F. Compromiso: ${new Date(prenda.fechaCompromiso).toLocaleDateString()}</div>` : '';
+
+    const valTotal = (prenda.servicios || []).reduce((acc, s) => acc + Number(s.precioFinal), 0);
+
+    let serviciosHtml = '';
+    if (prenda.servicios && prenda.servicios.length > 0) {
+      serviciosHtml = prenda.servicios.map(s => {
+        const nombre = s.servicio?.tipoEspecifico || s.servicio?.nombre || '';
+        // Use nested object if available (from backend include), fallback to array lookup
+        const arreglo = (s as any).tipoArreglo?.descripcion || tiposArreglo?.find((ta: any) => ta.id == s.tipoArregloId)?.descripcion || '';
+        const zona = (s as any).zona?.descripcion || zonas?.find((z: any) => z.id == s.zonaId)?.descripcion || '';
+        const longitud = s.medidaEntregada ? `Longitud: ${s.medidaEntregada}` : '';
+        const obs = s.observaciones ? `Obs: ${s.observaciones}` : '';
+        const details = [nombre, arreglo, zona, longitud, obs].filter(Boolean).join(' - ');
+        return `<li class="servicio-detail">${details}</li>`;
+      }).join('');
+      serviciosHtml = `<ul style="margin:0; padding-left:15px;">${serviciosHtml}</ul>`;
+    } else {
+      serviciosHtml = `<div class="servicio-detail">Sin servicios</div>`;
     }
 
-    const totalPrenda = (prenda.servicios || []).reduce((acc, s) => acc + Number(s.precioFinal), 0);
-    
-    const infoArr = [];
-    if (prenda.color) infoArr.push(prenda.color);
-    if (prenda.marca) infoArr.push(prenda.marca);
-    const infoAdicional = infoArr.length > 0 ? ` (${infoArr.join(', ')})` : '';
-
-    const observaciones: string[] = [];
-    if (prenda.notas) observaciones.push(`Prenda: ${prenda.notas}`);
-    prenda.servicios?.forEach(s => {
-      if (s.observaciones) observaciones.push(`${s.servicio?.tipoEspecifico || 'Servicio'}: ${s.observaciones}`);
-    });
+    const obsPrenda = prenda.notas ? `<div class="obs"><strong>Observaciones:</strong> ${prenda.notas}</div>` : '';
 
     return `
       <div class="item-block">
-        <div class="item-title">
-          ${idx + 1}. ${tipoPrenda.toUpperCase()}${infoAdicional}
-          ${urgencia ? `<div class="urgencia">${urgencia.toUpperCase()}</div>` : ''}
+        <div class="item-title">${idx + 1}. ${tipoPrenda.toUpperCase()}</div>
+        ${infoAdicional}
+        ${codigoId}
+        ${fechaCompromiso}
+        <div class="servicios-box">
+          ${serviciosHtml}
         </div>
-        ${observaciones.length > 0 ? `<div class="item-obs">${observaciones.join('<br/>')}</div>` : ''}
         <div class="item-price">
-          €${fmt(totalPrenda)}
+          €${fmt(valTotal)}
         </div>
+        ${urgencia ? `<div class="urgencia">Atención: ${urgencia}</div>` : ''}
+        ${obsPrenda}
       </div>
     `;
   }).join('');
@@ -106,6 +128,13 @@ export function imprimirFactura({ factura, tiposPrenda, configuracion }: Factura
     .urgencia { font-weight: bold; font-size: 14px; }
     .item-obs { font-size: 12px; margin-bottom: 3px; font-style: italic; }
     .item-price { text-align: right; font-weight: bold; font-size: 18px; margin-top: 4px; }
+    .info-adicional { font-size: 11px; margin-bottom: 3px; }
+    .servicios-header { font-size: 11px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; margin-top: 6px; }
+    .codigo { font-size: 11px; font-family: monospace; margin-bottom: 2px; }
+    .fecha { font-size: 12px; margin-bottom: 5px; }
+    .servicios-box { margin-bottom: 5px; margin-top: 5px; border-top: 1px solid #ddd; padding-top: 3px; }
+    .servicio-detail { font-size: 11px; margin-bottom: 2px; }
+    .obs { font-size: 11px; margin-bottom: 3px; font-style: italic; margin-top: 5px; }
     .subtotal-row { display: flex; justify-content: space-between; font-size: 14px; margin-top: 10px; border-top: 1px dashed #000; padding-top: 5px; }
     .iva-row { display: flex; justify-content: space-between; font-size: 14px; margin-top: 2px; }
     .total-row { display: flex; justify-content: space-between; font-weight: bold; font-size: 18px; margin-top: 5px; padding-top: 5px; border-top: 1px dashed #000; }
@@ -161,7 +190,7 @@ export function imprimirFactura({ factura, tiposPrenda, configuracion }: Factura
 }
 
 /** Opens a print window with 58mm labels per prenda/servicio */
-export function imprimirEtiquetas({ factura, tiposPrenda, configuracion }: EtiquetasPrintProps) {
+export function imprimirEtiquetas({ factura, tiposPrenda, configuracion, tiposArreglo = [], zonas = [] }: EtiquetasPrintProps) {
   let conf = configuracion;
   if (!conf || !conf.EMPRESA_NOMBRE) {
     try {
@@ -173,48 +202,74 @@ export function imprimirEtiquetas({ factura, tiposPrenda, configuracion }: Etiqu
   const getTipoPrendaNombre = (id: number) =>
     tiposPrenda.find(t => t.id === id)?.nombre || `Tipo #${id}`;
 
-  const clienteNombre = factura.cliente?.nombre || 'Consumidor Final';
   const totalPrendas = factura.prendas?.length || 0;
 
   const htmlContent = (factura.prendas || []).map((prenda, idx) => {
     const tipoPrenda = getTipoPrendaNombre(prenda.tipoPrendaId);
     
+    // Fila Superior (Color, Marca, Talla)
     const infoArr = [];
-    if (prenda.color) infoArr.push(prenda.color);
-    if (prenda.marca) infoArr.push(prenda.marca);
-    const infoAdicional = infoArr.length > 0 ? ` (${infoArr.join(', ')})` : '';
+    if (prenda.color) infoArr.push(`Color: <strong>${prenda.color}</strong>`);
+    if (prenda.marca) infoArr.push(`Marca: <strong>${prenda.marca}</strong>`);
+    if (prenda.talla) infoArr.push(`Talla: <strong>${prenda.talla}</strong>`);
+    const infoAdicional = infoArr.length > 0 ? `<div class="info-adicional">${infoArr.join(' &nbsp; ')}</div>` : '';
 
-    const renderEtiqueta = (servicioObj: any, observaciones?: string) => {
-      let servicioHtml = '';
-      if (servicioObj) {
-        const nombre = servicioObj.servicio?.tipoEspecifico || servicioObj.servicio?.nombre || 'Servicio';
-        const medida = servicioObj.medidaEntregada ? ` | Medida: ${servicioObj.medidaEntregada}cm` : '';
-        const precio = servicioObj.precioFinal ? ` | €${Number(servicioObj.precioFinal).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '';
-        const obsText = observaciones ? ` ${observaciones}` : '';
-        servicioHtml = `<div class="servicio-detail"><strong>${nombre.toUpperCase()}:</strong>${obsText}${medida}${precio}</div>`;
-      } else {
-        servicioHtml = `<div class="servicio-detail"><strong>SIN SERVICIO:</strong> ${observaciones || ''}</div>`;
-      }
+    const codigoId = prenda.codigoQR ? `<div class="codigo">ID: ${prenda.codigoQR}</div>` : '';
+    
+    const fechaCompromiso = prenda.fechaCompromiso 
+      ? `<div class="fecha">F. Compromiso: ${new Date(prenda.fechaCompromiso).toLocaleDateString()}</div>` 
+      : '';
+      
+    const fechaRecepcion = factura.createdAt 
+      ? `<div class="fecha-recepcion">F. Recepcin: ${new Date(factura.createdAt).toLocaleDateString()}</div>` 
+      : '';
 
-      return `
-        <div class="etiqueta">
-          <div class="factura-num">Factura #${factura.numero}</div>
-          <div class="prenda-num">Prenda ${idx + 1}/${totalPrendas}</div>
-          <div class="cliente">${clienteNombre}</div>
-          <div class="tipo">${tipoPrenda.toUpperCase()}${infoAdicional}</div>
-          ${servicioHtml}
-        </div>
-        <div class="page-break"></div>
-      `;
-    };
+    let urgenciaHtml = '';
+    if (prenda.tipoUrgencia && prenda.tipoUrgencia.nombre) {
+      urgenciaHtml = `<div style="font-size: 11px; margin-top: 3px;">Atencin: <strong>${prenda.tipoUrgencia.nombre}</strong></div>`;
+    }
+
+    let serviciosHtml = '';
+    const valTotal = (prenda.servicios || []).reduce((acc, s) => acc + Number(s.precioFinal), 0);
 
     if (prenda.servicios && prenda.servicios.length > 0) {
-      return prenda.servicios.map(s => {
-        return renderEtiqueta(s, s.observaciones || prenda.notas || '');
+      serviciosHtml = prenda.servicios.map(s => {
+        const nombre = s.servicio?.tipoEspecifico || s.servicio?.nombre || '';
+        // Use nested object if available (from backend include), fallback to array lookup
+        const arreglo = (s as any).tipoArreglo?.descripcion || tiposArreglo?.find((ta: any) => ta.id == s.tipoArregloId)?.descripcion || '';
+        const zona = (s as any).zona?.descripcion || zonas?.find((z: any) => z.id == s.zonaId)?.descripcion || '';
+        const longitud = s.medidaEntregada ? `Longitud: ${s.medidaEntregada}` : '';
+        const obs = s.observaciones ? `Obs: ${s.observaciones}` : '';
+        
+        const details = [nombre, arreglo, zona, longitud, obs].filter(Boolean).join(' - ');
+        return `<li class="servicio-detail">${details}</li>`;
       }).join('');
+      serviciosHtml = `<div class="servicios-header">Servicios Asignados (${prenda.servicios.length})</div><ul style="margin:0; padding-left:15px;">${serviciosHtml}</ul>`;
     } else {
-      return renderEtiqueta(null, prenda.notas || '');
+      serviciosHtml = `<div class="servicio-detail">Sin servicios</div>`;
     }
+
+    const obsPrenda = prenda.notas ? `<div class="obs"><strong>Observaciones:</strong> ${prenda.notas}</div>` : '';
+
+    return `
+      <div class="etiqueta">
+        <div class="factura-num">Factura #${factura.numero} <span style="float:right;">Prenda ${idx + 1}/${totalPrendas}</span></div>
+        <div class="tipo">${tipoPrenda.toUpperCase()}</div>
+        ${infoAdicional}
+        ${codigoId}
+        ${fechaCompromiso}
+        
+        <div class="servicios-box">
+          ${serviciosHtml}
+        </div>
+        
+        <div class="precio-total">TOTAL: ${valTotal.toFixed(2)}</div>
+        ${urgenciaHtml}
+        ${obsPrenda}
+        ${fechaRecepcion}
+      </div>
+      <div class="page-break"></div>
+    `;
   }).join('');
 
   const html = `<!DOCTYPE html>
@@ -230,21 +285,30 @@ export function imprimirEtiquetas({ factura, tiposPrenda, configuracion }: Etiqu
       padding: 0;
       background: #fff;
       color: #000;
-      width: 58mm; /* Ancho impresora térmica */
+      width: 58mm;
       box-sizing: border-box;
     }
     .etiqueta {
-      padding: 8px 4px;
+      /* Espacio superior para fijar/engrapar la etiqueta */
+      padding-top: 2cm;
+      padding-left: 4px;
+      padding-right: 4px;
+      padding-bottom: 8px;
       text-align: left;
       line-height: 1.2;
-      border-bottom: 1px dashed #000; /* Para saber donde cortar si no hay page-break */
+      border-bottom: 1px dashed #000;
     }
-    .factura-num { font-weight: bold; font-size: 15px; margin-bottom: 2px; }
-    .prenda-num { font-weight: bold; font-size: 13px; margin-bottom: 3px; }
-    .cliente { font-size: 14px; margin-bottom: 3px; font-weight: bold; text-decoration: underline; }
-    .tipo { font-size: 14px; font-weight: bold; margin-bottom: 3px; }
-    .servicio-detail { font-size: 13px; margin-bottom: 3px; margin-top: 3px; border-top: 1px solid #000; padding-top: 3px; }
-    .obs { font-size: 12px; margin-bottom: 3px; font-style: italic; border: 1px solid #000; padding: 2px; margin-top: 3px; }
+    .info-adicional { font-size: 11px; margin-bottom: 3px; }
+    .servicios-header { font-size: 11px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; }
+    .factura-num { font-weight: bold; font-size: 14px; margin-bottom: 5px; border-bottom: 1px solid #000; padding-bottom: 3px; }
+    .tipo { font-size: 13px; font-weight: bold; margin-bottom: 3px; }
+    .codigo { font-size: 11px; font-family: monospace; margin-bottom: 2px; }
+    .fecha { font-size: 12px; margin-bottom: 5px; }
+    .fecha-recepcion { font-size: 12px; margin-top: 5px; text-align: center; font-style: italic; border-top: 1px dashed #000; padding-top: 3px; }
+    .servicios-box { margin-bottom: 5px; margin-top: 5px; border-top: 1px solid #000; padding-top: 3px; }
+    .servicio-detail { font-size: 11px; margin-bottom: 2px; }
+    .precio-total { font-size: 14px; font-weight: bold; text-align: right; margin-top: 5px; border-top: 1px dashed #000; padding-top: 3px; }
+    .obs { font-size: 11px; margin-bottom: 3px; font-style: italic; margin-top: 5px; }
     .page-break { page-break-after: always; }
   </style>
 </head>

@@ -7,7 +7,7 @@ import { catalogoService } from '../catalogo/catalogo.service';
 import { imprimirFactura, imprimirEtiquetas } from './FacturaPrint';
 import type { Factura, Prenda, TipoPrenda, CatalogoServicio, PrendaServicio, EstadoPrenda } from '../../shared/types';
 import api from '../../shared/api';
-import { ChevronLeft, FileText, Plus, Check, Trash2, Tag, Calendar, Euro, Edit2, CreditCard, Printer } from 'lucide-react';
+import { ChevronLeft, FileText, Plus, Check, Trash2, Tag, Calendar, Euro, Edit2, CreditCard, Printer, ChevronUp, ChevronDown } from 'lucide-react';
 
 const toTitleCase = (str: string) => {
   if (!str) return '';
@@ -39,6 +39,8 @@ export function FacturaDetail() {
   const [catalogoServicios, setCatalogoServicios] = useState<CatalogoServicio[]>([]);
   const [tiposUrgencia, setTiposUrgencia] = useState<any[]>([]);
   const [configuracion, setConfiguracion] = useState<any>({});
+  const [tiposArreglo, setTiposArreglo] = useState<any[]>([]);
+  const [zonas, setZonas] = useState<any[]>([]);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -64,6 +66,7 @@ export function FacturaDetail() {
   
   // Edit mode
   const [isEditingPrenda, setIsEditingPrenda] = useState(false);
+  const [isFormExpanded, setIsFormExpanded] = useState(true);
 
   // Expand Prenda Card
   const [expandedPrendaId, setExpandedPrendaId] = useState<number | null>(null);
@@ -95,6 +98,8 @@ export function FacturaDetail() {
     catalogoService.getAll().then(res => setCatalogoServicios(res.filter(s => s.activo)));
     api.get('/tipo-urgencia').then(res => setTiposUrgencia(res.data)).catch(console.error);
     api.get('/configuracion').then(res => setConfiguracion(res.data)).catch(console.error);
+    api.get('/tipo-arreglo').then(res => setTiposArreglo(res.data)).catch(console.error);
+    api.get('/zona').then(res => setZonas(res.data)).catch(console.error);
   }, [id]);
 
   const handleOpenModal = (prendaToEdit?: Prenda) => {
@@ -128,6 +133,7 @@ export function FacturaDetail() {
     setMedidaEntregada('');
     setObservacionesServicio('');
     setBusquedaServicio('');
+    setIsFormExpanded(true);
     setIsModalOpen(true);
   };
 
@@ -160,6 +166,7 @@ export function FacturaDetail() {
         const fullPrenda = await prendasService.getById(created.id);
         setActivePrenda(fullPrenda);
       }
+      setIsFormExpanded(false);
     } catch (err: any) {
       alert(err.response?.data?.message || 'Error al guardar prenda');
     }
@@ -362,14 +369,14 @@ export function FacturaDetail() {
             <button
               className="btn btn-ghost"
               style={{ border: '1px solid var(--color-border)' }}
-              onClick={() => imprimirFactura({ factura, tiposPrenda, configuracion })}
+              onClick={() => imprimirFactura({ factura, tiposPrenda, configuracion, tiposArreglo, zonas })}
             >
               <Printer size={16} /> Imprimir
             </button>
             <button
               className="btn btn-ghost"
               style={{ border: '1px solid var(--color-border)' }}
-              onClick={() => imprimirEtiquetas({ factura, tiposPrenda, configuracion })}
+              onClick={() => imprimirEtiquetas({ factura, tiposPrenda, configuracion, tiposArreglo, zonas })}
               title="Imprimir etiquetas para colgar en cada prenda"
             >
               <Tag size={16} /> Etiquetas
@@ -557,11 +564,27 @@ export function FacturaDetail() {
           backgroundColor: 'rgba(0,0,0,0.7)', padding: 'var(--space-4)'
         }}>
           <div className="card" style={{ width: '100%', maxWidth: '800px', padding: 'var(--space-6)', maxHeight: '90vh', overflowY: 'auto' }}>
-            <h2 style={{ fontSize: 'var(--text-xl)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-4)' }}>
-              Agregar Prenda
-            </h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
+              <h2 style={{ fontSize: 'var(--text-xl)', fontFamily: 'var(--font-heading)', margin: 0 }}>
+                {isEditingPrenda && activePrenda ? 'Editar Prenda' : 'Agregar Prenda'}
+              </h2>
+              {activePrenda && (
+                <button
+                  type="button"
+                  onClick={() => setIsFormExpanded(!isFormExpanded)}
+                  style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)', fontWeight: 'var(--font-medium)' }}
+                >
+                  {isFormExpanded ? (
+                    <>Ocultar Info <ChevronUp size={18} /></>
+                  ) : (
+                    <>Ver Info <ChevronDown size={18} /></>
+                  )}
+                </button>
+              )}
+            </div>
             
             {/* Prenda Form */}
+            {isFormExpanded && (
             <form onSubmit={handleSavePrenda} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
                 <div className="form-group">
@@ -641,6 +664,7 @@ export function FacturaDetail() {
                 </div>
               )}
             </form>
+            )}
 
             {activePrenda && activePrenda.fechaCompromiso && (
               <div style={{
@@ -700,7 +724,7 @@ export function FacturaDetail() {
                               <Check size={16} style={{ color: 'var(--color-success)' }} />
                               <div>
                                 <p style={{ fontWeight: 'var(--font-medium)', fontSize: 'var(--text-sm)' }}>
-                                  {srv?.categoria} — {srv?.tipoEspecifico ?? 'Servicio'}
+                                  {(srv?.tipoPrenda?.nombre || 'Sin Tipo de Prenda')} — {srv?.tipoEspecifico ?? 'Servicio'}
                                 </p>
                                 {s.medidaEntregada && (
                                   <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>
@@ -777,9 +801,9 @@ export function FacturaDetail() {
                   const sinAsignar = disponibles.filter(s => {
                     if (yaAsignados.has(s.id)) return false;
                     if (!term) return true;
-                    return normalizeText(s.categoria).includes(term) || normalizeText(s.tipoEspecifico).includes(term);
+                    return normalizeText((s.tipoPrenda?.nombre || 'Sin Tipo de Prenda')).includes(term) || normalizeText(s.tipoEspecifico).includes(term);
                   });
-                  const categorias = [...new Set(sinAsignar.map(s => s.categoria))].sort();
+                  const categorias = [...new Set(sinAsignar.map(s => (s.tipoPrenda?.nombre || 'Sin Tipo de Prenda')))].sort();
 
                   if (disponibles.length === 0) {
                     return (
@@ -819,7 +843,7 @@ export function FacturaDetail() {
                               {cat}
                             </p>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-                              {sinAsignar.filter(s => s.categoria === cat).map(srv => {
+                              {sinAsignar.filter(s => (s.tipoPrenda?.nombre || 'Sin Tipo de Prenda') === cat).map(srv => {
                                 const isSelected = servicioSeleccionado === String(srv.id);
                                 return (
                                   <div key={srv.id} style={{

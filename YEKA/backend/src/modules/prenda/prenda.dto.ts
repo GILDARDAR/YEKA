@@ -156,6 +156,8 @@ export class PrendaResponseDto {
   tipoUrgencia?: any;
   porcentajeAtencionAplicado?: string | null;
   factura?: any;
+  materialId?: number | null;
+  material?: any;
 }
 
 // ─── PRENDA SERVICIO RESPONSE ─────────────────────────────────

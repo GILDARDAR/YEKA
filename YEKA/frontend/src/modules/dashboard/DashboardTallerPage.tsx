@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../shared/auth.context';
 import { facturasService } from '../facturas/facturas.service';
 import { clientesService } from '../clientes/clientes.service';
@@ -13,6 +13,7 @@ import { imprimirFactura, imprimirEtiquetas } from '../facturas/FacturaPrint';
 
 import { ClienteModal } from '../clientes/ClienteModal';
 import { PrendaModal } from '../prendas/PrendaModal';
+import { TipoPrendaSelectorModal } from '../prendas/TipoPrendaSelectorModal';
 
 
 
@@ -33,12 +34,14 @@ export function DashboardTallerPage() {
 
   // Search KPIs
   const [searchPrenda, setSearchPrenda] = useState('');
+  const [showSearchPrendaModal, setShowSearchPrendaModal] = useState(false);
+  const [searchPrendaToEdit] = useState<Prenda | null>(null);
   const [searchNroFactura, setSearchNroFactura] = useState('');
   const [isNroFacturaDropdownOpen, setIsNroFacturaDropdownOpen] = useState(false);
   const [isPrendaDropdownOpen, setIsPrendaDropdownOpen] = useState(false);
   const nroFacturaDropdownRef = useRef<HTMLDivElement>(null);
   const prendaDropdownRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
+  // remove navigate
   const [facturasList, setFacturasList] = useState<Factura[]>([]);
   const [prendasList, setPrendasList] = useState<Prenda[]>([]);
   
@@ -82,10 +85,9 @@ export function DashboardTallerPage() {
 
   const [isClienteModalOpen, setIsClienteModalOpen] = useState(false);
   const [isPrendaModalOpen, setIsPrendaModalOpen] = useState(false);
+  const [isTipoSelectorOpen, setIsTipoSelectorOpen] = useState(false);
+  const [selectedTipoId, setSelectedTipoId] = useState<number | undefined>(undefined);
   const [prendaToEdit, setPrendaToEdit] = useState<Prenda | null>(null);
-
-  const [showSearchPrendaModal, setShowSearchPrendaModal] = useState(false);
-  const [searchPrendaToEdit, setSearchPrendaToEdit] = useState<Prenda | null>(null);
 
   // Abonos State
   const [isAbonoModalOpen, setIsAbonoModalOpen] = useState(false);
@@ -103,6 +105,8 @@ export function DashboardTallerPage() {
   const [printPrendas, setPrintPrendas] = useState(true);
   const [facturaParaImprimir, setFacturaParaImprimir] = useState<Factura | null>(null);
 
+  const [tiposArreglo, setTiposArreglo] = useState<any[]>([]);
+  const [zonas, setZonas] = useState<any[]>([]);
   const [tiposPrenda, setTiposPrenda] = useState<TipoPrenda[]>([]);
   const [catalogoServicios, setCatalogoServicios] = useState<CatalogoServicio[]>([]);
   const [tiposUrgencia, setTiposUrgencia] = useState<any[]>([]);
@@ -113,14 +117,16 @@ export function DashboardTallerPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [facturasData, prendasData, clientesData, catalogData, urgenciasData, tiposPrendaData, configData] = await Promise.all([
+        const [facturasData, prendasData, clientesData, catalogData, urgenciasData, tiposPrendaData, configData, arregloData, zonaData] = await Promise.all([
           facturasService.getAll(),
           prendasService.getAll(),
           clientesService.getAll(),
           catalogoService.getAll(),
           api.get('/tipo-urgencia').then(res => res.data).catch(() => []),
           tipoPrendaService.getTiposPrenda(),
-          api.get('/configuracion').then(res => res.data).catch(() => ({}))
+          api.get('/configuracion').then(res => res.data).catch(() => ({})),
+          api.get('/tipo-arreglo').then(res => res.data).catch(() => []),
+          api.get('/zona').then(res => res.data).catch(() => [])
         ]);
 
         setFacturasList(facturasData);
@@ -130,6 +136,8 @@ export function DashboardTallerPage() {
         setTiposUrgencia(urgenciasData);
         setTiposPrenda(tiposPrendaData.filter(t => t.activo));
         setConfiguracion(configData);
+        if (arregloData) setTiposArreglo(arregloData);
+        if (zonaData) setZonas(zonaData);
 
         // Compute Stats based on user's sede (Taller) or all if admin
         const filterSedeId = user?.rol !== 'ADMIN' ? user?.sedeId : null;
@@ -299,6 +307,13 @@ export function DashboardTallerPage() {
   const handleOpenAddPrenda = async () => {
     await ensureDraftFactura();
     setPrendaToEdit(null);
+    setSelectedTipoId(undefined);
+    setIsTipoSelectorOpen(true);
+  };
+
+  const handleTipoSelected = (tipoId: number) => {
+    setSelectedTipoId(tipoId);
+    setIsTipoSelectorOpen(false);
     setIsPrendaModalOpen(true);
   };
 
@@ -385,6 +400,11 @@ export function DashboardTallerPage() {
       alert('Debes agregar al menos una prenda para finalizar la factura.');
       return;
     }
+    
+    if (draftFactura.prendas.some(p => !p.servicios || p.servicios.length === 0)) {
+      alert('Todas las prendas deben tener al menos un servicio asignado.');
+      return;
+    }
 
     setSavingInvoice(true);
     try {
@@ -416,10 +436,10 @@ export function DashboardTallerPage() {
     if (!facturaParaImprimir) return;
     setShowPrintModal(false);
     if (printRecibo) {
-      imprimirFactura({ factura: facturaParaImprimir, tiposPrenda, configuracion });
+      imprimirFactura({ factura: facturaParaImprimir, tiposPrenda, configuracion, tiposArreglo, zonas });
     }
     if (printPrendas) {
-      imprimirEtiquetas({ factura: facturaParaImprimir, tiposPrenda, configuracion });
+      imprimirEtiquetas({ factura: facturaParaImprimir, tiposPrenda, configuracion, tiposArreglo, zonas });
     }
     setFacturaParaImprimir(null);
   };
@@ -434,13 +454,126 @@ export function DashboardTallerPage() {
 
   return (
     <div>
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', position: 'relative', zIndex: 50 }}>
         <div>
           <h1 className="page-title">Dashboard de Taller</h1>
           <p className="page-subtitle">
             {user?.nombre} · {new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </div>
+          {/* Buscar Facturas */}
+          <div className="card" style={{ width: 'auto', padding: '12px 16px', margin: 0, overflow: 'visible', zIndex: 50 }}>
+            <h3 className="card-title" style={{ fontSize: 'var(--text-sm)', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', marginBottom: '8px' }}>
+              Búsqueda de Facturas
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'row', gap: '12px' }}>
+              <div className="form-group" style={{ position: 'relative', margin: 0, flex: 1 }} ref={nroFacturaDropdownRef}>
+                <div style={{ position: 'absolute', top: '8px', left: '8px', color: 'var(--color-text-light)' }}><FileText size={16} /></div>
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  style={{ paddingLeft: '32px', fontSize: '13px', padding: '6px 8px 6px 32px' }} 
+                  placeholder="Nro Factura" 
+                  value={searchNroFactura} 
+                  onChange={e => {
+                    setSearchNroFactura(e.target.value);
+                    setIsNroFacturaDropdownOpen(true);
+                  }}
+                  onFocus={() => setIsNroFacturaDropdownOpen(true)}
+                />
+                
+                {isNroFacturaDropdownOpen && searchNroFactura.length > 0 && (
+                  <div style={{
+                    position: 'absolute', top: '100%', left: 0, right: 0,
+                    background: 'rgba(15, 23, 42, 0.85)',
+                    backdropFilter: 'blur(8px)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 'var(--radius-md)', zIndex: 20,
+                    boxShadow: '0 10px 15px -3px rgba(0,0,0,0.5)',
+                    marginTop: '4px', maxHeight: '200px', overflowY: 'auto'
+                  }}>
+                    {filteredFacturasByNro.length > 0 ? (
+                      filteredFacturasByNro.map(f => (
+                        <div 
+                          key={f.id} 
+                          style={{ padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.1)' }}
+                          onClick={() => {
+                            setIsNroFacturaDropdownOpen(false);
+                            loadFacturaIntoDraft(f.id);
+                          }}
+                          className="hover-bg"
+                          onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                        >
+                          <div style={{ fontWeight: 'var(--font-medium)', color: '#f8fafc' }}>#{f.numero}</div>
+                          <div style={{ fontSize: 'var(--text-xs)', color: '#94a3b8' }}>{f.cliente?.nombre || 'Consumidor Final'}</div>
+                        </div>
+                      ))
+                    ) : (
+                      <div style={{ padding: '8px 12px', fontSize: 'var(--text-sm)', color: '#94a3b8' }}>
+                        No encontrada
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="form-group" style={{ position: 'relative', margin: 0, flex: 1 }} ref={prendaDropdownRef}>
+                <div style={{ position: 'absolute', top: '8px', left: '8px', color: 'var(--color-text-light)' }}><Tag size={16} /></div>
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  style={{ paddingLeft: '32px', fontSize: '13px', padding: '6px 8px 6px 32px' }} 
+                  placeholder="Prenda (ID o Código QR)" 
+                  value={searchPrenda} 
+                  onChange={e => {
+                    setSearchPrenda(e.target.value);
+                    setIsPrendaDropdownOpen(true);
+                  }} 
+                  onFocus={() => setIsPrendaDropdownOpen(true)}
+                />
+
+                {isPrendaDropdownOpen && searchPrenda.length > 0 && (
+                  <div style={{
+                    position: 'absolute', top: '100%', left: 0, right: 0,
+                    background: 'rgba(15, 23, 42, 0.85)',
+                    backdropFilter: 'blur(8px)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 'var(--radius-md)', zIndex: 20,
+                    boxShadow: '0 10px 15px -3px rgba(0,0,0,0.5)',
+                    marginTop: '4px', maxHeight: '200px', overflowY: 'auto'
+                  }}>
+                    {filteredPrendasBySearch.length > 0 ? (
+                      filteredPrendasBySearch.map(p => (
+                        <div 
+                          key={p.id} 
+                          style={{ padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.1)' }}
+                          onClick={() => {
+                            setIsPrendaDropdownOpen(false);
+                            if (p.facturaId) {
+                              loadFacturaIntoDraft(p.facturaId);
+                            }
+                          }}
+                          className="hover-bg"
+                          onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                        >
+                          <div style={{ fontWeight: 'var(--font-medium)', color: '#f8fafc' }}>
+                            {p.codigoQR ? `QR: ${p.codigoQR}` : `ID: ${p.id}`}
+                          </div>
+                          <div style={{ fontSize: 'var(--text-xs)', color: '#94a3b8' }}>Factura #{p.facturaId}</div>
+                        </div>
+                      ))
+                    ) : (
+                      <div style={{ padding: '8px 12px', fontSize: 'var(--text-sm)', color: '#94a3b8' }}>
+                        No encontrada
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '6fr 4fr', gap: 'var(--space-6)', alignItems: 'start' }}>
@@ -531,89 +664,114 @@ export function DashboardTallerPage() {
                 Prendas
               </h3>
               
-              <div className="table-wrapper" style={{ maxHeight: '400px', overflowY: 'auto', marginBottom: 'var(--space-4)' }}>
-                <table className="table">
-                  <thead style={{ position: 'sticky', top: 0, background: 'var(--bg-card)', zIndex: 1 }}>
-                    <tr>
-                      <th>Tipo Prenda</th>
-                      <th>Servicios</th>
-                      <th>Atención</th>
-                      <th style={{ textAlign: 'right' }}>Valor</th>
-                      <th style={{ textAlign: 'center' }}>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(!draftFactura?.prendas || draftFactura.prendas.length === 0) ? (
-                      <tr>
-                        <td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: 'var(--color-text-muted)' }}>
-                          No hay prendas agregadas a esta factura.
-                        </td>
-                      </tr>
-                    ) : (
-                      draftFactura.prendas.map(p => {
-                        const tipo = tiposPrenda.find(t => t.id === p.tipoPrendaId)?.nombre || 'Desconocido';
-                        const val = p.servicios?.reduce((acc, s) => acc + Number(s.precioFinal), 0) || 0;
-                        const srvResumen = p.servicios?.map(s => {
-                          const c = catalogoServicios.find(cs => cs.id === s.servicioId);
-                          return c ? c.tipoEspecifico : 'Servicio';
-                        }).join(', ') || 'Sin servicios';
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '500px', overflowY: 'auto', marginBottom: 'var(--space-4)', paddingRight: '8px' }}>
+                {(!draftFactura?.prendas || draftFactura.prendas.length === 0) ? (
+                  <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--color-text-muted)' }}>
+                    No hay prendas agregadas a esta factura.
+                  </div>
+                ) : (
+                  draftFactura.prendas.map(p => {
+                    const tipo = tiposPrenda.find(t => t.id === p.tipoPrendaId)?.nombre || 'Desconocido';
+                    const val = p.servicios?.reduce((acc, s) => acc + Number(s.precioFinal), 0) || 0;
+                    
+                    return (
+                      <div key={p.id} className="card" style={{ padding: '0.5rem', margin: 0, border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)' }}>
+                        {/* FILA SUPERIOR: TIPO PRENDA, COLOR, MARCA, TALLA | FECHA COMPROMISO */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-border)', paddingBottom: '12px', marginBottom: '12px' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                              <div style={{ fontWeight: 'var(--font-medium)', fontSize: 'var(--text-lg)', textTransform: 'uppercase', color: 'var(--color-primary)' }}>
+                                {tipo}
+                              </div>
+                              <div style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                {p.color && <span><strong>Color:</strong> {p.color}</span>}
+                                {p.marca && <span><strong>Marca:</strong> {p.marca}</span>}
+                                {p.talla && <span><strong>Talla:</strong> {p.talla}</span>}
+                              </div>
+                            </div>
+                            <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', fontFamily: 'monospace', letterSpacing: '0.05em' }}>
+                              ID: {p.codigoQR}
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+                            {p.fechaCompromiso && (
+                              <div style={{ fontSize: '12px', color: 'var(--color-info)', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 'var(--font-medium)', backgroundColor: 'rgba(59, 130, 246, 0.1)', padding: '4px 8px', borderRadius: '4px' }}>
+                                <Calendar size={14} /> F. Compromiso: {new Date(p.fechaCompromiso).toLocaleDateString()}
+                              </div>
+                            )}
+                          </div>
+                        </div>
 
-                        return (
-                          <tr key={p.id}>
-                            <td style={{ fontWeight: 'var(--font-medium)', textTransform: 'uppercase' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <span>{tipo}</span>
-                                {tiposUrgencia.find(tu => tu.id === p.tipoUrgenciaId) && (
-                                  <span className="badge badge-warning" style={{ fontSize: '9px', padding: '1px 4px', textTransform: 'none' }}>
-                                    {tiposUrgencia.find(tu => tu.id === p.tipoUrgenciaId)?.nombre}
-                                  </span>
-                                )}
-                              </div>
-                              <div style={{ fontSize: '10px', color: 'var(--color-text-muted)', fontWeight: 'normal' }}>{p.codigoQR}</div>
-                              {p.fechaCompromiso && (
-                                <div style={{ fontSize: '10px', color: 'var(--color-info)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '3px', fontWeight: 'normal', textTransform: 'none' }}>
-                                  <Calendar size={10} /> F. Compromiso: {new Date(p.fechaCompromiso).toLocaleDateString()}
-                                </div>
-                              )}
-                            </td>
-                            <td style={{ fontSize: 'var(--text-sm)' }}>
-                              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                                <span>{p.servicios?.length || 0} asignados</span>
-                                <span style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{srvResumen}</span>
-                              </div>
-                            </td>
-                            <td>
-                              <select 
-                                className="form-select"
-                                style={{ fontSize: '12px', padding: '2px 24px 2px 8px', height: 'auto', minHeight: '26px' }}
-                                value={p.tipoUrgenciaId != null ? p.tipoUrgenciaId.toString() : ''}
-                                onChange={e => handleCambiarUrgencia(p.id, e.target.value ? Number(e.target.value) : null)}
-                              >
-                                <option value="">Normal</option>
-                                {tiposUrgencia.map(tu => (
-                                  <option key={tu.id} value={tu.id.toString()}>{tu.nombre}</option>
-                                ))}
-                              </select>
-                            </td>
-                            <td style={{ textAlign: 'right', fontWeight: 'bold' }}>
+                        {/* SECCION CENTRAL: SERVICIOS */}
+                        <div style={{ marginBottom: '16px' }}>
+                          <div style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--color-text-light)', marginBottom: '8px', letterSpacing: '0.05em' }}>
+                            Servicios Asignados ({p.servicios?.length || 0})
+                          </div>
+                          {p.servicios && p.servicios.length > 0 ? (
+                            <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '13px' }}>
+                              {p.servicios.map(s => {
+                                const cs = catalogoServicios.find(c => c.id === s.servicioId);
+                                const servicioNombre = cs ? cs.tipoEspecifico : 'Servicio';
+                                const arreglo = tiposArreglo.find(ta => ta.id === s.tipoArregloId)?.descripcion || '';
+                                const zona = zonas.find(z => z.id === s.zonaId)?.descripcion || '';
+                                const longitud = s.medidaEntregada ? `Longitud: ${s.medidaEntregada}` : '';
+                                const obs = s.observaciones ? `Obs: ${s.observaciones}` : '';
+                                const details = [servicioNombre, arreglo, zona, longitud, obs].filter(Boolean).join(' - ');
+                                return (
+                                  <li key={s.id} style={{ marginBottom: '4px' }}>{details}</li>
+                                );
+                              })}
+                            </ul>
+                          ) : (
+                            <div style={{ fontSize: '13px', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Sin servicios asignados</div>
+                          )}
+                        </div>
+
+                        {/* SEPARATOR */}
+                        <div style={{ marginBottom: '16px', borderBottom: '1px solid var(--color-border)' }}></div>
+
+                        {/* FOOTER: COMBOBOX URGENCIA Y ACCIONES Y PRECIO */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <span style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>Atención:</span>
+                            <select 
+                              className="form-select"
+                              style={{ fontSize: '13px', padding: '6px 32px 6px 12px', width: '200px' }}
+                              value={p.tipoUrgenciaId != null ? p.tipoUrgenciaId.toString() : ''}
+                              onChange={e => handleCambiarUrgencia(p.id, e.target.value ? Number(e.target.value) : null)}
+                            >
+                              <option value="">Normal</option>
+                              {tiposUrgencia.map(tu => (
+                                <option key={tu.id} value={tu.id.toString()}>{tu.nombre}</option>
+                              ))}
+                            </select>
+                          </div>
+                          
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                              <button className="btn btn-secondary btn-sm" onClick={() => handleEditPrenda(p)} title="Editar prenda">
+                                <Edit2 size={16} style={{ marginRight: '4px' }} /> Editar
+                              </button>
+                              <button className="btn btn-outline btn-sm" style={{ color: 'var(--color-danger)', borderColor: 'var(--color-danger)' }} onClick={() => handleRemovePrenda(p.id)} title="Eliminar prenda">
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                            <div style={{ fontSize: 'var(--text-lg)', fontWeight: 'bold', color: 'var(--color-text)', borderLeft: '1px solid var(--color-border)', paddingLeft: '16px' }}>
                               €{val.toFixed(2)}
-                            </td>
-                            <td>
-                              <div style={{ display: 'flex', justifyContent: 'center', gap: '4px' }}>
-                                <button className="btn btn-ghost btn-sm btn-icon" onClick={() => handleEditPrenda(p)} style={{ color: 'var(--color-primary)' }} title="Editar prenda">
-                                  <Edit2 size={16} />
-                                </button>
-                                <button className="btn btn-ghost btn-sm btn-icon" onClick={() => handleRemovePrenda(p.id)} style={{ color: 'var(--color-danger)' }} title="Eliminar prenda">
-                                  <Trash2 size={16} />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* OBSERVACIONES DE LA PRENDA */}
+                        {p.notas && (
+                          <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px dashed var(--color-border)', fontSize: '13px', color: 'var(--color-text-muted)' }}>
+                            <strong>Observaciones:</strong> {p.notas}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+                )}
               </div>
 
               <div style={{ marginTop: 'var(--space-2)' }}>
@@ -742,7 +900,15 @@ export function DashboardTallerPage() {
         {/* COLUMNA DERECHA: FORMULARIO PRENDA INLINE */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)', height: '100%' }}>
           {draftFactura ? (
-            isPrendaModalOpen ? (
+            <>
+        {isTipoSelectorOpen && (
+        <TipoPrendaSelectorModal
+          tiposPrenda={tiposPrenda}
+          onSelect={handleTipoSelected}
+          onClose={() => setIsTipoSelectorOpen(false)}
+        />
+      )}
+          {isPrendaModalOpen ? (
               <PrendaModal
                 inline={true}
                 facturaId={draftFactura.id}
@@ -751,6 +917,7 @@ export function DashboardTallerPage() {
                 catalogoServicios={catalogoServicios}
                 onClose={() => setIsPrendaModalOpen(false)}
                 onSaved={refreshDraftInvoice}
+          initialTipoPrendaId={selectedTipoId}
               />
             ) : (
               <div className="card" style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
@@ -761,7 +928,8 @@ export function DashboardTallerPage() {
                   Agregar Prenda
                 </button>
               </div>
-            )
+            )}
+            </>
           ) : (
             <div className="card" style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
               <FileText size={48} style={{ opacity: 0.2, margin: '0 auto var(--space-4)' }} />
@@ -775,123 +943,7 @@ export function DashboardTallerPage() {
       {/* KPIs AHORA EN LA PARTE INFERIOR */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-6)', marginTop: 'var(--space-6)' }}>
           
-          {/* Buscar Facturas */}
-          <div className="card">
-            <h3 className="card-title" style={{ fontSize: 'var(--text-sm)', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)' }}>
-              Búsqueda de Facturas
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <div className="form-group" style={{ position: 'relative', margin: 0 }} ref={nroFacturaDropdownRef}>
-                <div style={{ position: 'absolute', top: '8px', left: '8px', color: 'var(--color-text-light)' }}><FileText size={16} /></div>
-                <input 
-                  type="text" 
-                  className="form-input" 
-                  style={{ paddingLeft: '32px', fontSize: '13px', padding: '6px 8px 6px 32px' }} 
-                  placeholder="Nro Factura" 
-                  value={searchNroFactura} 
-                  onChange={e => {
-                    setSearchNroFactura(e.target.value);
-                    setIsNroFacturaDropdownOpen(true);
-                  }}
-                  onFocus={() => setIsNroFacturaDropdownOpen(true)}
-                />
-                
-                {isNroFacturaDropdownOpen && searchNroFactura.length > 0 && (
-                  <div style={{
-                    position: 'absolute', top: '100%', left: 0, right: 0,
-                    background: 'rgba(15, 23, 42, 0.85)',
-                    backdropFilter: 'blur(8px)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: 'var(--radius-md)', zIndex: 20,
-                    boxShadow: '0 10px 15px -3px rgba(0,0,0,0.5)',
-                    marginTop: '4px', maxHeight: '200px', overflowY: 'auto'
-                  }}>
-                    {filteredFacturasByNro.length > 0 ? (
-                      filteredFacturasByNro.map(f => (
-                        <div 
-                          key={f.id} 
-                          style={{ padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.1)' }}
-                          onClick={() => {
-                            setIsNroFacturaDropdownOpen(false);
-                            loadFacturaIntoDraft(f.id);
-                          }}
-                          className="hover-bg"
-                          onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-                          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                        >
-                          <div style={{ fontWeight: 'var(--font-medium)', color: '#f8fafc' }}>#{f.numero}</div>
-                          <div style={{ fontSize: 'var(--text-xs)', color: '#94a3b8' }}>{f.cliente?.nombre || 'Consumidor Final'}</div>
-                        </div>
-                      ))
-                    ) : (
-                      <div style={{ padding: '8px 12px', fontSize: 'var(--text-sm)', color: '#94a3b8' }}>
-                        No encontrada
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
 
-              <div className="form-group" style={{ position: 'relative', margin: 0 }} ref={prendaDropdownRef}>
-                <div style={{ position: 'absolute', top: '8px', left: '8px', color: 'var(--color-text-light)' }}><Tag size={16} /></div>
-                <input 
-                  type="text" 
-                  className="form-input" 
-                  style={{ paddingLeft: '32px', fontSize: '13px', padding: '6px 8px 6px 32px' }} 
-                  placeholder="Prenda (ID o Código QR)" 
-                  value={searchPrenda} 
-                  onChange={e => {
-                    setSearchPrenda(e.target.value);
-                    setIsPrendaDropdownOpen(true);
-                  }} 
-                  onFocus={() => setIsPrendaDropdownOpen(true)}
-                />
-
-                {isPrendaDropdownOpen && searchPrenda.length > 0 && (
-                  <div style={{
-                    position: 'absolute', top: '100%', left: 0, right: 0,
-                    background: 'rgba(15, 23, 42, 0.85)',
-                    backdropFilter: 'blur(8px)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: 'var(--radius-md)', zIndex: 20,
-                    boxShadow: '0 10px 15px -3px rgba(0,0,0,0.5)',
-                    marginTop: '4px', maxHeight: '200px', overflowY: 'auto'
-                  }}>
-                    {filteredPrendasBySearch.length > 0 ? (
-                      filteredPrendasBySearch.map(p => (
-                        <div 
-                          key={p.id} 
-                          style={{ padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.1)' }}
-                          onClick={() => {
-                            setIsPrendaDropdownOpen(false);
-                            if (p.facturaId) {
-                              loadFacturaIntoDraft(p.facturaId);
-                            }
-                          }}
-                          className="hover-bg"
-                          onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-                          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                        >
-                          <div style={{ fontWeight: 'var(--font-medium)', color: '#f8fafc' }}>
-                            {p.codigoQR ? `QR: ${p.codigoQR}` : `ID: ${p.id}`}
-                          </div>
-                          <div style={{ fontSize: 'var(--text-xs)', color: '#94a3b8' }}>Factura #{p.facturaId}</div>
-                        </div>
-                      ))
-                    ) : (
-                      <div style={{ padding: '8px 12px', fontSize: 'var(--text-sm)', color: '#94a3b8' }}>
-                        No encontrada
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-              
-              <Link to="/facturas" className="btn btn-secondary btn-sm" style={{ marginTop: '4px', width: '100%', justifyContent: 'center' }}>
-                Ir a todas las facturas
-              </Link>
-            </div>
-          </div>
 
           {/* Facturas Hoy */}
           <div className="stat-card">

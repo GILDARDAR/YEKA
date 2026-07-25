@@ -56,6 +56,8 @@ export declare class PrendaResponseDto {
     tipoUrgencia?: any;
     porcentajeAtencionAplicado?: string | null;
     factura?: any;
+    materialId?: number | null;
+    material?: any;
 }
 export declare class PrendaServicioResponseDto {
     id: number;
