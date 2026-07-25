@@ -26,6 +26,8 @@ services:
       DATABASE_URL: postgresql://yeka_user:yeka_password@postgres:5432/yeka?schema=public
       JWT_SECRET: ${JWT_SECRET:-yeka_jwt_secret_key_2026_safe_and_long}
       PORT: 3000
+    volumes:
+      - uploads_data:/app/uploads
     depends_on:
       - postgres
 
@@ -42,3 +44,4 @@ services:
 
 volumes:
   postgres_data:
+  uploads_data:
