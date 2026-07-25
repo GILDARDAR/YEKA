@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
@@ -18,10 +20,16 @@ import { FactorCobroModule } from './modules/factor-cobro/factor-cobro.module';
 import { MaterialModule } from './modules/material/material.module';
 import { TipoArregloModule } from './modules/tipo-arreglo/tipo-arreglo.module';
 import { ZonaModule } from './modules/zona/zona.module';
+import { UploadModule } from './modules/upload/upload.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'uploads'),
+      serveRoot: '/uploads',
+      serveStaticOptions: { index: false },
+    }),
     PrismaModule,
     AuthModule,
     UsuarioModule,
@@ -38,6 +46,7 @@ import { ZonaModule } from './modules/zona/zona.module';
     MaterialModule,
     TipoArregloModule,
     ZonaModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

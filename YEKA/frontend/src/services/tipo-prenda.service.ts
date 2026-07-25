@@ -20,6 +20,17 @@ class TipoPrendaService {
   async deleteTipoPrenda(id: number): Promise<void> {
     await api.delete(`/tipos-prenda/${id}`);
   }
+
+  /** Sube un archivo de icono al servidor y devuelve la URL pública */
+  async uploadIcono(file: File): Promise<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await api.post<{ url: string }>('/upload/icono', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data.url;
+  }
 }
 
 export default new TipoPrendaService();
+

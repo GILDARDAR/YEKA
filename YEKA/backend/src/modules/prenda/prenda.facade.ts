@@ -66,6 +66,9 @@ function toPrendaServicioResponseDto(ps: PrendaServicio): PrendaServicioResponse
     materialId: (ps as any).materialId || null,
     tipoArregloId: (ps as any).tipoArregloId || null,
     zonaId: (ps as any).zonaId || null,
+    tipoArreglo: (ps as any).tipoArreglo || null,
+    zona: (ps as any).zona || null,
+    servicio: (ps as any).servicio || null,
     createdAt: ps.createdAt,
   };
 }

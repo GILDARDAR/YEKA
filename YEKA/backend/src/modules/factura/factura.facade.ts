@@ -66,6 +66,11 @@ function toResponseDto(factura: Factura & { abonos?: Abono[]; cliente?: any; pre
         observaciones: s.observaciones || null,
         detallesCalculo: s.detallesCalculo || null,
         createdAt: s.createdAt,
+        tipoArregloId: s.tipoArregloId ?? null,
+        zonaId: s.zonaId ?? null,
+        tipoArreglo: s.tipoArreglo ?? null,
+        zona: s.zona ?? null,
+        servicio: s.servicio ?? null,
       })),
     })),
   };

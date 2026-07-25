@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import type { TipoPrenda, TipoPrendaMaterial } from '../shared/types';
 import tipoPrendaService from '../services/tipo-prenda.service';
 import api from '../shared/api';
-import { Layers, Plus, Pencil, X, PackageOpen } from 'lucide-react';
+import { Layers, Plus, Pencil, X, PackageOpen, Upload, Shirt, ImageOff } from 'lucide-react';
 
 interface Material {
   id: number;
@@ -28,6 +28,13 @@ const TipoPrendaPage: React.FC = () => {
     porcentajeDificultad: 0,
     activo: true,
   });
+
+  // ── Icono ──────────────────────────────────────────────────────
+  const [iconoUrlActual, setIconoUrlActual] = useState<string | null>(null);
+  const [iconoPreview, setIconoPreview] = useState<string | null>(null);
+  const [iconoFile, setIconoFile] = useState<File | null>(null);
+  const [uploadingIcono, setUploadingIcono] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Materiales ya vinculados al tipo de prenda en edición
   const [selectedMateriales, setSelectedMateriales] = useState<TipoPrendaMaterial[]>([]);
@@ -74,6 +81,9 @@ const TipoPrendaPage: React.FC = () => {
         activo: tipo.activo,
       });
       setSelectedMateriales(tipo.materiales || []);
+      setIconoUrlActual(tipo.iconoUrl || null);
+      setIconoPreview(null);
+      setIconoFile(null);
     } else {
       setEditingId(null);
       setFormData({
@@ -83,6 +93,9 @@ const TipoPrendaPage: React.FC = () => {
         activo: true,
       });
       setSelectedMateriales([]);
+      setIconoUrlActual(null);
+      setIconoPreview(null);
+      setIconoFile(null);
     }
     setMaterialToAdd('');
     setShowNewMaterial(false);
@@ -93,6 +106,8 @@ const TipoPrendaPage: React.FC = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingId(null);
+    setIconoPreview(null);
+    setIconoFile(null);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -105,6 +120,24 @@ const TipoPrendaPage: React.FC = () => {
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
+  };
+
+  // ── Icono handlers ─────────────────────────────────────────────
+  const handleIconoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIconoFile(file);
+    // Preview local inmediato
+    const reader = new FileReader();
+    reader.onload = (ev) => setIconoPreview(ev.target?.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveIcono = () => {
+    setIconoFile(null);
+    setIconoPreview(null);
+    setIconoUrlActual(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   /** Añadir material existente a la selección */
@@ -127,9 +160,7 @@ const TipoPrendaPage: React.FC = () => {
     try {
       const res = await api.post<Material>('/material', { descripcion: newMaterialDesc.trim(), activo: true });
       const created = res.data;
-      // Recargar catálogo
       await fetchMateriales();
-      // Añadir a la selección
       setSelectedMateriales((prev) => [...prev, created]);
       setNewMaterialDesc('');
       setShowNewMaterial(false);
@@ -149,14 +180,27 @@ const TipoPrendaPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // 1. Si hay un archivo de icono nuevo, subirlo primero
+      let finalIconoUrl: string | null | undefined = iconoUrlActual;
+      if (iconoFile) {
+        setUploadingIcono(true);
+        try {
+          finalIconoUrl = await tipoPrendaService.uploadIcono(iconoFile);
+        } finally {
+          setUploadingIcono(false);
+        }
+      }
+
+      // 2. Guardar el tipo de prenda con la URL del icono
       const payload = {
         ...formData,
         materialesIds: selectedMateriales.map((m) => m.id),
+        iconoUrl: finalIconoUrl ?? null,
       };
       if (editingId) {
         await tipoPrendaService.updateTipoPrenda(editingId, payload);
       } else {
-        await tipoPrendaService.createTipoPrenda(payload);
+        await tipoPrendaService.createTipoPrenda(payload as any);
       }
       await fetchTipos();
       await fetchMateriales();
@@ -171,6 +215,9 @@ const TipoPrendaPage: React.FC = () => {
   const availableMateriales = allMateriales.filter(
     (m) => m.activo && !selectedMateriales.some((s) => s.id === m.id)
   );
+
+  // Icono a mostrar en la vista previa del formulario
+  const iconoMostrado = iconoPreview || iconoUrlActual;
 
   return (
     <div>
@@ -203,6 +250,7 @@ const TipoPrendaPage: React.FC = () => {
           <table className="table">
             <thead>
               <tr>
+                <th style={{ width: '56px' }}>Icono</th>
                 <th>Nombre</th>
                 <th>Descripción</th>
                 <th>Dificultad</th>
@@ -214,6 +262,27 @@ const TipoPrendaPage: React.FC = () => {
             <tbody>
               {tipos.map((tipo) => (
                 <tr key={tipo.id}>
+                  {/* Columna icono */}
+                  <td>
+                    <div style={{
+                      width: '40px', height: '40px', borderRadius: '8px',
+                      background: 'var(--color-bg)',
+                      border: '1px solid var(--color-border)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      overflow: 'hidden',
+                    }}>
+                      {tipo.iconoUrl ? (
+                        <img
+                          src={tipo.iconoUrl}
+                          alt={tipo.nombre}
+                          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                        />
+                      ) : (
+                        <Shirt size={20} style={{ color: 'var(--color-primary)', opacity: 0.5 }} />
+                      )}
+                    </div>
+                  </td>
                   <td style={{ fontWeight: 'var(--font-medium)' }}>{tipo.nombre}</td>
                   <td style={{ color: 'var(--color-text-light)' }}>{tipo.descripcion || '-'}</td>
                   <td>{Number(tipo.porcentajeDificultad) * 100}%</td>
@@ -264,6 +333,83 @@ const TipoPrendaPage: React.FC = () => {
             </h2>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+
+              {/* ── Sección Icono ── */}
+              <div style={{
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--radius-md)',
+                padding: 'var(--space-4)',
+                background: 'var(--color-bg)',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-3)' }}>
+                  <Upload size={16} style={{ color: 'var(--color-primary)' }} />
+                  <label className="form-label" style={{ margin: 0, fontWeight: 'var(--font-semibold)', color: 'var(--color-primary)' }}>
+                    Icono de la prenda
+                  </label>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
+                  {/* Preview */}
+                  <div style={{
+                    width: '80px', height: '80px', flexShrink: 0,
+                    borderRadius: 'var(--radius-md)',
+                    border: '2px dashed var(--color-border)',
+                    background: 'var(--color-surface)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    overflow: 'hidden', position: 'relative',
+                  }}>
+                    {iconoMostrado ? (
+                      <>
+                        <img
+                          src={iconoMostrado}
+                          alt="Preview"
+                          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                        />
+                        <button
+                          type="button"
+                          onClick={handleRemoveIcono}
+                          style={{
+                            position: 'absolute', top: '2px', right: '2px',
+                            background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%',
+                            width: '20px', height: '20px', cursor: 'pointer',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            color: '#fff', padding: 0,
+                          }}
+                          title="Quitar icono"
+                        >
+                          <X size={12} />
+                        </button>
+                      </>
+                    ) : (
+                      <ImageOff size={28} style={{ color: 'var(--color-text-light)', opacity: 0.4 }} />
+                    )}
+                  </div>
+
+                  {/* Controles */}
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: 'var(--space-2)' }}>
+                      PNG, JPG, SVG o WEBP · Máx. 2 MB
+                    </p>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".png,.jpg,.jpeg,.svg,.webp,.gif"
+                      onChange={handleIconoChange}
+                      style={{ display: 'none' }}
+                      id="icono-file-input"
+                    />
+                    <label
+                      htmlFor="icono-file-input"
+                      className="btn btn-ghost btn-sm"
+                      style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                    >
+                      <Upload size={14} />
+                      {iconoMostrado ? 'Cambiar icono' : 'Seleccionar icono'}
+                    </label>
+                  </div>
+                </div>
+              </div>
+
               {/* Nombre */}
               <div className="form-group">
                 <label className="form-label">Nombre</label>
@@ -451,8 +597,9 @@ const TipoPrendaPage: React.FC = () => {
                 <button
                   type="submit"
                   className="btn btn-primary"
+                  disabled={uploadingIcono}
                 >
-                  Guardar
+                  {uploadingIcono ? 'Subiendo icono...' : 'Guardar'}
                 </button>
               </div>
             </form>

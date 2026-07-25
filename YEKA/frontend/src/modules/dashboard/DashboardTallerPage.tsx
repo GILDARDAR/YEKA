@@ -906,6 +906,9 @@ export function DashboardTallerPage() {
           tiposPrenda={tiposPrenda}
           onSelect={handleTipoSelected}
           onClose={() => setIsTipoSelectorOpen(false)}
+          onIconoActualizado={(tipoActualizado) =>
+            setTiposPrenda(prev => prev.map(t => t.id === tipoActualizado.id ? tipoActualizado : t))
+          }
         />
       )}
           {isPrendaModalOpen ? (

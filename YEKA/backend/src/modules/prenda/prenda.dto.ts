@@ -178,4 +178,7 @@ export class PrendaServicioResponseDto {
   tipoArregloId?: number | null;
   zonaId?: number | null;
   createdAt: Date;
+  tipoArreglo?: any;
+  zona?: any;
+  servicio?: any;
 }

@@ -43,4 +43,8 @@ export class UpdateTipoPrendaDto {
   @IsArray()
   @IsInt({ each: true })
   materialesIds?: number[];
+
+  @IsOptional()
+  @IsString()
+  iconoUrl?: string | null;
 }

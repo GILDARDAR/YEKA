@@ -103,6 +103,7 @@ model TipoPrenda {
   id                   Int              @id @default(autoincrement())
   nombre               String           @unique
   descripcion          String?
+  iconoUrl             String?
   porcentajeDificultad Decimal          @default(0) @db.Decimal(5, 2)
   activo               Boolean          @default(true)
   createdAt            DateTime         @default(now())

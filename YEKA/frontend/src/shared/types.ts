@@ -144,6 +144,7 @@ export interface TipoPrenda {
   id: number;
   nombre: string;
   descripcion: string | null;
+  iconoUrl?: string | null;
   porcentajeDificultad: number;
   activo: boolean;
   createdAt: string;
@@ -165,6 +166,7 @@ export interface UpdateTipoPrendaDto {
   porcentajeDificultad?: number;
   activo?: boolean;
   materialesIds?: number[];
+  iconoUrl?: string | null;
 }
 
 // ─── Tipo Urgencia ──────────────────────────────────────────────────
