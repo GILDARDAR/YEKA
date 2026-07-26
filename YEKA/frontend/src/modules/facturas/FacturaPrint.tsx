@@ -157,10 +157,16 @@ export function imprimirFactura({ factura, tiposPrenda, configuracion, tiposArre
       <p>Tel: ${conf?.EMPRESA_TELEFONO || '---'} ${conf?.EMPRESA_WHATSAPP ? `| WA: ${conf.EMPRESA_WHATSAPP}` : ''}</p>
       <p>${conf?.EMPRESA_DIRECCION || '---'}</p>
       <h2>Factura #${factura.numero}</h2>
+      ${factura.nroFactura ? `<p><strong>Nro Oficial:</strong> ${factura.nroFactura}</p>` : ''}
+      ${factura.fechaDeFactura ? `<p><strong>Fecha Oficial:</strong> ${new Date(factura.fechaDeFactura).toLocaleDateString('es-ES')}</p>` : ''}
     </div>
   
   <div class="cliente-info">
-    <div><strong>Cliente:</strong><br/>${factura.cliente?.nombre || 'Consumidor Final'}</div>
+    <div>
+      <strong>Cliente:</strong><br/>
+      ${factura.cliente?.nombre || 'Consumidor Final'}
+      ${factura.cliente?.celular ? `<br/><span style="font-size: 11px;">Tel: ${factura.cliente.celular}</span>` : ''}
+    </div>
   </div>
 
   <div class="items">

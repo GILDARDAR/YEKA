@@ -73,6 +73,8 @@ model Cliente {
 model Factura {
   id               Int        @id @default(autoincrement())
   numero           String     @unique
+  nroFactura       String?
+  fechaDeFactura   DateTime?
   clienteId        Int?
   usuarioCreadorId Int
   sedeId           Int

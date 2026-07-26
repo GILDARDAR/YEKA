@@ -41,6 +41,14 @@ export class UpdateFacturaDto {
   @IsOptional()
   @IsString()
   notas?: string;
+
+  @IsOptional()
+  @IsString()
+  nroFactura?: string;
+
+  @IsOptional()
+  @IsString()
+  fechaDeFactura?: string; // ISO string, parsed in facade
 }
 
 export class UpdateAbonoDto {
@@ -70,6 +78,8 @@ export class AbonoResponseDto {
 export class FacturaResponseDto {
   id: number;
   numero: string;
+  nroFactura: string | null;
+  fechaDeFactura: Date | null;
   clienteId: number | null;
   usuarioCreadorId: number;
   sedeId: number;

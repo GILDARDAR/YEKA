@@ -1,24 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+
 import { facturasService } from './facturas.service';
 import type { Factura, EstadoPago } from '../../shared/types';
-import { Search, Plus, Filter, FileText, Calendar } from 'lucide-react';
+import { Search, Plus, Filter, FileText } from 'lucide-react';
 import { NuevaFacturaModal } from './NuevaFacturaModal';
+import { FacturaCard } from './FacturaCard';
 
 
-const ESTADO_BADGE: Record<EstadoPago, string> = {
-  PENDIENTE: 'badge-neutral',
-  PARCIAL:   'badge-warning',
-  PAGADO:    'badge-success',
-  ANULADO:   'badge-danger',
-};
 
-const ESTADO_LABEL: Record<EstadoPago, string> = {
-  PENDIENTE: 'Pendiente',
-  PARCIAL:   'Parcial',
-  PAGADO:    'Pagado',
-  ANULADO:   'Anulado',
-};
 
 export function FacturasPage() {
   const [facturas, setFacturas]   = useState<Factura[]>([]);
@@ -87,36 +76,13 @@ export function FacturasPage() {
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--space-4)' }}>
           {filtered.map(f => (
-            <div key={f.id} className="card" style={{ display: 'flex', flexDirection: 'column', padding: 'var(--space-4)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-2)' }}>
-                <Link to={`/facturas/${f.id}`} style={{ fontWeight: 'var(--font-heading)', fontSize: 'var(--text-lg)', color: 'var(--color-primary)', textDecoration: 'none' }}>
-                  #{f.numero}
-                </Link>
-                <span className={`badge ${ESTADO_BADGE[f.estadoPago]}`}>
-                  {ESTADO_LABEL[f.estadoPago]}
-                </span>
-              </div>
-              
-              <div style={{ flex: 1 }}>
-                <p style={{ fontWeight: 'var(--font-medium)', color: 'var(--color-text)', marginBottom: '4px' }}>
-                  {f.cliente?.nombre || <span style={{ color: 'var(--color-text-muted)' }}>Consumidor Final</span>}
-                </p>
-                <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-light)', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: 'var(--space-3)' }}>
-                  <Calendar size={12} /> {new Date(f.createdAt).toLocaleDateString('es-ES')}
-                </p>
-                
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: 'var(--text-sm)' }}>
-                  <span style={{ color: 'var(--color-text-muted)' }}>Prendas:</span>
-                  <span className="badge badge-neutral">{f.prendas?.length ?? 0}</span>
-                </div>
-              </div>
-              
-              <div style={{ marginTop: 'var(--space-4)', paddingTop: 'var(--space-3)', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'flex-end' }}>
-                <span style={{ fontWeight: 'bold', fontSize: 'var(--text-lg)', color: 'var(--color-text)' }}>
-                  €{Number(f.total).toFixed(2)}
-                </span>
-              </div>
-            </div>
+            <FacturaCard
+              key={f.id}
+              factura={f}
+              onUpdate={(updatedFactura) => {
+                setFacturas(prev => prev.map(item => item.id === updatedFactura.id ? updatedFactura : item));
+              }}
+            />
           ))}
         </div>
       )}

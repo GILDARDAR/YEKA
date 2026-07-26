@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { FacturaService } from './factura.service';
-import { CreateFacturaDto, AddAbonoDto, UpdateAbonoDto, FacturaResponseDto } from './factura.dto';
+import { CreateFacturaDto, AddAbonoDto, UpdateAbonoDto, FacturaResponseDto, UpdateFacturaDto } from './factura.dto';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -52,6 +52,16 @@ export class FacturaController {
     @CurrentUser('sub') usuarioId: number,
   ): Promise<FacturaResponseDto> {
     return this.facturaService.anularFactura(id, usuarioId);
+  }
+
+  @Patch(':id')
+  async updateFactura(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateFacturaDto,
+    @CurrentUser('sub') usuarioId: number,
+    @CurrentUser('rol') rol: string,
+  ): Promise<FacturaResponseDto> {
+    return this.facturaService.updateFactura(id, dto, usuarioId, rol);
   }
 
   @Post(':id/abonos')

@@ -6,7 +6,7 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { FacturaDAO } from './factura.dao';
-import { CreateFacturaDto, AddAbonoDto, FacturaResponseDto } from './factura.dto';
+import { CreateFacturaDto, AddAbonoDto, FacturaResponseDto, UpdateFacturaDto } from './factura.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { SedeFacade } from '../sede/sede.facade';
 import { ClienteFacade } from '../cliente/cliente.facade';
@@ -17,6 +17,8 @@ function toResponseDto(factura: Factura & { abonos?: Abono[]; cliente?: any; pre
   return {
     id: factura.id,
     numero: factura.numero,
+    nroFactura: (factura as any).nroFactura ?? null,
+    fechaDeFactura: (factura as any).fechaDeFactura ?? null,
     clienteId: factura.clienteId,
     usuarioCreadorId: factura.usuarioCreadorId,
     sedeId: factura.sedeId,
@@ -364,6 +366,45 @@ export class FacturaFacade {
     const updated = await this.facturaDAO.recalcularTotales(facturaId);
     const freshFactura = await this.facturaDAO.findById(facturaId);
     return toResponseDto(freshFactura!);
+  }
+
+  async updateFactura(
+    facturaId: number,
+    dto: UpdateFacturaDto,
+    usuarioId: number,
+    userRol: string,
+  ): Promise<FacturaResponseDto> {
+    const factura = await this.facturaDAO.findById(facturaId);
+    if (!factura) {
+      throw new NotFoundException(`Factura con id ${facturaId} no encontrada`);
+    }
+
+    const updateData: any = {};
+    if (dto.notas !== undefined) updateData.notas = dto.notas;
+
+    // Solo ADMIN puede modificar nroFactura y fechaDeFactura
+    if (userRol === 'ADMIN') {
+      if (dto.nroFactura !== undefined) updateData.nroFactura = dto.nroFactura || null;
+      if (dto.fechaDeFactura !== undefined) {
+        updateData.fechaDeFactura = dto.fechaDeFactura ? new Date(dto.fechaDeFactura) : null;
+      }
+    }
+
+    const updated = await this.facturaDAO.update(facturaId, updateData);
+
+    await this.prismaService.auditLog.create({
+      data: {
+        usuarioId,
+        accion: AccionAuditoria.MODIFICACION,
+        entidadAfectada: 'Factura',
+        entidadId: facturaId,
+        valorAnterior: { nroFactura: (factura as any).nroFactura, fechaDeFactura: (factura as any).fechaDeFactura, notas: factura.notas } as any,
+        valorNuevo: updateData as any,
+      },
+    });
+
+    const fresh = await this.facturaDAO.findById(facturaId);
+    return toResponseDto(fresh!);
   }
 
   async generatePdf(id: number): Promise<Buffer> {

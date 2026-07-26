@@ -1,5 +1,5 @@
 import api from '../../shared/api';
-import type { Factura, CreateFacturaDto, AddAbonoDto, EstadoPago } from '../../shared/types';
+import type { Factura, CreateFacturaDto, UpdateFacturaDto, AddAbonoDto, EstadoPago } from '../../shared/types';
 
 export const facturasService = {
   getAll: (sedeId?: number, estadoPago?: EstadoPago) =>
@@ -10,6 +10,9 @@ export const facturasService = {
 
   create: (dto: CreateFacturaDto) =>
     api.post<Factura>('/facturas', dto).then(r => r.data),
+
+  update: (id: number, dto: UpdateFacturaDto) =>
+    api.patch<Factura>(`/facturas/${id}`, dto).then(r => r.data),
 
   anular: (id: number) =>
     api.patch<Factura>(`/facturas/${id}/anular`).then(r => r.data),

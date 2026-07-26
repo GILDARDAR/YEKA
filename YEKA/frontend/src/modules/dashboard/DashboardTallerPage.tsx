@@ -76,6 +76,12 @@ export function DashboardTallerPage() {
   const [creatingDraft, setCreatingDraft] = useState(false);
   const [savingInvoice, setSavingInvoice] = useState(false);
 
+  // Edit Invoice Fields State
+  const [isEditingNroFactura, setIsEditingNroFactura] = useState(false);
+  const [draftNroFactura, setDraftNroFactura] = useState('');
+  const [draftFechaFactura, setDraftFechaFactura] = useState('');
+  const [savingNroFactura, setSavingNroFactura] = useState(false);
+
   // Client Selection
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [clienteSearch, setClienteSearch] = useState('');
@@ -233,12 +239,30 @@ export function DashboardTallerPage() {
       });
       const fullFactura = await facturasService.getById(nueva.id);
       setDraftFactura(fullFactura);
-      return fullFactura;
-    } catch (e) {
-      console.error(e);
-      alert('Error al inicializar factura');
+      setDraftFactura(fullFactura);
+    } catch (error) {
+      console.error('Error ensuring draft factura', error);
+      alert('Error al crear o recuperar la factura borrador');
     } finally {
       setCreatingDraft(false);
+    }
+  };
+
+  const handleSaveNroFactura = async () => {
+    if (!draftFactura) return;
+    try {
+      setSavingNroFactura(true);
+      const updated = await facturasService.update(draftFactura.id, {
+        nroFactura: draftNroFactura || undefined,
+        fechaDeFactura: draftFechaFactura ? new Date(draftFechaFactura).toISOString() : undefined,
+      });
+      setDraftFactura(updated);
+      setIsEditingNroFactura(false);
+    } catch (error) {
+      console.error('Error saving nroFactura', error);
+      alert('Error al guardar Nro. Factura');
+    } finally {
+      setSavingNroFactura(false);
     }
   };
 
@@ -583,6 +607,60 @@ export function DashboardTallerPage() {
             <h2 style={{ fontSize: 'var(--text-xl)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-4)' }}>
               Nueva Factura de Taller {draftFactura ? `(#${draftFactura.numero})` : ''}
             </h2>
+
+            {draftFactura && (
+              <div style={{ marginBottom: 'var(--space-4)' }}>
+                {isEditingNroFactura ? (
+                  <div style={{ background: 'var(--color-bg)', padding: '12px', borderRadius: '4px', border: '1px solid var(--color-border)' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
+                      <div>
+                        <label className="form-label" style={{ fontSize: '12px', marginBottom: '4px' }}>Nro Oficial:</label>
+                        <input type="text" className="form-input" style={{ padding: '4px 8px' }} value={draftNroFactura} onChange={e => setDraftNroFactura(e.target.value)} placeholder="Ej: F-2026-001" />
+                      </div>
+                      <div>
+                        <label className="form-label" style={{ fontSize: '12px', marginBottom: '4px' }}>Fecha Oficial:</label>
+                        <input type="date" className="form-input" style={{ padding: '4px 8px' }} value={draftFechaFactura} onChange={e => setDraftFechaFactura(e.target.value)} />
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button onClick={handleSaveNroFactura} disabled={savingNroFactura} className="btn btn-primary" style={{ padding: '4px 12px', fontSize: '13px' }}>
+                        {savingNroFactura ? 'Guardando...' : 'Guardar'}
+                      </button>
+                      <button onClick={() => setIsEditingNroFactura(false)} disabled={savingNroFactura} className="btn btn-secondary" style={{ padding: '4px 12px', fontSize: '13px' }}>
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div 
+                    style={{ 
+                      display: 'flex', gap: '16px', background: 'rgba(0,0,0,0.02)', padding: '8px 12px', 
+                      borderRadius: '4px', border: '1px dashed transparent', cursor: user?.rol === 'ADMIN' ? 'pointer' : 'default',
+                      transition: '0.2s'
+                    }}
+                    onMouseEnter={e => { if (user?.rol === 'ADMIN') e.currentTarget.style.borderColor = 'var(--color-border)' }}
+                    onMouseLeave={e => { if (user?.rol === 'ADMIN') e.currentTarget.style.borderColor = 'transparent' }}
+                    onClick={() => {
+                      if (user?.rol === 'ADMIN') {
+                        setDraftNroFactura(draftFactura.nroFactura || '');
+                        setDraftFechaFactura(draftFactura.fechaDeFactura ? new Date(draftFactura.fechaDeFactura).toISOString().split('T')[0] : '');
+                        setIsEditingNroFactura(true);
+                      }
+                    }}
+                  >
+                    <div>
+                      <span style={{ fontSize: '12px', color: 'var(--color-text-light)' }}>Nro Oficial: </span>
+                      <strong style={{ fontSize: '14px' }}>{draftFactura.nroFactura || <span style={{ color: 'var(--color-text-muted)', fontStyle: 'italic', fontWeight: 'normal' }}>Sin Nro.</span>}</strong>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '12px', color: 'var(--color-text-light)' }}>Fecha Oficial: </span>
+                      <strong style={{ fontSize: '14px' }}>{draftFactura.fechaDeFactura ? new Date(draftFactura.fechaDeFactura).toLocaleDateString('es-ES') : <span style={{ color: 'var(--color-text-muted)', fontStyle: 'italic', fontWeight: 'normal' }}>Automática</span>}</strong>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
 
             {/* BÚSQUEDA / CREACIÓN CLIENTE */}
             <div className="form-group" style={{ position: 'relative' }} ref={dropdownRef}>

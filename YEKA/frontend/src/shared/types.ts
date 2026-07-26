@@ -335,6 +335,8 @@ export interface CambiarEstadoDto {
 export interface Factura {
   id: number;
   numero: string;
+  nroFactura: string | null;
+  fechaDeFactura: string | null;
   clienteId: number | null;
   usuarioCreadorId: number;
   sedeId: number;
@@ -354,6 +356,12 @@ export interface CreateFacturaDto {
   clienteId?: number;
   sedeId: number;
   notas?: string;
+}
+
+export interface UpdateFacturaDto {
+  notas?: string;
+  nroFactura?: string;
+  fechaDeFactura?: string;
 }
 
 export interface AddAbonoDto {
