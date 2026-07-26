@@ -13,6 +13,7 @@ export interface AppConfig {
   EMPRESA_WHATSAPP: string;
   EMPRESA_DIRECCION: string;
   IVA_PORCENTAJE: string;
+  CONDICIONES_FACTURA: string;
 }
 
 const DEFAULT_CONFIG: AppConfig = {
@@ -27,6 +28,7 @@ const DEFAULT_CONFIG: AppConfig = {
   EMPRESA_WHATSAPP: '+34 600 000 000',
   EMPRESA_DIRECCION: 'Dirección del establecimiento',
   IVA_PORCENTAJE: '21.00',
+  CONDICIONES_FACTURA: 'Gracias por su confianza. Las prendas no recogidas en 30 días serán donadas.',
 };
 
 @Injectable()

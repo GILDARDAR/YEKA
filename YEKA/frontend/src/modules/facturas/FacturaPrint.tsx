@@ -147,6 +147,7 @@ export function imprimirFactura({ factura, tiposPrenda, configuracion, tiposArre
     .saldo-pendiente { color: #000; }
     .saldo-cero { color: #000; }
     .fecha-comp { text-align: center; font-size: 13px; margin-top: 15px; border: 2px solid #000; padding: 5px; }
+    .condiciones { margin-top: 12px; border-top: 1px dashed #000; padding-top: 6px; font-size: 10px; color: #444; line-height: 1.4; text-align: center; font-style: italic; white-space: pre-wrap; }
   </style>
 </head>
 <body>
@@ -218,6 +219,8 @@ export function imprimirFactura({ factura, tiposPrenda, configuracion, tiposArre
     <div><strong>FECHA DE RECEPCIÓN:</strong><br/>${fmtFecha(factura.createdAt)}</div>
     ${fechaMaxima ? `<div style="margin-top:5px;"><strong>FECHA DE COMPROMISO:</strong><br/>${fmtFecha(fechaMaxima)}</div>` : ''}
   </div>
+
+  ${conf?.CONDICIONES_FACTURA ? `<div class="condiciones">${conf.CONDICIONES_FACTURA}</div>` : ''}
 
   <script>window.onload = () => { window.print(); setTimeout(() => window.close(), 500); };</script>
 </body>

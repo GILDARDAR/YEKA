@@ -13,6 +13,7 @@ export function ConfiguracionPage() {
     EMPRESA_TELEFONO: '',
     EMPRESA_WHATSAPP: '',
     EMPRESA_DIRECCION: '',
+    CONDICIONES_FACTURA: '',
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -36,7 +37,7 @@ export function ConfiguracionPage() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setConfig({ ...config, [e.target.name]: e.target.value });
   };
 
@@ -125,6 +126,21 @@ export function ConfiguracionPage() {
               className="w-full border border-gray-300 rounded p-2 focus:ring focus:ring-blue-200"
               required
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Condiciones de la Factura
+            </label>
+            <textarea
+              name="CONDICIONES_FACTURA"
+              value={config.CONDICIONES_FACTURA || ''}
+              onChange={handleChange}
+              rows={4}
+              placeholder="Ej: Gracias por su confianza. Las prendas no recogidas en 30 días serán donadas."
+              className="w-full border border-gray-300 rounded p-2 focus:ring focus:ring-blue-200 resize-y"
+            />
+            <p className="text-xs text-gray-500 mt-1">Este texto aparecerá al pie de cada factura impresa.</p>
           </div>
 
           <h2 className="text-xl font-semibold mt-8 mb-4 border-b pb-2">Parámetros del Sistema</h2>
