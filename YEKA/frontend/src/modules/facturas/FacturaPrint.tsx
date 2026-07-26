@@ -215,12 +215,12 @@ export function imprimirFactura({ factura, tiposPrenda, configuracion, tiposArre
       </div>`;
   })()}
 
+  ${conf?.CONDICIONES_FACTURA ? `<div class="condiciones">${conf.CONDICIONES_FACTURA}</div>` : ''}
+
   <div class="fecha-comp">
     <div><strong>FECHA DE RECEPCIÓN:</strong><br/>${fmtFecha(factura.createdAt)}</div>
     ${fechaMaxima ? `<div style="margin-top:5px;"><strong>FECHA DE COMPROMISO:</strong><br/>${fmtFecha(fechaMaxima)}</div>` : ''}
   </div>
-
-  ${conf?.CONDICIONES_FACTURA ? `<div class="condiciones">${conf.CONDICIONES_FACTURA}</div>` : ''}
 
   <script>window.onload = () => { window.print(); setTimeout(() => window.close(), 500); };</script>
 </body>
