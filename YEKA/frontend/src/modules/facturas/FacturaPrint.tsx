@@ -138,6 +138,14 @@ export function imprimirFactura({ factura, tiposPrenda, configuracion, tiposArre
     .subtotal-row { display: flex; justify-content: space-between; font-size: 14px; margin-top: 10px; border-top: 1px dashed #000; padding-top: 5px; }
     .iva-row { display: flex; justify-content: space-between; font-size: 14px; margin-top: 2px; }
     .total-row { display: flex; justify-content: space-between; font-weight: bold; font-size: 18px; margin-top: 5px; padding-top: 5px; border-top: 1px dashed #000; }
+    .abonos-section { margin-top: 8px; border-top: 1px dashed #000; padding-top: 5px; }
+    .abonos-title { font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; }
+    .abono-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 2px; }
+    .abono-metodo { font-size: 11px; color: #333; }
+    .total-abonado-row { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; margin-top: 4px; border-top: 1px dotted #000; padding-top: 3px; }
+    .saldo-row { display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-top: 5px; padding-top: 5px; border-top: 2px solid #000; }
+    .saldo-pendiente { color: #000; }
+    .saldo-cero { color: #000; }
     .fecha-comp { text-align: center; font-size: 13px; margin-top: 15px; border: 2px solid #000; padding: 5px; }
   </style>
 </head>
@@ -170,6 +178,41 @@ export function imprimirFactura({ factura, tiposPrenda, configuracion, tiposArre
     <span>TOTAL</span>
     <span>€${fmt(factura.total)}</span>
   </div>
+
+  ${(() => {
+    const abonos = factura.abonos || [];
+    if (abonos.length === 0) return '';
+    const metodosLabel: Record<string, string> = {
+      EFECTIVO: 'Efectivo',
+      TARJETA: 'Tarjeta',
+      TRANSFERENCIA: 'Transferencia',
+      BIZUM: 'Bizum',
+    };
+    const totalAbonado = abonos.reduce((acc, a) => acc + Number(a.monto), 0);
+    const saldo = Number(factura.total) - totalAbonado;
+    const abonosRows = abonos.map((a, i) => {
+      const label = metodosLabel[a.metodoPago] || a.metodoPago;
+      const fecha = new Date(a.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      const notas = a.notas ? ` (${a.notas})` : '';
+      return `<div class="abono-row">
+        <span class="abono-metodo">${i+1}. ${label} · ${fecha}${notas}</span>
+        <span>€${fmt(a.monto)}</span>
+      </div>`;
+    }).join('');
+    return `
+      <div class="abonos-section">
+        <div class="abonos-title">Abonos</div>
+        ${abonosRows}
+        <div class="total-abonado-row">
+          <span>Total abonado</span>
+          <span>€${fmt(totalAbonado)}</span>
+        </div>
+        <div class="saldo-row ${saldo <= 0 ? 'saldo-cero' : 'saldo-pendiente'}">
+          <span>${saldo <= 0 ? '✓ SALDO' : 'SALDO PENDIENTE'}</span>
+          <span>€${fmt(Math.max(0, saldo))}</span>
+        </div>
+      </div>`;
+  })()}
 
   <div class="fecha-comp">
     <div><strong>FECHA DE RECEPCIÓN:</strong><br/>${fmtFecha(factura.createdAt)}</div>
