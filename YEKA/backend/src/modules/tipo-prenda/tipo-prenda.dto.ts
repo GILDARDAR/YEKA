@@ -20,6 +20,10 @@ export class CreateTipoPrendaDto {
   @IsArray()
   @IsInt({ each: true })
   materialesIds?: number[];
+
+  @IsOptional()
+  @IsString()
+  iconoUrl?: string | null;
 }
 
 export class UpdateTipoPrendaDto {
