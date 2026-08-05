@@ -11,6 +11,8 @@ function toResponseDto(item: any): CatalogoServicioResponseDto {
     tipoEspecifico: item.tipoEspecifico,
     medidaBase: item.medidaBase?.toNumber() ?? 0,
     tiempoBase: item.tiempoBase,
+    zonaId: item.zonaId,
+    zona: item.zona ? { id: item.zona.id, descripcion: item.zona.descripcion, activo: item.zona.activo } : null,
     activo: item.activo,
     categoriasFactores: item.categoriasFactores?.map((c: any) => ({
       id: c.id,

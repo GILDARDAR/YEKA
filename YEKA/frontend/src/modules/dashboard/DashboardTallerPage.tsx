@@ -90,10 +90,15 @@ export function DashboardTallerPage() {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const [isClienteModalOpen, setIsClienteModalOpen] = useState(false);
-  const [isPrendaModalOpen, setIsPrendaModalOpen] = useState(false);
   const [isTipoSelectorOpen, setIsTipoSelectorOpen] = useState(false);
   const [selectedTipoId, setSelectedTipoId] = useState<number | undefined>(undefined);
   const [prendaToEdit, setPrendaToEdit] = useState<Prenda | null>(null);
+  const [prendaFormKey, setPrendaFormKey] = useState(0); // incrementar para limpiar el formulario
+  const [collapsedServicios, setCollapsedServicios] = useState<Record<number, boolean>>({});
+
+  const toggleServiciosCollapsed = (prendaId: number) => {
+    setCollapsedServicios(prev => ({ ...prev, [prendaId]: !prev[prendaId] }));
+  };
 
   // Abonos State
   const [isAbonoModalOpen, setIsAbonoModalOpen] = useState(false);
@@ -328,22 +333,31 @@ export function DashboardTallerPage() {
     handleSelectCliente(nuevoCliente);
   };
 
-  const handleOpenAddPrenda = async () => {
+  // Abre el selector de tipo prenda (creando draft si no existe)
+  const handleOpenTipoSelector = async () => {
     await ensureDraftFactura();
     setPrendaToEdit(null);
-    setSelectedTipoId(undefined);
     setIsTipoSelectorOpen(true);
   };
 
+  // Callback del TipoPrendaSelectorModal — actualiza el tipo seleccionado en el form
   const handleTipoSelected = (tipoId: number) => {
     setSelectedTipoId(tipoId);
     setIsTipoSelectorOpen(false);
-    setIsPrendaModalOpen(true);
   };
 
+  // Editar prenda existente desde el panel de resumen
   const handleEditPrenda = (prenda: Prenda) => {
     setPrendaToEdit(prenda);
-    setIsPrendaModalOpen(true);
+    // PrendaModal actualiza via su useEffect — no need to change key
+  };
+
+  // Finalizar prenda: limpiar formulario y refrescar factura
+  const handlePrendaFormClose = async () => {
+    setPrendaToEdit(null);
+    setSelectedTipoId(undefined);
+    setPrendaFormKey(k => k + 1); // fuerza remount de PrendaModal → formulario limpio
+    await refreshDraftInvoice();
   };
 
   const handleRemovePrenda = async (prendaId: number) => {
@@ -601,11 +615,43 @@ export function DashboardTallerPage() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '6fr 4fr', gap: 'var(--space-6)', alignItems: 'start' }}>
-        {/* COLUMNA IZQUIERDA: FORMULARIO FACTURA */}
+        {/* ════════════════════════════════════════════════════════
+             COLUMNA IZQUIERDA (PRINCIPAL): FORMULARIO AGREGAR PRENDA
+        ════════════════════════════════════════════════════════ */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+          {/* Selector de tipo prenda — se abre cuando el usuario hace clic en la tarjeta */}
+          {isTipoSelectorOpen && (
+            <TipoPrendaSelectorModal
+              tiposPrenda={tiposPrenda}
+              onSelect={handleTipoSelected}
+              onClose={() => setIsTipoSelectorOpen(false)}
+              onIconoActualizado={(tipoActualizado) =>
+                setTiposPrenda(prev => prev.map(t => t.id === tipoActualizado.id ? tipoActualizado : t))
+              }
+            />
+          )}
+          {/* Formulario siempre visible — key cambia al finalizar prenda (limpia estado) */}
+          <PrendaModal
+            key={`prenda-form-${prendaFormKey}`}
+            inline={true}
+            facturaId={draftFactura?.id || 0}
+            prendaToEdit={prendaToEdit}
+            tiposPrenda={tiposPrenda}
+            catalogoServicios={catalogoServicios}
+            onClose={handlePrendaFormClose}
+            onSaved={refreshDraftInvoice}
+            initialTipoPrendaId={selectedTipoId}
+            onRequestTipoPrendaSelector={handleOpenTipoSelector}
+          />
+        </div>
+
+        {/* ════════════════════════════════════════════════════════
+             COLUMNA DERECHA (SECUNDARIA): RESUMEN FACTURA
+        ════════════════════════════════════════════════════════ */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
           <div className="card" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
             <h2 style={{ fontSize: 'var(--text-xl)', fontFamily: 'var(--font-heading)', marginBottom: 'var(--space-4)' }}>
-              Nueva Factura de Taller {draftFactura ? `(#${draftFactura.numero})` : ''}
+              Resumen Factura {draftFactura ? `#${draftFactura.numero}` : '— Nueva'}
             </h2>
 
             {draftFactura && (
@@ -755,7 +801,7 @@ export function DashboardTallerPage() {
                     return (
                       <div key={p.id} className="card" style={{ padding: '0.5rem', margin: 0, border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)' }}>
                         {/* FILA SUPERIOR: TIPO PRENDA, COLOR, MARCA, TALLA | FECHA COMPROMISO */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-border)', paddingBottom: '12px', marginBottom: '12px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '12px', marginBottom: '12px' }}>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                               <div style={{ fontWeight: 'var(--font-medium)', fontSize: 'var(--text-lg)', textTransform: 'uppercase', color: 'var(--color-primary)' }}>
@@ -780,39 +826,11 @@ export function DashboardTallerPage() {
                           </div>
                         </div>
 
-                        {/* SECCION CENTRAL: SERVICIOS */}
-                        <div style={{ marginBottom: '16px' }}>
-                          <div style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--color-text-light)', marginBottom: '8px', letterSpacing: '0.05em' }}>
-                            Servicios Asignados ({p.servicios?.length || 0})
-                          </div>
-                          {p.servicios && p.servicios.length > 0 ? (
-                            <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '13px' }}>
-                              {p.servicios.map(s => {
-                                const cs = catalogoServicios.find(c => c.id === s.servicioId);
-                                const servicioNombre = cs ? cs.tipoEspecifico : 'Servicio';
-                                const arreglo = tiposArreglo.find(ta => ta.id === s.tipoArregloId)?.descripcion || '';
-                                const zona = zonas.find(z => z.id === s.zonaId)?.descripcion || '';
-                                const longitud = s.medidaEntregada ? `Longitud: ${s.medidaEntregada}` : '';
-                                const obs = s.observaciones ? `Obs: ${s.observaciones}` : '';
-                                const details = [servicioNombre, arreglo, zona, longitud, obs].filter(Boolean).join(' - ');
-                                return (
-                                  <li key={s.id} style={{ marginBottom: '4px' }}>{details}</li>
-                                );
-                              })}
-                            </ul>
-                          ) : (
-                            <div style={{ fontSize: '13px', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Sin servicios asignados</div>
-                          )}
-                        </div>
-
-                        {/* SEPARATOR */}
-                        <div style={{ marginBottom: '16px', borderBottom: '1px solid var(--color-border)' }}></div>
-
-                        {/* FOOTER: COMBOBOX URGENCIA Y ACCIONES Y PRECIO */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        {/* BARRA DE ACCIONES: URGENCIA, EDITAR/ELIMINAR, PRECIO — después del ID */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-hover)', borderRadius: 'var(--radius-md)', padding: '8px 12px', marginBottom: '16px', border: '1px solid var(--color-border)' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <span style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>Atención:</span>
-                            <select 
+                            <select
                               className="form-select"
                               style={{ fontSize: '13px', padding: '6px 32px 6px 12px', width: '200px' }}
                               value={p.tipoUrgenciaId != null ? p.tipoUrgenciaId.toString() : ''}
@@ -824,7 +842,6 @@ export function DashboardTallerPage() {
                               ))}
                             </select>
                           </div>
-                          
                           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                             <div style={{ display: 'flex', gap: '8px' }}>
                               <button className="btn btn-secondary btn-sm" onClick={() => handleEditPrenda(p)} title="Editar prenda">
@@ -838,6 +855,44 @@ export function DashboardTallerPage() {
                               €{val.toFixed(2)}
                             </div>
                           </div>
+                        </div>
+
+                        {/* SECCION CENTRAL: SERVICIOS con toggle colapsable */}
+                        <div style={{ marginBottom: '16px' }}>
+                          <button
+                            type="button"
+                            onClick={() => toggleServiciosCollapsed(p.id)}
+                            style={{
+                              display: 'flex', alignItems: 'center', gap: '6px',
+                              background: 'none', border: 'none', cursor: 'pointer',
+                              fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase',
+                              color: 'var(--color-primary)', letterSpacing: '0.05em',
+                              marginBottom: '8px', padding: 0
+                            }}
+                          >
+                            {collapsedServicios[p.id] ? <PlusCircle size={14} /> : <AlertCircle size={14} />}
+                            Servicios Asignados ({p.servicios?.length || 0})
+                          </button>
+                          {!collapsedServicios[p.id] && (
+                            p.servicios && p.servicios.length > 0 ? (
+                              <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '13px' }}>
+                                {p.servicios.map(s => {
+                                  const cs = catalogoServicios.find(c => c.id === s.servicioId);
+                                  const servicioNombre = cs ? cs.tipoEspecifico : 'Servicio';
+                                  const arreglo = tiposArreglo.find(ta => ta.id === s.tipoArregloId)?.descripcion || '';
+                                  const zona = zonas.find(z => z.id === s.zonaId)?.descripcion || '';
+                                  const longitud = s.medidaEntregada ? `Longitud: ${s.medidaEntregada}` : '';
+                                  const obs = s.observaciones ? `Obs: ${s.observaciones}` : '';
+                                  const details = [servicioNombre, arreglo, zona, longitud, obs].filter(Boolean).join(' - ');
+                                  return (
+                                    <li key={s.id} style={{ marginBottom: '4px' }}>{details}</li>
+                                  );
+                                })}
+                              </ul>
+                            ) : (
+                              <div style={{ fontSize: '13px', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Sin servicios asignados</div>
+                            )
+                          )}
                         </div>
                         
                         {/* OBSERVACIONES DE LA PRENDA */}
@@ -857,11 +912,11 @@ export function DashboardTallerPage() {
                   type="button" 
                   className="btn btn-outline" 
                   style={{ width: 'max-content', borderStyle: 'dashed' }}
-                  onClick={handleOpenAddPrenda}
+                  onClick={handlePrendaFormClose}
                   disabled={creatingDraft}
                 >
                   {creatingDraft ? <span className="spinner spinner-sm" /> : <Plus size={16} />} 
-                  Agregar Prenda
+                  Nueva Prenda
                 </button>
               </div>
 
@@ -975,50 +1030,6 @@ export function DashboardTallerPage() {
           </div>
         </div>
 
-        {/* COLUMNA DERECHA: FORMULARIO PRENDA INLINE */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)', height: '100%' }}>
-          {draftFactura ? (
-            <>
-        {isTipoSelectorOpen && (
-        <TipoPrendaSelectorModal
-          tiposPrenda={tiposPrenda}
-          onSelect={handleTipoSelected}
-          onClose={() => setIsTipoSelectorOpen(false)}
-          onIconoActualizado={(tipoActualizado) =>
-            setTiposPrenda(prev => prev.map(t => t.id === tipoActualizado.id ? tipoActualizado : t))
-          }
-        />
-      )}
-          {isPrendaModalOpen ? (
-              <PrendaModal
-                inline={true}
-                facturaId={draftFactura.id}
-                prendaToEdit={prendaToEdit}
-                tiposPrenda={tiposPrenda}
-                catalogoServicios={catalogoServicios}
-                onClose={() => setIsPrendaModalOpen(false)}
-                onSaved={refreshDraftInvoice}
-          initialTipoPrendaId={selectedTipoId}
-              />
-            ) : (
-              <div className="card" style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
-                <Shirt size={48} style={{ opacity: 0.2, margin: '0 auto var(--space-4)' }} />
-                <h3 style={{ fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)' }}>No hay prenda seleccionada</h3>
-                <p style={{ fontSize: 'var(--text-sm)', marginTop: 'var(--space-2)' }}>Haz clic en "Agregar Prenda" o edita una existente para comenzar.</p>
-                <button className="btn btn-primary" style={{ marginTop: 'var(--space-4)' }} onClick={handleOpenAddPrenda}>
-                  Agregar Prenda
-                </button>
-              </div>
-            )}
-            </>
-          ) : (
-            <div className="card" style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
-              <FileText size={48} style={{ opacity: 0.2, margin: '0 auto var(--space-4)' }} />
-              <h3 style={{ fontSize: 'var(--text-lg)', fontFamily: 'var(--font-heading)' }}>Crea una factura</h3>
-              <p style={{ fontSize: 'var(--text-sm)', marginTop: 'var(--space-2)' }}>Busca o selecciona un cliente a la izquierda para poder agregar prendas.</p>
-            </div>
-          )}
-        </div>
       </div>
 
       {/* KPIs AHORA EN LA PARTE INFERIOR */}

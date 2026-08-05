@@ -133,7 +133,7 @@ export class PrendaFacade {
     const created = await this.prendaDAO.create({
       facturaId: dto.facturaId,
       tipoPrendaId: dto.tipoPrendaId,
-      talla: dto.talla,
+      talla: dto.talla ?? '',
       color: dto.color,
       marca: dto.marca,
       esLujo: dto.esLujo,

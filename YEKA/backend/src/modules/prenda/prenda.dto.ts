@@ -20,9 +20,9 @@ export class CreatePrendaDto {
   @IsInt()
   tipoPrendaId: number;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  talla: string;
+  talla?: string;
 
   @IsString()
   @IsNotEmpty()

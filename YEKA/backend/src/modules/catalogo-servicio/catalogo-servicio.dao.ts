@@ -7,6 +7,7 @@ const servicioInclude = {
   materiales: true,
   tiposArreglo: true,
   tipoPrenda: true,
+  zona: true,
 } as const;
 
 @Injectable()
@@ -42,6 +43,7 @@ export class CatalogoServicioDAO {
         tipoEspecifico: data.tipoEspecifico,
         medidaBase: data.medidaBase,
         tiempoBase: data.tiempoBase,
+        zonaId: data.zonaId ?? null,
         activo: true,
         ...(data.categoriasFactoresIds?.length ? {
           categoriasFactores: { connect: data.categoriasFactoresIds.map(id => ({ id })) }
@@ -66,6 +68,7 @@ export class CatalogoServicioDAO {
         ...(data.tipoEspecifico ? { tipoEspecifico: data.tipoEspecifico } : {}),
         ...(data.medidaBase !== undefined ? { medidaBase: data.medidaBase } : {}),
         ...(data.tiempoBase !== undefined ? { tiempoBase: data.tiempoBase } : {}),
+        ...(data.zonaId !== undefined ? { zonaId: data.zonaId } : {}),
         ...(data.activo !== undefined ? { activo: data.activo } : {}),
         ...(data.categoriasFactoresIds !== undefined ? {
           categoriasFactores: { set: data.categoriasFactoresIds.map(id => ({ id })) }

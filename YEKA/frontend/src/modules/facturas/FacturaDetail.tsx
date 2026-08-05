@@ -71,6 +71,9 @@ export function FacturaDetail() {
   // Expand Prenda Card
   const [expandedPrendaId, setExpandedPrendaId] = useState<number | null>(null);
 
+  // Toggle servicios asignados section in modal
+  const [serviciosAsignadosExpanded, setServiciosAsignadosExpanded] = useState(true);
+
   // Abono Modal
   const [isAbonoModalOpen, setIsAbonoModalOpen] = useState(false);
   const [abonoForm, setAbonoForm] = useState({
@@ -666,6 +669,53 @@ export function FacturaDetail() {
             </form>
             )}
 
+            {/* Info row after prenda ID: urgencia selector, edit/delete buttons, total price */}
+            {activePrenda && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'var(--space-3)', padding: 'var(--space-3) var(--space-4)', background: 'var(--bg-hover)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>Atención:</span>
+                  <select
+                    key={`modal-urg-${activePrenda.id}-${activePrenda.tipoUrgenciaId}-${tiposUrgencia.length}`}
+                    value={activePrenda.tipoUrgenciaId != null ? activePrenda.tipoUrgenciaId.toString() : ''}
+                    onChange={(e) => handleCambiarUrgencia(activePrenda.id, e.target.value ? Number(e.target.value) : null).then(() => prendasService.getById(activePrenda.id).then(setActivePrenda))}
+                    className="form-select"
+                    style={{ fontSize: '13px', padding: '6px 32px 6px 12px', width: '220px' }}
+                  >
+                    <option value="">Normal (0%)</option>
+                    {tiposUrgencia.map(tu => (
+                      <option key={tu.id} value={tu.id.toString()}>
+                        {tu.nombre} ({Number(tu.porcentajeRecargo) > 0 ? '+' : ''}{Number(tu.porcentajeRecargo)}%)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-sm"
+                      title="Editar prenda"
+                      onClick={() => { setIsModalOpen(false); setTimeout(() => handleOpenModal(activePrenda), 50); }}
+                    >
+                      <Edit2 size={14} style={{ marginRight: '4px' }} /> Editar
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-outline btn-sm"
+                      title="Eliminar prenda"
+                      style={{ color: 'var(--color-danger)', borderColor: 'var(--color-danger)' }}
+                      onClick={() => { handleRemovePrenda(activePrenda.id); setIsModalOpen(false); }}
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                  <div style={{ fontSize: 'var(--text-lg)', fontWeight: 'bold', color: 'var(--color-text)', borderLeft: '1px solid var(--color-border)', paddingLeft: '16px' }}>
+                    €{(activePrenda.servicios?.reduce((acc, s) => acc + Number(s.precioFinal), 0) || 0).toFixed(2)}
+                  </div>
+                </div>
+              </div>
+            )}
+
             {activePrenda && activePrenda.fechaCompromiso && (
               <div style={{
                 display: 'flex',
@@ -706,9 +756,21 @@ export function FacturaDetail() {
                 {/* Servicios ya asignados */}
                 {activePrenda.servicios && activePrenda.servicios.length > 0 && (
                   <div>
-                    <p style={{ fontSize: 'var(--text-xs)', textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.06em', marginBottom: 'var(--space-2)' }}>
-                      Servicios asignados
-                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setServiciosAsignadosExpanded(prev => !prev)}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '6px',
+                        background: 'none', border: 'none', cursor: 'pointer',
+                        fontSize: 'var(--text-xs)', textTransform: 'uppercase',
+                        color: 'var(--color-primary)', letterSpacing: '0.06em',
+                        fontWeight: 'var(--font-semibold)', marginBottom: 'var(--space-2)', padding: 0
+                      }}
+                    >
+                      {serviciosAsignadosExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                      Servicios asignados ({activePrenda.servicios.length})
+                    </button>
+                    {serviciosAsignadosExpanded && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
                       {activePrenda.servicios.map(s => {
                         const srv = catalogoServicios.find(c => c.id === s.servicioId);
@@ -767,6 +829,7 @@ export function FacturaDetail() {
                         );
                       })}
                     </div>
+                    )}
                   </div>
                 )}
 

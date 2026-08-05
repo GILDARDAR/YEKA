@@ -30,6 +30,10 @@ export class CreateCatalogoServicioDto {
   @Min(1)
   tiempoBase: number;
 
+  @IsInt()
+  @IsOptional()
+  zonaId?: number;
+
   @IsArray()
   @IsInt({ each: true })
   @IsOptional()
@@ -69,6 +73,10 @@ export class UpdateCatalogoServicioDto {
   @IsOptional()
   tiempoBase?: number;
 
+  @IsInt()
+  @IsOptional()
+  zonaId?: number;
+
   @IsBoolean()
   @IsOptional()
   activo?: boolean;
@@ -97,6 +105,8 @@ export class CatalogoServicioResponseDto {
   tipoEspecifico: string;
   medidaBase: number;
   tiempoBase: number;
+  zonaId?: number;
+  zona?: any;
   activo: boolean;
   categoriasFactores: any[];
   materiales?: any[];

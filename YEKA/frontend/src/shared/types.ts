@@ -205,6 +205,8 @@ export interface CatalogoServicio {
   tipoEspecifico: string;
   medidaBase: number;
   tiempoBase: number;
+  zonaId?: number;
+  zona?: { id: number; descripcion: string; activo?: boolean };
   activo: boolean;
   categoriasFactores: { id: number; nombre: string }[];
   materiales?: { id: number; descripcion: string }[];
@@ -219,6 +221,7 @@ export interface CreateCatalogoServicioDto {
   tipoEspecifico: string;
   medidaBase?: number;
   tiempoBase?: number;
+  zonaId?: number;
   categoriasFactoresIds?: number[];
   materialesIds?: number[];
   tiposArregloIds?: number[];
@@ -230,6 +233,7 @@ export interface UpdateCatalogoServicioDto {
   tipoEspecifico?: string;
   medidaBase?: number;
   tiempoBase?: number;
+  zonaId?: number;
   activo?: boolean;
   categoriasFactoresIds?: number[];
   materialesIds?: number[];

@@ -6,6 +6,7 @@ import api from '../../shared/api';
 
 interface Material { id: number; descripcion: string; activo: boolean; }
 interface TipoArreglo { id: number; descripcion: string; activo: boolean; }
+interface Zona { id: number; descripcion: string; activa: boolean; }
 
 export interface ServicioModalProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ export function ServicioModal({ isOpen, servicioToEdit, initialData, onClose, on
   const [categoriasFactores, setCategoriasFactores] = useState<CategoriaFactorCobro[]>([]);
   const [allMateriales, setAllMateriales] = useState<Material[]>([]);
   const [allTiposArreglo, setAllTiposArreglo] = useState<TipoArreglo[]>([]);
+  const [allZonas, setAllZonas] = useState<Zona[]>([]);
   const [tiposPrenda, setTiposPrenda] = useState<TipoPrenda[]>([]);
 
   const [formData, setFormData] = useState<Omit<CreateCatalogoServicioDto, 'tipoPrendaId'> & { activa?: boolean; tipoPrendaId: number | '' }>({
@@ -35,9 +37,11 @@ export function ServicioModal({ isOpen, servicioToEdit, initialData, onClose, on
 
   const [selectedMateriales, setSelectedMateriales] = useState<Material[]>([]);
   const [selectedTiposArreglo, setSelectedTiposArreglo] = useState<TipoArreglo[]>([]);
+  const [selectedZonas, setSelectedZonas] = useState<Zona[]>([]);
 
   const [materialToAdd, setMaterialToAdd] = useState<number | ''>('');
   const [tipoArregloToAdd, setTipoArregloToAdd] = useState<number | ''>('');
+  const [zonaToAdd, setZonaToAdd] = useState<number | ''>('');
 
   const [showNewMaterial, setShowNewMaterial] = useState(false);
   const [newMaterialDesc, setNewMaterialDesc] = useState('');
@@ -55,16 +59,23 @@ export function ServicioModal({ isOpen, servicioToEdit, initialData, onClose, on
       api.get<Material[]>('/material').then(res => res.data),
       api.get<TipoArreglo[]>('/tipo-arreglo').then(res => res.data),
       api.get<TipoPrenda[]>('/tipos-prenda').then(res => res.data),
-    ]).then(([catFactoresData, materialesData, tiposArregloData, tiposPrendaData]) => {
+      api.get<Zona[]>('/zona').then(res => res.data),
+    ]).then(([catFactoresData, materialesData, tiposArregloData, tiposPrendaData, zonasData]) => {
       setCategoriasFactores(catFactoresData);
       setAllMateriales(materialesData);
       setAllTiposArreglo(tiposArregloData);
       setTiposPrenda(tiposPrendaData);
+      setAllZonas(zonasData);
       if (!servicioToEdit && initialData?.materialId) {
         const mat = materialesData.find(m => m.id === Number(initialData.materialId));
         if (mat) {
           setSelectedMateriales([{ id: mat.id, descripcion: mat.descripcion, activo: mat.activo }]);
         }
+      }
+
+      if (!servicioToEdit) {
+        const todasCatIds = catFactoresData.filter((c: any) => c.activa).map((c: any) => c.id);
+        setFormData(prev => ({ ...prev, categoriasFactoresIds: todasCatIds }));
       }
     }).catch(console.error);
 
@@ -82,20 +93,49 @@ export function ServicioModal({ isOpen, servicioToEdit, initialData, onClose, on
       });
       setSelectedMateriales(servicioToEdit.materiales?.map(m => ({ id: m.id, descripcion: m.descripcion, activo: true })) || []);
       setSelectedTiposArreglo(servicioToEdit.tiposArreglo?.map(t => ({ id: t.id, descripcion: t.descripcion, activo: true })) || []);
+      if ((servicioToEdit as any).zona) {
+        setSelectedZonas([{ id: (servicioToEdit as any).zona.id, descripcion: (servicioToEdit as any).zona.descripcion, activa: true }]);
+      } else if ((servicioToEdit as any).zonas?.length) {
+        setSelectedZonas(((servicioToEdit as any).zonas).map((z: any) => ({ id: z.id, descripcion: z.descripcion, activa: true })));
+      } else {
+        setSelectedZonas([]);
+      }
     } else {
-      setFormData({ nombre: '', tipoPrendaId: initialData?.tipoPrendaId || '', tipoEspecifico: '', medidaBase: 0, tiempoBase: 0, categoriasFactoresIds: [], materialesIds: initialData?.materialId ? [Number(initialData.materialId)] : [], tiposArregloIds: [], activa: true });
+      setFormData({ 
+        nombre: '', 
+        tipoPrendaId: initialData?.tipoPrendaId || '', 
+        tipoEspecifico: '', 
+        medidaBase: 0, 
+        tiempoBase: 0, 
+        categoriasFactoresIds: [], 
+        materialesIds: initialData?.materialId ? [Number(initialData.materialId)] : [], 
+        tiposArregloIds: [], 
+        activa: true 
+      });
       if (!initialData?.materialId) setSelectedMateriales([]);
       setSelectedTiposArreglo([]);
+      setSelectedZonas([]);
     }
     
     setMaterialToAdd('');
     setTipoArregloToAdd('');
+    setZonaToAdd('');
     setShowNewMaterial(false);
     setShowNewTipoArreglo(false);
     setNewMaterialDesc('');
     setNewTipoArregloDesc('');
 
   }, [isOpen, servicioToEdit, initialData]);
+
+  // ── Zonas ──
+  const handleAddZona = () => {
+    if (zonaToAdd === '') return;
+    const z = allZonas.find(item => item.id === Number(zonaToAdd));
+    if (!z || selectedZonas.some(item => item.id === z.id)) { setZonaToAdd(''); return; }
+    setSelectedZonas(prev => [...prev, z]);
+    setZonaToAdd('');
+  };
+  const handleRemoveZona = (id: number) => setSelectedZonas(prev => prev.filter(z => z.id !== id));
 
   const handleBasicChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -172,6 +212,8 @@ export function ServicioModal({ isOpen, servicioToEdit, initialData, onClose, on
         categoriasFactoresIds: formData.categoriasFactoresIds,
         materialesIds: selectedMateriales.map(m => m.id),
         tiposArregloIds: selectedTiposArreglo.map(t => t.id),
+        zonasIds: undefined,
+        zonaId: selectedZonas.length > 0 ? selectedZonas[0].id : undefined,
       };
       let savedServicio;
       if (servicioToEdit) {
@@ -208,12 +250,9 @@ export function ServicioModal({ isOpen, servicioToEdit, initialData, onClose, on
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
-            <div className="form-group">
-              <label className="form-label">Nombre General</label>
-              <input type="text" name="nombre" required value={formData.nombre} onChange={handleBasicChange} className="form-input" placeholder="Ej. Dobladillo Pantalón" />
-            </div>
-            <div className="form-group">
+          {/* Fila 1: Tipo Prenda (izquierda) | Material (derecha) */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)', alignItems: 'start' }}>
+            <div className="form-group" style={{ margin: 0 }}>
               <label className="form-label">Tipo de Prenda</label>
               <select
                 name="tipoPrendaId"
@@ -228,33 +267,167 @@ export function ServicioModal({ isOpen, servicioToEdit, initialData, onClose, on
                 ))}
               </select>
             </div>
+
+            <div className="form-group" style={{ margin: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-2)' }}>
+                <PackageOpen size={16} />
+                <label className="form-label" style={{ margin: 0, fontWeight: 'var(--font-semibold)' }}>Material</label>
+              </div>
+
+              {selectedMateriales.length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: 'var(--space-2)' }}>
+                  {selectedMateriales.map(m => (
+                    <span key={m.id} style={{ ...chipStyle, backgroundColor: 'var(--color-primary-light, #e0e7ff)', color: 'var(--color-primary, #4f46e5)' }}>
+                      {m.descripcion}
+                      <button type="button" onClick={() => handleRemoveMaterial(m.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', color: 'inherit', opacity: 0.7 }} title="Quitar"><X size={12} /></button>
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                <select value={materialToAdd} onChange={e => setMaterialToAdd(e.target.value === '' ? '' : Number(e.target.value))} className="form-input" style={{ flex: 1 }}>
+                  <option value="">Seleccionar material...</option>
+                  {allMateriales.filter(m => m.activo && !selectedMateriales.some(s => s.id === m.id)).map(m => (
+                    <option key={m.id} value={m.id}>{m.descripcion}</option>
+                  ))}
+                </select>
+                <button type="button" onClick={handleAddMaterial} className="btn btn-primary btn-sm" disabled={materialToAdd === ''} style={{ whiteSpace: 'nowrap' }}>
+                  <Plus size={14} /> Añadir
+                </button>
+              </div>
+
+              {!showNewMaterial ? (
+                <button type="button" onClick={() => setShowNewMaterial(true)} className="btn btn-ghost btn-sm" style={{ fontSize: '0.8rem', marginTop: '4px' }}>
+                  <Plus size={13} /> Crear nuevo material
+                </button>
+              ) : (
+                <div style={{ border: '1px dashed var(--color-border)', borderRadius: 'var(--radius-md)', padding: 'var(--space-3)', display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', marginTop: 'var(--space-2)' }}>
+                  <label className="form-label" style={{ margin: 0, fontSize: '0.82rem' }}>Descripción del nuevo material</label>
+                  <input type="text" className="form-input" value={newMaterialDesc} onChange={e => setNewMaterialDesc(e.target.value)} placeholder="Ej. Algodón, Seda..." maxLength={500} />
+                  <div style={{ display: 'flex', gap: 'var(--space-2)', justifyContent: 'flex-end' }}>
+                    <button type="button" onClick={() => { setShowNewMaterial(false); setNewMaterialDesc(''); }} className="btn btn-ghost btn-sm">Cancelar</button>
+                    <button type="button" onClick={handleCreateMaterial} className="btn btn-primary btn-sm" disabled={savingMaterial || !newMaterialDesc.trim()}>
+                      {savingMaterial ? 'Guardando...' : 'Crear y añadir'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
-            <div className="form-group">
-              <label className="form-label">Tipo Específico</label>
-              <input type="text" name="tipoEspecifico" required value={formData.tipoEspecifico} onChange={handleBasicChange} className="form-input" placeholder="Ej. Dobladillo simple" />
+          {/* Fila 2: Tipo Servicio / Arreglo (izquierda) | Zona (derecha) */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)', alignItems: 'start' }}>
+            <div className="form-group" style={{ margin: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-2)' }}>
+                <Wrench size={16} />
+                <label className="form-label" style={{ margin: 0, fontWeight: 'var(--font-semibold)' }}>Tipo Servicio (Tipo Arreglo)</label>
+              </div>
+
+              {selectedTiposArreglo.length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: 'var(--space-2)' }}>
+                  {selectedTiposArreglo.map(t => (
+                    <span key={t.id} style={{ ...chipStyle, backgroundColor: 'var(--color-success-light, #d1fae5)', color: 'var(--color-success, #065f46)' }}>
+                      {t.descripcion}
+                      <button type="button" onClick={() => handleRemoveTipoArreglo(t.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', color: 'inherit', opacity: 0.7 }} title="Quitar"><X size={12} /></button>
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                <select value={tipoArregloToAdd} onChange={e => setTipoArregloToAdd(e.target.value === '' ? '' : Number(e.target.value))} className="form-input" style={{ flex: 1 }}>
+                  <option value="">Seleccionar tipo servicio...</option>
+                  {allTiposArreglo.filter(t => t.activo && !selectedTiposArreglo.some(s => s.id === t.id)).map(t => (
+                    <option key={t.id} value={t.id}>{t.descripcion}</option>
+                  ))}
+                </select>
+                <button type="button" onClick={handleAddTipoArreglo} className="btn btn-primary btn-sm" disabled={tipoArregloToAdd === ''} style={{ whiteSpace: 'nowrap' }}>
+                  <Plus size={14} /> Añadir
+                </button>
+              </div>
+
+              {!showNewTipoArreglo ? (
+                <button type="button" onClick={() => setShowNewTipoArreglo(true)} className="btn btn-ghost btn-sm" style={{ fontSize: '0.8rem', marginTop: '4px' }}>
+                  <Plus size={13} /> Crear nuevo tipo servicio
+                </button>
+              ) : (
+                <div style={{ border: '1px dashed var(--color-border)', borderRadius: 'var(--radius-md)', padding: 'var(--space-3)', display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', marginTop: 'var(--space-2)' }}>
+                  <label className="form-label" style={{ margin: 0, fontSize: '0.82rem' }}>Descripción del nuevo tipo servicio</label>
+                  <input type="text" className="form-input" value={newTipoArregloDesc} onChange={e => setNewTipoArregloDesc(e.target.value)} placeholder="Ej. Dobladillo, Cremallera..." maxLength={500} />
+                  <div style={{ display: 'flex', gap: 'var(--space-2)', justifyContent: 'flex-end' }}>
+                    <button type="button" onClick={() => { setShowNewTipoArreglo(false); setNewTipoArregloDesc(''); }} className="btn btn-ghost btn-sm">Cancelar</button>
+                    <button type="button" onClick={handleCreateTipoArreglo} className="btn btn-primary btn-sm" disabled={savingTipoArreglo || !newTipoArregloDesc.trim()}>
+                      {savingTipoArreglo ? 'Guardando...' : 'Crear y añadir'}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="form-group">
-              <label className="form-label">Medida Base (cm)</label>
-              <input type="number" name="medidaBase" required min="0" step="0.01" value={formData.medidaBase} onChange={handleBasicChange} className="form-input" />
+
+            <div className="form-group" style={{ margin: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-2)' }}>
+                <label className="form-label" style={{ margin: 0, fontWeight: 'var(--font-semibold)' }}>Zona</label>
+              </div>
+
+              {selectedZonas.length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: 'var(--space-2)' }}>
+                  {selectedZonas.map(z => (
+                    <span key={z.id} style={{ ...chipStyle, backgroundColor: '#fef3c7', color: '#92400e' }}>
+                      {z.descripcion}
+                      <button type="button" onClick={() => handleRemoveZona(z.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', color: 'inherit', opacity: 0.7 }} title="Quitar"><X size={12} /></button>
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                <select value={zonaToAdd} onChange={e => setZonaToAdd(e.target.value === '' ? '' : Number(e.target.value))} className="form-input" style={{ flex: 1 }}>
+                  <option value="">Seleccionar zona...</option>
+                  {allZonas.filter(z => (z as any).activo !== false && (z as any).activa !== false && !selectedZonas.some(s => s.id === z.id)).map(z => (
+                    <option key={z.id} value={z.id}>{z.descripcion}</option>
+                  ))}
+                </select>
+                <button type="button" onClick={handleAddZona} className="btn btn-primary btn-sm" disabled={zonaToAdd === ''} style={{ whiteSpace: 'nowrap' }}>
+                  <Plus size={14} /> Añadir
+                </button>
+              </div>
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
-            <div className="form-group">
-              <label className="form-label">Tiempo Base (minutos)</label>
-              <input type="number" name="tiempoBase" required min="0" value={formData.tiempoBase} onChange={handleBasicChange} className="form-input" />
+          {/* Campos del servicio */}
+          <div style={sectionStyle}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
+              <div className="form-group">
+                <label className="form-label">Nombre General</label>
+                <input type="text" name="nombre" required value={formData.nombre} onChange={handleBasicChange} className="form-input" placeholder="Ej. Dobladillo Pantalón" />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Tipo Específico</label>
+                <input type="text" name="tipoEspecifico" required value={formData.tipoEspecifico} onChange={handleBasicChange} className="form-input" placeholder="Ej. Dobladillo simple" />
+              </div>
             </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+              <div className="form-group">
+                <label className="form-label">Medida Base (cm)</label>
+                <input type="number" name="medidaBase" required min="0" step="0.01" value={formData.medidaBase} onChange={handleBasicChange} className="form-input" />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Tiempo Base (minutos)</label>
+                <input type="number" name="tiempoBase" required min="0" value={formData.tiempoBase} onChange={handleBasicChange} className="form-input" />
+              </div>
+            </div>
+
             {servicioToEdit && (
-              <div className="form-group" style={{ flexDirection: 'row', alignItems: 'center', gap: 'var(--space-2)', marginTop: '28px' }}>
+              <div className="form-group" style={{ flexDirection: 'row', alignItems: 'center', gap: 'var(--space-2)', marginTop: 'var(--space-4)' }}>
                 <input type="checkbox" id="activa" name="activa" checked={formData.activa} onChange={handleBasicChange} />
                 <label htmlFor="activa" className="form-label" style={{ margin: 0 }}>Servicio Activo</label>
               </div>
             )}
           </div>
 
-          {/* ── Categorías de Factores ── */}
+          {/* Categorías de Factores Aplicables (Justo antes de los botones) */}
           <div style={sectionStyle}>
             <h3 style={{ fontSize: 'var(--text-base)', fontFamily: 'var(--font-heading)', fontWeight: 'var(--font-semibold)', marginBottom: 'var(--space-2)' }}>
               Categorías de Factores Aplicables
@@ -269,106 +442,7 @@ export function ServicioModal({ isOpen, servicioToEdit, initialData, onClose, on
             </div>
           </div>
 
-          {/* ── Materiales asociados ── */}
-          <div style={sectionStyle}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-3)' }}>
-              <PackageOpen size={16} />
-              <label className="form-label" style={{ margin: 0, fontWeight: 'var(--font-semibold)' }}>Materiales asociados</label>
-            </div>
-
-            {selectedMateriales.length === 0 ? (
-              <p style={{ fontSize: '0.85rem', color: 'var(--color-text-light)', marginBottom: 'var(--space-3)' }}>Sin materiales asociados.</p>
-            ) : (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: 'var(--space-3)' }}>
-                {selectedMateriales.map(m => (
-                  <span key={m.id} style={{ ...chipStyle, backgroundColor: 'var(--color-primary-light, #e0e7ff)', color: 'var(--color-primary, #4f46e5)' }}>
-                    {m.descripcion}
-                    <button type="button" onClick={() => handleRemoveMaterial(m.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', color: 'inherit', opacity: 0.7 }} title="Quitar"><X size={12} /></button>
-                  </span>
-                ))}
-              </div>
-            )}
-
-            <div style={{ display: 'flex', gap: 'var(--space-2)', marginBottom: 'var(--space-2)' }}>
-              <select value={materialToAdd} onChange={e => setMaterialToAdd(e.target.value === '' ? '' : Number(e.target.value))} className="form-input" style={{ flex: 1 }}>
-                <option value="">Seleccionar material...</option>
-                {allMateriales.filter(m => m.activo && !selectedMateriales.some(s => s.id === m.id)).map(m => (
-                  <option key={m.id} value={m.id}>{m.descripcion}</option>
-                ))}
-              </select>
-              <button type="button" onClick={handleAddMaterial} className="btn btn-primary btn-sm" disabled={materialToAdd === ''} style={{ whiteSpace: 'nowrap' }}>
-                <Plus size={14} /> Añadir
-              </button>
-            </div>
-
-            {!showNewMaterial ? (
-              <button type="button" onClick={() => setShowNewMaterial(true)} className="btn btn-ghost btn-sm" style={{ fontSize: '0.8rem' }}>
-                <Plus size={13} /> Crear nuevo material
-              </button>
-            ) : (
-              <div style={{ border: '1px dashed var(--color-border)', borderRadius: 'var(--radius-md)', padding: 'var(--space-3)', display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', marginTop: 'var(--space-2)' }}>
-                <label className="form-label" style={{ margin: 0, fontSize: '0.82rem' }}>Descripción del nuevo material</label>
-                <input type="text" className="form-input" value={newMaterialDesc} onChange={e => setNewMaterialDesc(e.target.value)} placeholder="Ej. Algodón, Seda..." maxLength={500} />
-                <div style={{ display: 'flex', gap: 'var(--space-2)', justifyContent: 'flex-end' }}>
-                  <button type="button" onClick={() => { setShowNewMaterial(false); setNewMaterialDesc(''); }} className="btn btn-ghost btn-sm">Cancelar</button>
-                  <button type="button" onClick={handleCreateMaterial} className="btn btn-primary btn-sm" disabled={savingMaterial || !newMaterialDesc.trim()}>
-                    {savingMaterial ? 'Guardando...' : 'Crear y añadir'}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* ── Tipos de Arreglo ── */}
-          <div style={sectionStyle}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-3)' }}>
-              <Wrench size={16} />
-              <label className="form-label" style={{ margin: 0, fontWeight: 'var(--font-semibold)' }}>Tipos de Arreglo asociados</label>
-            </div>
-
-            {selectedTiposArreglo.length === 0 ? (
-              <p style={{ fontSize: '0.85rem', color: 'var(--color-text-light)', marginBottom: 'var(--space-3)' }}>Sin tipos de arreglo asociados.</p>
-            ) : (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: 'var(--space-3)' }}>
-                {selectedTiposArreglo.map(t => (
-                  <span key={t.id} style={{ ...chipStyle, backgroundColor: 'var(--color-success-light, #d1fae5)', color: 'var(--color-success, #065f46)' }}>
-                    {t.descripcion}
-                    <button type="button" onClick={() => handleRemoveTipoArreglo(t.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', color: 'inherit', opacity: 0.7 }} title="Quitar"><X size={12} /></button>
-                  </span>
-                ))}
-              </div>
-            )}
-
-            <div style={{ display: 'flex', gap: 'var(--space-2)', marginBottom: 'var(--space-2)' }}>
-              <select value={tipoArregloToAdd} onChange={e => setTipoArregloToAdd(e.target.value === '' ? '' : Number(e.target.value))} className="form-input" style={{ flex: 1 }}>
-                <option value="">Seleccionar tipo de arreglo...</option>
-                {allTiposArreglo.filter(t => t.activo && !selectedTiposArreglo.some(s => s.id === t.id)).map(t => (
-                  <option key={t.id} value={t.id}>{t.descripcion}</option>
-                ))}
-              </select>
-              <button type="button" onClick={handleAddTipoArreglo} className="btn btn-primary btn-sm" disabled={tipoArregloToAdd === ''} style={{ whiteSpace: 'nowrap' }}>
-                <Plus size={14} /> Añadir
-              </button>
-            </div>
-
-            {!showNewTipoArreglo ? (
-              <button type="button" onClick={() => setShowNewTipoArreglo(true)} className="btn btn-ghost btn-sm" style={{ fontSize: '0.8rem' }}>
-                <Plus size={13} /> Crear nuevo tipo de arreglo
-              </button>
-            ) : (
-              <div style={{ border: '1px dashed var(--color-border)', borderRadius: 'var(--radius-md)', padding: 'var(--space-3)', display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', marginTop: 'var(--space-2)' }}>
-                <label className="form-label" style={{ margin: 0, fontSize: '0.82rem' }}>Descripción del nuevo tipo de arreglo</label>
-                <input type="text" className="form-input" value={newTipoArregloDesc} onChange={e => setNewTipoArregloDesc(e.target.value)} placeholder="Ej. Dobladillo, Cremallera..." maxLength={500} />
-                <div style={{ display: 'flex', gap: 'var(--space-2)', justifyContent: 'flex-end' }}>
-                  <button type="button" onClick={() => { setShowNewTipoArreglo(false); setNewTipoArregloDesc(''); }} className="btn btn-ghost btn-sm">Cancelar</button>
-                  <button type="button" onClick={handleCreateTipoArreglo} className="btn btn-primary btn-sm" disabled={savingTipoArreglo || !newTipoArregloDesc.trim()}>
-                    {savingTipoArreglo ? 'Guardando...' : 'Crear y añadir'}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
+          {/* Botones de acción al final */}
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)', marginTop: 'var(--space-4)' }}>
             <button type="button" onClick={onClose} className="btn btn-ghost">Cancelar</button>
             <button type="submit" className="btn btn-primary">

@@ -5,7 +5,7 @@ import { ServicioModal } from '../catalogo/ServicioModal';
 
 import api from '../../shared/api';
 import type { Prenda, TipoPrenda, CatalogoServicio, PrendaServicio, EstadoPrenda } from '../../shared/types';
-import { Check, Trash2, Edit2, X, Calendar, Plus, ChevronUp, ChevronDown } from 'lucide-react';
+import { Check, Trash2, Edit2, X, Calendar, Plus, ChevronUp, ChevronDown, Shirt } from 'lucide-react';
 
 interface PrendaModalProps {
   facturaId: number;
@@ -17,6 +17,7 @@ interface PrendaModalProps {
   onSaved: () => void; // Called when any change happens so parent can refresh
   onTipoPrendaCreated?: (nuevoTipo: TipoPrenda) => void; // Optional: called after creating a new tipo
   initialTipoPrendaId?: number;
+  onRequestTipoPrendaSelector?: () => void; // Invoked when user clicks the tipo card in inline mode
 }
 
 const ESTADOS_PRENDA: EstadoPrenda[] = [
@@ -44,6 +45,7 @@ export function PrendaModal({
   onTipoPrendaCreated,
   inline = false,
   initialTipoPrendaId,
+  onRequestTipoPrendaSelector,
 }: PrendaModalProps) {
   // Local copy of tiposPrenda so we can append newly created ones without refreshing parent
   const [tiposPrenda, setTiposPrenda] = useState<TipoPrenda[]>(tiposPrendaProp);
@@ -54,9 +56,8 @@ export function PrendaModal({
   const [prendaForm, setPrendaForm] = useState({
     tipoPrendaId: prendaToEdit?.tipoPrendaId?.toString() || initialTipoPrendaId?.toString() || '',
     tipoUrgenciaId: prendaToEdit?.tipoUrgenciaId?.toString() || '',
-    talla: prendaToEdit?.talla || '',
     color: prendaToEdit?.color || '',
-    esLujo: prendaToEdit?.esLujo || false,
+    esLujo: prendaToEdit?.esLujo ?? true,
     marca: prendaToEdit?.marca || '',
     notas: prendaToEdit?.notas || '',
     materialId: prendaToEdit?.materialId?.toString() || '',
@@ -65,6 +66,7 @@ export function PrendaModal({
   const [activePrenda, setActivePrenda] = useState<Prenda | null>(prendaToEdit);
   const [isFormExpanded, setIsFormExpanded] = useState(true);
 
+  // Sync when prendaToEdit changes (e.g., user clicks Editar from the right panel)
   React.useEffect(() => {
     if (prendaToEdit && prendaToEdit.id) {
       prendasService.getById(prendaToEdit.id).then(fullPrenda => {
@@ -74,9 +76,8 @@ export function PrendaModal({
         setPrendaForm({
           tipoPrendaId: fullPrenda.tipoPrendaId?.toString() || '',
           tipoUrgenciaId: fullPrenda.tipoUrgenciaId?.toString() || '',
-          talla: fullPrenda.talla || '',
           color: fullPrenda.color || '',
-          esLujo: fullPrenda.esLujo || false,
+          esLujo: fullPrenda.esLujo ?? true,
           marca: fullPrenda.marca || '',
           notas: fullPrenda.notas || '',
           materialId: fullPrenda.materialId?.toString() || '',
@@ -89,15 +90,24 @@ export function PrendaModal({
       setPrendaForm({
         tipoPrendaId: initialTipoPrendaId?.toString() || '',
         tipoUrgenciaId: '',
-        talla: '',
         color: '',
-        esLujo: false,
+        esLujo: true,
         marca: '',
         notas: '',
         materialId: '',
       });
     }
   }, [prendaToEdit]);
+
+  // Sync initialTipoPrendaId when parent changes it (user selects tipo from TipoPrendaSelectorModal)
+  React.useEffect(() => {
+    if (!prendaToEdit) {
+      setPrendaForm(p => ({
+        ...p,
+        tipoPrendaId: initialTipoPrendaId ? initialTipoPrendaId.toString() : '',
+      }));
+    }
+  }, [initialTipoPrendaId]);
 
   // ─── Nuevo Tipo de Prenda inline ──────────────────────────────────────
   const [showNuevoTipoModal, setShowNuevoTipoModal] = useState(false);
@@ -169,8 +179,9 @@ export function PrendaModal({
     api.get('/zona').then(res => setZonas(res.data)).catch(console.error);
   }, []);
 
-  // Handle ESC key
+  // Handle ESC key — only for modal (non-inline) mode
   React.useEffect(() => {
+    if (inline) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onClose();
@@ -178,16 +189,29 @@ export function PrendaModal({
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
+  }, [onClose, inline]);
 
   const handleSavePrenda = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // In inline mode, tipo prenda is a card (not a required select), validate manually
+    if (!prendaForm.tipoPrendaId) {
+      alert('Debes seleccionar un tipo de prenda. Haz clic en la tarjeta de la izquierda.');
+      return;
+    }
+    
+    // Validate facturaId (might be 0 if no client/draft yet)
+    if (!facturaId) {
+      alert('Primero selecciona un cliente en el panel de la derecha para crear la factura.');
+      return;
+    }
+    
     try {
       const dto = {
         facturaId: Number(facturaId),
         tipoPrendaId: Number(prendaForm.tipoPrendaId),
-        tipoUrgenciaId: prendaForm.tipoUrgenciaId ? Number(prendaForm.tipoUrgenciaId) : null,
-        talla: prendaForm.talla,
+        tipoUrgenciaId: prendaForm.tipoUrgenciaId ? Number(prendaForm.tipoUrgenciaId) : undefined,
+        talla: 'm',
         color: prendaForm.color,
         esLujo: prendaForm.esLujo,
         marca: prendaForm.marca || undefined,
@@ -216,11 +240,10 @@ export function PrendaModal({
     if (!servicioSeleccionado || !activePrenda) return;
     try {
       setIsCalculando(true);
-await prendasService.asignarServicio(activePrenda.id, {
+      await prendasService.asignarServicio(activePrenda.id, {
         servicioId: Number(servicioSeleccionado),
         medidaEntregada: medidaEntregada !== '' ? Number(medidaEntregada) : undefined,
         observaciones: observacionesServicio ? observacionesServicio : undefined,
-
         tipoArregloId: tipoArregloSeleccionado ? Number(tipoArregloSeleccionado) : undefined,
         zonaId: zonaSeleccionada ? Number(zonaSeleccionada) : undefined,
       });
@@ -286,7 +309,7 @@ await prendasService.asignarServicio(activePrenda.id, {
   };
 
   const wrapperStyle = inline 
-    ? { width: '100%', padding: 'var(--space-4)', position: 'relative' as any, height: '100%', overflowY: 'auto' as any, background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }
+    ? { width: '100%', padding: 'var(--space-4)', position: 'relative' as any, overflowY: 'auto' as any, background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }
     : { width: '100%', maxWidth: '800px', padding: 'var(--space-6)', maxHeight: '90vh', overflowY: 'auto' as any, position: 'relative' as any, background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' };
 
   const Overlay = inline ? React.Fragment : 'div';
@@ -298,16 +321,22 @@ await prendasService.asignarServicio(activePrenda.id, {
     }
   };
 
+  // Urgencia colors palette
+  const urgColors = ['#f59e0b', '#f97316', '#ef4444', '#dc2626'];
+
   return (
     <>
     <Overlay {...overlayProps}>
       <div style={wrapperStyle}>
-        <button 
-          onClick={onClose}
-          style={{ position: 'absolute', top: 'var(--space-4)', right: 'var(--space-4)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)' }}
-        >
-          <X size={20} />
-        </button>
+        {/* X button only in non-inline (modal) mode */}
+        {!inline && (
+          <button 
+            onClick={onClose}
+            style={{ position: 'absolute', top: 'var(--space-4)', right: 'var(--space-4)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)' }}
+          >
+            <X size={20} />
+          </button>
+        )}
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
           <h2 style={{ fontSize: 'var(--text-xl)', fontFamily: 'var(--font-heading)', margin: 0 }}>
@@ -328,124 +357,409 @@ await prendasService.asignarServicio(activePrenda.id, {
           )}
         </div>
         
-        {/* Prenda Form */}
+        {/* ─── PRENDA FORM ─── */}
         {isFormExpanded && (
           <form onSubmit={handleSavePrenda} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-          {activePrenda && (
-            <div className="form-group" style={{ marginBottom: 'var(--space-2)' }}>
-              <label className="form-label" style={{ fontWeight: 'bold', color: 'var(--color-primary)' }}>Estado Actual de la Prenda</label>
-              <select 
-                className="form-select" 
-                value={activePrenda.estadoActual}
-                onChange={e => handleCambiarEstado(e.target.value as EstadoPrenda)}
-                style={{ borderColor: 'var(--color-primary)', background: 'rgba(59, 130, 246, 0.05)' }}
-              >
-                {ESTADOS_PRENDA.map(e => <option key={e} value={e}>{ESTADO_LABELS[e]}</option>)}
-              </select>
-            </div>
-          )}
-          
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-4)' }}>
-            <div className="form-group">
-              <label className="form-label">Tipo de Prenda</label>
-              <select 
-                required 
-                className="form-select" 
-                value={prendaForm.tipoPrendaId}
-                onChange={e => {
-                  if (e.target.value === '__CREAR__') {
-                    setShowNuevoTipoModal(true);
-                  } else {
-                    setPrendaForm(p => ({ ...p, tipoPrendaId: e.target.value }));
-                  }
-                }}
-                disabled={!!activePrenda && !isEditingPrenda}
-              >
-                <option value="">Seleccione...</option>
-                {tiposPrenda.map(t => <option key={t.id} value={t.id}>{t.nombre.toUpperCase()}</option>)}
-                {!activePrenda || isEditingPrenda ? (
-                  <option value="__CREAR__" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>➕ Crear nuevo tipo de prenda...</option>
-                ) : null}
-              </select>
-            </div>
-            <div className="form-group">
-              <label className="form-label">Talla <span style={{ color: 'var(--color-text-muted)', fontWeight: 400 }}>(Opcional)</span></label>
-              <input type="text" className="form-input" value={prendaForm.talla} onChange={e => setPrendaForm(p => ({ ...p, talla: e.target.value }))} placeholder="Ej. L, 42..." disabled={!!activePrenda && !isEditingPrenda} />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Material</label>
-              <select 
-                className="form-select" 
-                value={prendaForm.materialId}
-                onChange={e => {
-                  if (e.target.value === '__CREAR__') {
-                    setShowNuevoMaterialModal(true);
-                  } else {
-                    setPrendaForm(p => ({ ...p, materialId: e.target.value }));
-                  }
-                }}
-                disabled={!!activePrenda && !isEditingPrenda}
-              >
-                <option value="">Seleccione material...</option>
-                {materiales.map(m => <option key={m.id} value={m.id}>{m.descripcion}</option>)}
-                {!activePrenda || isEditingPrenda ? (
-                  <option value="__CREAR__" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>➕ Crear nuevo material...</option>
-                ) : null}
-              </select>
-            </div>
-          </div>
+            {activePrenda && (
+              <div className="form-group" style={{ marginBottom: 'var(--space-2)' }}>
+                <label className="form-label" style={{ fontWeight: 'bold', color: 'var(--color-primary)' }}>Estado Actual de la Prenda</label>
+                <select 
+                  className="form-select" 
+                  value={activePrenda.estadoActual}
+                  onChange={e => handleCambiarEstado(e.target.value as EstadoPrenda)}
+                  style={{ borderColor: 'var(--color-primary)', background: 'rgba(59, 130, 246, 0.05)' }}
+                >
+                  {ESTADOS_PRENDA.map(e => <option key={e} value={e}>{ESTADO_LABELS[e]}</option>)}
+                </select>
+              </div>
+            )}
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
-            <div className="form-group">
-              <label className="form-label">Color</label>
-              <input type="text" required className="form-input" value={prendaForm.color} onChange={e => setPrendaForm(p => ({ ...p, color: e.target.value }))} placeholder="Ej. Azul marino..." disabled={!!activePrenda && !isEditingPrenda} />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Marca <span style={{ color: 'var(--color-danger)' }}>*</span></label>
-              <input type="text" required className="form-input" value={prendaForm.marca} onChange={e => setPrendaForm(p => ({ ...p, marca: e.target.value }))} placeholder="Ej. Gucci, Zara, Sin marca..." disabled={!!activePrenda && !isEditingPrenda} />
-            </div>
-          </div>
+            {inline ? (
+              /* ════════════════════════════════════════════════════════
+                 MODO INLINE: grid tipo prenda + fila campos + obs/urgencia
+              ════════════════════════════════════════════════════════ */
+              <>
+                {/* ── GRID TIPO PRENDA — todas las opciones visibles ── */}
+                <div>
+                  <label className="form-label" style={{ fontSize: '11px', marginBottom: '8px', display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)' }}>
+                    Tipo de Prenda <span style={{ color: 'var(--color-danger)' }}>*</span>
+                  </label>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    {tiposPrenda.map(tipo => {
+                      const isSelected = prendaForm.tipoPrendaId === tipo.id.toString();
+                      const canChange = !activePrenda || isEditingPrenda;
+                      return (
+                        <button
+                          key={tipo.id}
+                          type="button"
+                          disabled={!canChange}
+                          onClick={() => canChange && setPrendaForm(p => ({ ...p, tipoPrendaId: tipo.id.toString() }))}
+                          style={{
+                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
+                            padding: '6px 8px',
+                            border: `2px solid ${isSelected ? 'var(--color-primary)' : 'var(--color-border)'}`,
+                            borderRadius: 'var(--radius-md)',
+                            background: isSelected ? 'rgba(99,102,241,0.08)' : 'var(--color-bg)',
+                            cursor: canChange ? 'pointer' : 'default',
+                            transition: 'all 0.15s',
+                            minWidth: '72px',
+                            boxShadow: isSelected ? '0 0 0 2px rgba(99,102,241,0.2)' : 'none',
+                          }}
+                        >
+                          <div style={{
+                            width: '36px', height: '36px', borderRadius: '50%',
+                            background: isSelected ? 'rgba(99,102,241,0.12)' : 'var(--color-bg-subtle, #f5f5f5)',
+                            border: `1px solid ${isSelected ? 'var(--color-primary)' : 'var(--color-border)'}`,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            overflow: 'hidden', flexShrink: 0,
+                          }}>
+                            {tipo.iconoUrl ? (
+                              <img
+                                src={tipo.iconoUrl}
+                                alt={tipo.nombre}
+                                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                                onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                              />
+                            ) : (
+                              <Shirt size={16} style={{ color: isSelected ? 'var(--color-primary)' : 'var(--color-text-muted)' }} />
+                            )}
+                          </div>
+                          <span style={{
+                            fontSize: '10px', fontWeight: isSelected ? '700' : '500',
+                            color: isSelected ? 'var(--color-primary)' : 'var(--color-text-muted)',
+                            textTransform: 'uppercase', letterSpacing: '0.03em',
+                            maxWidth: '70px', textAlign: 'center',
+                            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                          }}>
+                            {tipo.nombre}
+                          </span>
+                        </button>
+                      );
+                    })}
+                    {(!activePrenda || isEditingPrenda) && (
+                      <button
+                        type="button"
+                        onClick={() => setShowNuevoTipoModal(true)}
+                        style={{
+                          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px',
+                          padding: '6px 8px', minWidth: '72px',
+                          border: '2px dashed var(--color-border)',
+                          borderRadius: 'var(--radius-md)',
+                          background: 'transparent',
+                          cursor: 'pointer',
+                          color: 'var(--color-primary)',
+                          fontSize: '10px', fontWeight: '600',
+                          transition: 'all 0.15s',
+                        }}
+                      >
+                        <div style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px dashed var(--color-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <Plus size={14} />
+                        </div>
+                        <span style={{ fontSize: '10px', textTransform: 'uppercase' }}>Nuevo</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
-            <div className="form-group">
-              <label className="form-label">Tipo de Urgencia</label>
-              <select 
-                key={`form-urg-${prendaForm.tipoUrgenciaId}-${tiposUrgencia.length}`}
-                className="form-select" 
-                value={prendaForm.tipoUrgenciaId}
-                onChange={e => setPrendaForm(p => ({ ...p, tipoUrgenciaId: e.target.value }))}
-                disabled={!!activePrenda && !isEditingPrenda}
-              >
-                <option value="">Normal</option>
-                {tiposUrgencia.map(tu => <option key={tu.id} value={tu.id.toString()}>{tu.nombre}</option>)}
-              </select>
-            </div>
-            <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: inline ? '0px' : '28px' }}>
-              <input type="checkbox" id="esLujo" checked={prendaForm.esLujo} onChange={e => setPrendaForm(p => ({ ...p, esLujo: e.target.checked }))} disabled={!!activePrenda && !isEditingPrenda} />
-              <label htmlFor="esLujo" className="form-label" style={{ margin: 0 }}>Prenda Costosa / Alta Costura</label>
-            </div>
-          </div>
+                {/* ── FILA: Marca + Material + Color ── */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-3)' }}>
+                  <div className="form-group" style={{ margin: 0 }}>
+                    <label className="form-label" style={{ fontSize: '12px', marginBottom: '3px' }}>
+                      Marca <span style={{ color: 'var(--color-danger)' }}>*</span>
+                    </label>
+                    <input
+                      type="text" required
+                      className="form-input"
+                      style={{ padding: '6px 10px', fontSize: '13px' }}
+                      value={prendaForm.marca}
+                      onChange={e => setPrendaForm(p => ({ ...p, marca: e.target.value }))}
+                      placeholder="Zara, Gucci..."
+                      disabled={!!activePrenda && !isEditingPrenda}
+                    />
+                  </div>
+                  <div className="form-group" style={{ margin: 0 }}>
+                    <label className="form-label" style={{ fontSize: '12px', marginBottom: '3px' }}>Material</label>
+                    <select
+                      className="form-select"
+                      style={{ padding: '6px 10px', fontSize: '13px' }}
+                      value={prendaForm.materialId}
+                      onChange={e => {
+                        if (e.target.value === '__CREAR__') {
+                          setShowNuevoMaterialModal(true);
+                        } else {
+                          setPrendaForm(p => ({ ...p, materialId: e.target.value }));
+                        }
+                      }}
+                      disabled={!!activePrenda && !isEditingPrenda}
+                    >
+                      <option value="">Material...</option>
+                      {(() => {
+                        const selectedTipoPrendaId = prendaForm.tipoPrendaId ? Number(prendaForm.tipoPrendaId) : null;
+                        const serviciosFiltrados = selectedTipoPrendaId
+                          ? catalogoServicios.filter(s => s.tipoPrendaId === selectedTipoPrendaId)
+                          : catalogoServicios;
+                        
+                        const materialIdsEnCatalogo = new Set(
+                          serviciosFiltrados.flatMap(s => s.materiales?.map(m => m.id) || [])
+                        );
+                        
+                        const materialesFiltrados = materiales.filter(m => materialIdsEnCatalogo.has(m.id));
 
-          <div className="form-group">
-            <label className="form-label">Observaciones (Opcional)</label>
-            <textarea 
-              className="form-input" 
-              value={prendaForm.notas} 
-              onChange={e => setPrendaForm(p => ({ ...p, notas: e.target.value }))} 
-              placeholder="Añade observaciones para la prenda..." 
-              disabled={!!activePrenda && !isEditingPrenda} 
-              rows={2}
-            />
-          </div>
+                        return materialesFiltrados.map(m => (
+                          <option key={m.id} value={m.id}>{m.descripcion}</option>
+                        ));
+                      })()}
+                      {(!activePrenda || isEditingPrenda) ? (
+                        <option value="__CREAR__" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>➕ Nuevo...</option>
+                      ) : null}
+                    </select>
+                  </div>
+                  <div className="form-group" style={{ margin: 0 }}>
+                    <label className="form-label" style={{ fontSize: '12px', marginBottom: '3px' }}>
+                      Color <span style={{ color: 'var(--color-danger)' }}>*</span>
+                    </label>
+                    <input
+                      type="text" required
+                      className="form-input"
+                      style={{ padding: '6px 10px', fontSize: '13px' }}
+                      value={prendaForm.color}
+                      onChange={e => setPrendaForm(p => ({ ...p, color: e.target.value }))}
+                      placeholder="Azul marino..."
+                      disabled={!!activePrenda && !isEditingPrenda}
+                    />
+                  </div>
+                </div>
 
-          {(!activePrenda || isEditingPrenda) && (
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 'var(--space-2)' }}>
-              <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
-                {isEditingPrenda ? 'Actualizar Prenda' : 'Guardar Prenda'}
-              </button>
-            </div>
-          )}
-        </form>
+                {/* ── Prenda Costosa — checkbox visual ── */}
+                <label style={{
+                  display: 'flex', alignItems: 'center', gap: '8px',
+                  padding: '7px 10px',
+                  background: prendaForm.esLujo ? 'rgba(245,158,11,0.1)' : 'transparent',
+                  border: `1px solid ${prendaForm.esLujo ? '#f59e0b' : 'var(--color-border)'}`,
+                  borderRadius: 'var(--radius-md)',
+                  cursor: (!!activePrenda && !isEditingPrenda) ? 'default' : 'pointer',
+                  transition: 'all 0.2s',
+                  userSelect: 'none',
+                }}>
+                  <input
+                    type="checkbox"
+                    id="esLujo"
+                    checked={prendaForm.esLujo}
+                    onChange={e => setPrendaForm(p => ({ ...p, esLujo: e.target.checked }))}
+                    disabled={!!activePrenda && !isEditingPrenda}
+                    style={{ width: '15px', height: '15px', accentColor: '#f59e0b', flexShrink: 0 }}
+                  />
+                  <span style={{ fontSize: '12px', fontWeight: '500', color: prendaForm.esLujo ? '#f59e0b' : 'var(--color-text-light)' }}>
+                    💎 Prenda Costosa / Alta Costura
+                  </span>
+                </label>
+
+
+                {/* FILA DE ABAJO EN DOS COLUMNAS: OBSERVACIONES (80%) | URGENCIA + BOTON GUARDAR (20%) */}
+                <div style={{ display: 'grid', gridTemplateColumns: '8fr 2fr', gap: 'var(--space-4)', marginTop: 'var(--space-2)' }}>
+                  
+                  {/* Columna Izquierda: Observaciones */}
+                  <div className="form-group" style={{ margin: 0 }}>
+                    <label className="form-label" style={{ fontSize: '12px', marginBottom: '4px', display: 'block' }}>
+                      Observaciones <span style={{ fontSize: '11px', color: 'var(--color-text-muted)', fontWeight: 400 }}>(Opcional)</span>
+                    </label>
+                    <textarea 
+                      className="form-input" 
+                      style={{ height: '110px', resize: 'none' }}
+                      value={prendaForm.notas} 
+                      onChange={e => setPrendaForm(p => ({ ...p, notas: e.target.value }))} 
+                      placeholder="Añade observaciones para la prenda..." 
+                      disabled={!!activePrenda && !isEditingPrenda} 
+                    />
+                  </div>
+
+                  {/* Columna Derecha: Urgencia + Botón Guardar */}
+                  <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 'var(--space-2)' }}>
+                    <div>
+                      <label className="form-label" style={{ fontSize: '12px', marginBottom: '8px', display: 'block' }}>
+                        Tipo de Urgencia
+                      </label>
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+                        {/* Opción Normal */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                          <button
+                            type="button"
+                            onClick={() => { if (!activePrenda || isEditingPrenda) setPrendaForm(p => ({ ...p, tipoUrgenciaId: '' })); }}
+                            title="Normal"
+                            style={{
+                              width: '38px', height: '38px', borderRadius: '50%',
+                              border: `2px solid ${prendaForm.tipoUrgenciaId === '' ? '#10b981' : 'var(--color-border)'}`,
+                              background: prendaForm.tipoUrgenciaId === '' ? '#10b981' : 'var(--color-bg)',
+                              color: prendaForm.tipoUrgenciaId === '' ? 'white' : 'var(--color-text-muted)',
+                              cursor: (!!activePrenda && !isEditingPrenda) ? 'default' : 'pointer',
+                              fontSize: '9px', fontWeight: '700',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              transition: 'all 0.2s', flexShrink: 0,
+                              boxShadow: prendaForm.tipoUrgenciaId === '' ? '0 0 0 2px rgba(16,185,129,0.25)' : 'none',
+                            }}
+                          >
+                            NM
+                          </button>
+                          <span style={{ fontSize: '9px', color: prendaForm.tipoUrgenciaId === '' ? '#10b981' : 'var(--color-text-muted)', textAlign: 'center', lineHeight: 1 }}>Normal</span>
+                        </div>
+
+                        {tiposUrgencia.map((tu, index) => {
+                          const color = urgColors[index % urgColors.length];
+                          const isSelected = prendaForm.tipoUrgenciaId === tu.id.toString();
+                          const words = (tu.nombre as string).split(' ');
+                          const abbrev = words.length > 1
+                            ? words.map((w: string) => w[0]).join('').substring(0, 3).toUpperCase()
+                            : (tu.nombre as string).substring(0, 3).toUpperCase();
+                          return (
+                            <div key={tu.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                              <button
+                                type="button"
+                                onClick={() => { if (!activePrenda || isEditingPrenda) setPrendaForm(p => ({ ...p, tipoUrgenciaId: tu.id.toString() })); }}
+                                title={tu.nombre}
+                                style={{
+                                  width: '38px', height: '38px', borderRadius: '50%',
+                                  border: `2px solid ${isSelected ? color : 'var(--color-border)'}`,
+                                  background: isSelected ? color : 'var(--color-bg)',
+                                  color: isSelected ? 'white' : 'var(--color-text-muted)',
+                                  cursor: (!!activePrenda && !isEditingPrenda) ? 'default' : 'pointer',
+                                  fontSize: '9px', fontWeight: '700',
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  transition: 'all 0.2s', flexShrink: 0,
+                                  boxShadow: isSelected ? `0 0 0 2px ${color}40` : 'none',
+                                }}
+                              >
+                                {abbrev}
+                              </button>
+                              <span style={{ fontSize: '9px', color: isSelected ? color : 'var(--color-text-muted)', textAlign: 'center', lineHeight: 1, maxWidth: '42px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {tu.nombre}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {(!activePrenda || isEditingPrenda) && (
+                      <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+                        {!facturaId && (
+                          <p style={{ fontSize: '11px', color: 'var(--color-warning)', margin: '0 0 4px 0' }}>
+                            ⚠️ Selecciona un cliente a la derecha
+                          </p>
+                        )}
+                        <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '6px 12px', fontSize: '13px' }}>
+                          {isEditingPrenda ? 'Actualizar Prenda' : 'Guardar Prenda'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                </div>
+              </>
+            ) : (
+              /* ════════════════════════════════════════════════════════
+                 MODO MODAL (no inline): formulario clásico con selects
+              ════════════════════════════════════════════════════════ */
+              <>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+                  <div className="form-group">
+                    <label className="form-label">Tipo de Prenda</label>
+                    <select 
+                      required 
+                      className="form-select" 
+                      value={prendaForm.tipoPrendaId}
+                      onChange={e => {
+                        if (e.target.value === '__CREAR__') {
+                          setShowNuevoTipoModal(true);
+                        } else {
+                          setPrendaForm(p => ({ ...p, tipoPrendaId: e.target.value }));
+                        }
+                      }}
+                      disabled={!!activePrenda && !isEditingPrenda}
+                    >
+                      <option value="">Seleccione...</option>
+                      {tiposPrenda.map(t => <option key={t.id} value={t.id}>{t.nombre.toUpperCase()}</option>)}
+                      {!activePrenda || isEditingPrenda ? (
+                        <option value="__CREAR__" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>➕ Crear nuevo tipo de prenda...</option>
+                      ) : null}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Material</label>
+                    <select 
+                      className="form-select" 
+                      value={prendaForm.materialId}
+                      onChange={e => {
+                        if (e.target.value === '__CREAR__') {
+                          setShowNuevoMaterialModal(true);
+                        } else {
+                          setPrendaForm(p => ({ ...p, materialId: e.target.value }));
+                        }
+                      }}
+                      disabled={!!activePrenda && !isEditingPrenda}
+                    >
+                      <option value="">Seleccione material...</option>
+                      {materiales.map(m => <option key={m.id} value={m.id}>{m.descripcion}</option>)}
+                      {!activePrenda || isEditingPrenda ? (
+                        <option value="__CREAR__" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>➕ Crear nuevo material...</option>
+                      ) : null}
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+                  <div className="form-group">
+                    <label className="form-label">Color</label>
+                    <input type="text" required className="form-input" value={prendaForm.color} onChange={e => setPrendaForm(p => ({ ...p, color: e.target.value }))} placeholder="Ej. Azul marino..." disabled={!!activePrenda && !isEditingPrenda} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Marca <span style={{ color: 'var(--color-danger)' }}>*</span></label>
+                    <input type="text" required className="form-input" value={prendaForm.marca} onChange={e => setPrendaForm(p => ({ ...p, marca: e.target.value }))} placeholder="Ej. Gucci, Zara, Sin marca..." disabled={!!activePrenda && !isEditingPrenda} />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+                  <div className="form-group">
+                    <label className="form-label">Tipo de Urgencia</label>
+                    <select 
+                      key={`form-urg-${prendaForm.tipoUrgenciaId}-${tiposUrgencia.length}`}
+                      className="form-select" 
+                      value={prendaForm.tipoUrgenciaId}
+                      onChange={e => setPrendaForm(p => ({ ...p, tipoUrgenciaId: e.target.value }))}
+                      disabled={!!activePrenda && !isEditingPrenda}
+                    >
+                      <option value="">Normal</option>
+                      {tiposUrgencia.map(tu => <option key={tu.id} value={tu.id.toString()}>{tu.nombre}</option>)}
+                    </select>
+                  </div>
+                  <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: inline ? '0px' : '28px' }}>
+                    <input type="checkbox" id="esLujo" checked={prendaForm.esLujo} onChange={e => setPrendaForm(p => ({ ...p, esLujo: e.target.checked }))} disabled={!!activePrenda && !isEditingPrenda} />
+                    <label htmlFor="esLujo" className="form-label" style={{ margin: 0 }}>Prenda Costosa / Alta Costura</label>
+                  </div>
+                </div>
+
+                {/* OBSERVACIONES — siempre visible (solo en modo modal clasico, ya que inline tiene su propio layout de 2 columnas) */}
+                <div className="form-group">
+                  <label className="form-label">Observaciones <span style={{ fontSize: '12px', color: 'var(--color-text-muted)', fontWeight: 400 }}>(Opcional)</span></label>
+                  <textarea 
+                    className="form-input" 
+                    value={prendaForm.notes || prendaForm.notas} 
+                    onChange={e => setPrendaForm(p => ({ ...p, notas: e.target.value }))} 
+                    placeholder="Añade observaciones para la prenda..." 
+                    disabled={!!activePrenda && !isEditingPrenda} 
+                    rows={2}
+                  />
+                </div>
+
+                {(!activePrenda || isEditingPrenda) && (
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 'var(--space-3)', marginTop: 'var(--space-2)' }}>
+                    <button type="submit" className="btn btn-primary">
+                      {isEditingPrenda ? 'Actualizar Prenda' : 'Guardar Prenda'}
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </form>
         )}
 
         {activePrenda && activePrenda.fechaCompromiso && (
@@ -553,15 +867,76 @@ await prendasService.asignarServicio(activePrenda.id, {
             )}
 
             {/* Buscador de Servicios y Botones de acción */}
-            <div style={{ marginBottom: 'var(--space-4)', display: 'flex', gap: 'var(--space-4)', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div style={{ marginBottom: 'var(--space-4)', display: 'flex', gap: 'var(--space-3)', alignItems: 'center', flexWrap: 'wrap' }}>
               <input
                 type="text"
                 className="form-input"
-                style={{ flex: 1, minWidth: '250px' }}
-                placeholder="Buscar servicio disponible (ej. dobladillo, bajo, cremallera)..."
+                style={{ flex: 1, minWidth: '200px' }}
+                placeholder="Buscar servicio..."
                 value={busquedaServicio}
                 onChange={e => setBusquedaServicio(e.target.value)}
               />
+
+              {/* Combobox Tipo Arreglo */}
+              <select
+                className="form-select"
+                style={{ width: '180px', fontSize: '13px' }}
+                value={tipoArregloSeleccionado}
+                onChange={e => setTipoArregloSeleccionado(e.target.value)}
+              >
+                <option value="">Todos los arreglos</option>
+                {(() => {
+                  const selectedTipoPrendaId = activePrenda ? activePrenda.tipoPrendaId : Number(prendaForm.tipoPrendaId);
+                  const selectedMaterialId = activePrenda ? activePrenda.materialId : Number(prendaForm.materialId);
+
+                  const serviciosBase = catalogoServicios.filter(s => {
+                    if (selectedTipoPrendaId && s.tipoPrendaId !== selectedTipoPrendaId) return false;
+                    if (selectedMaterialId && !s.materiales?.some(m => m.id === selectedMaterialId)) return false;
+                    return true;
+                  });
+
+                  const taIdsEnCatalogo = new Set(serviciosBase.flatMap(s => s.tiposArreglo?.map(ta => ta.id) || []));
+                  return tiposArreglo.filter(ta => taIdsEnCatalogo.has(ta.id)).map(ta => (
+                    <option key={ta.id} value={ta.id}>{ta.descripcion}</option>
+                  ));
+                })()}
+              </select>
+
+              {/* Combobox Zona */}
+              <select
+                className="form-select"
+                style={{ width: '180px', fontSize: '13px' }}
+                value={zonaSeleccionada}
+                onChange={e => setZonaSeleccionada(e.target.value)}
+              >
+                <option value="">Todas las zonas</option>
+                {(() => {
+                  const selectedTipoPrendaId = activePrenda ? activePrenda.tipoPrendaId : Number(prendaForm.tipoPrendaId);
+                  const selectedMaterialId = activePrenda ? activePrenda.materialId : Number(prendaForm.materialId);
+
+                  const serviciosBase = catalogoServicios.filter(s => {
+                    if (selectedTipoPrendaId && s.tipoPrendaId !== selectedTipoPrendaId) return false;
+                    if (selectedMaterialId && !s.materiales?.some(m => m.id === selectedMaterialId)) return false;
+                    return true;
+                  });
+
+                  const zonaIdsEnCatalogo = new Set(
+                    serviciosBase.flatMap(s => {
+                      const ids: number[] = [];
+                      if ((s as any).zonaId) ids.push((s as any).zonaId);
+                      if ((s as any).zona?.id) ids.push((s as any).zona.id);
+                      if ((s as any).zonas?.length) ids.push(...(s as any).zonas.map((z: any) => z.id));
+                      return ids;
+                    })
+                  );
+                  const filtradas = zonas.filter(z => zonaIdsEnCatalogo.has(z.id));
+                  const listaFinal = filtradas.length > 0 ? filtradas : zonas;
+                  return listaFinal.map(z => (
+                    <option key={z.id} value={z.id}>{z.descripcion}</option>
+                  ));
+                })()}
+              </select>
+
               <button 
                 type="button" 
                 onClick={() => setShowNuevoServicioModal(true)} 
@@ -585,7 +960,6 @@ await prendasService.asignarServicio(activePrenda.id, {
               const term = normalizeText(busquedaServicio);
 
               const selectedTipoPrendaId = activePrenda ? activePrenda.tipoPrendaId : Number(prendaForm.tipoPrendaId);
-
               const selectedMaterialId = activePrenda ? activePrenda.materialId : Number(prendaForm.materialId);
 
               const sinAsignar = disponibles.filter(s => {
@@ -600,6 +974,18 @@ await prendasService.asignarServicio(activePrenda.id, {
                 if (selectedMaterialId) {
                   const tieneMaterial = s.materiales?.some(m => m.id === selectedMaterialId);
                   if (!tieneMaterial) return false;
+                }
+
+                // Filtro por Tipo Arreglo
+                if (tipoArregloSeleccionado) {
+                  const tieneTipoArreglo = s.tiposArreglo?.some(ta => ta.id === Number(tipoArregloSeleccionado));
+                  if (!tieneTipoArreglo) return false;
+                }
+
+                // Filtro por Zona
+                if (zonaSeleccionada) {
+                  const sZonaId = (s as any).zonaId ?? (s as any).zona?.id;
+                  if (sZonaId !== Number(zonaSeleccionada)) return false;
                 }
 
                 if (!term) return true;
@@ -678,24 +1064,38 @@ await prendasService.asignarServicio(activePrenda.id, {
                                       Base: {Number(srv.medidaBase ?? 0)} cm · Tiempo estimado: {Number(srv.tiempoBase ?? 0)} min
                                     </p>
                                   </div>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-                                    <span className={`badge ${isSelected ? 'badge-primary' : 'badge-neutral'}`}>
-                                      {isSelected ? '✓ Seleccionado' : 'Seleccionar'}
-                                    </span>
-                                  </div>
-                                </button>
+                                   <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                                    {isSelected ? (
+                                      /* Botón Agregar directamente en la cabecera */
+                                      <button
+                                        type="button"
+                                        className="btn btn-primary btn-sm"
+                                        disabled={isCalculando}
+                                        onClick={e => { e.stopPropagation(); handleAddServicio(); }}
+                                        style={{ fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                                      >
+                                        {isCalculando ? 'Agregando...' : <><Check size={14} /> Agregar</>}
+                                      </button>
+                                    ) : (
+                                      <span className="badge badge-neutral">Seleccionar</span>
+                                    )}
+                                   </div>
+</button>
 
-{/* Panel de ajuste cuando está seleccionado */}
+                                {/* Panel de ajuste cuando está seleccionado */}
                                 {isSelected && (
                                   <div style={{
                                     borderTop: '1px solid var(--color-primary)',
                                     padding: 'var(--space-3) var(--space-4)',
-                                    display: 'flex', flexDirection: 'column', gap: 'var(--space-4)',
                                     background: 'var(--bg)',
+                                    display: 'grid',
+                                    gridTemplateColumns: '1fr 1fr',
+                                    gap: 'var(--space-3)',
+                                    alignItems: 'start',
                                   }}>
-                                    <div style={{ display: 'flex', gap: 'var(--space-4)', flexWrap: 'wrap', flexDirection: inline ? 'column' : 'row' }}>
-
-                                      <div style={{ flex: 1, minWidth: '150px' }}>
+                                    {/* COLUMNA IZQUIERDA: Tipo Arreglo + Zona + Longitud */}
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                                      <div>
                                         <label style={{ fontSize: '11px', color: 'var(--color-text-muted)', display: 'block', marginBottom: '4px' }}>
                                           Tipo Arreglo <a href="/tipos-arreglo" target="_blank" style={{ float: 'right', color: 'var(--color-primary)' }}>+ Crear</a>
                                         </label>
@@ -704,7 +1104,7 @@ await prendasService.asignarServicio(activePrenda.id, {
                                           {tiposArreglo.map((m: any) => <option key={m.id} value={m.id}>{m.descripcion}</option>)}
                                         </select>
                                       </div>
-                                      <div style={{ flex: 1, minWidth: '150px' }}>
+                                      <div>
                                         <label style={{ fontSize: '11px', color: 'var(--color-text-muted)', display: 'block', marginBottom: '4px' }}>
                                           Zona <a href="/zonas" target="_blank" style={{ float: 'right', color: 'var(--color-primary)' }}>+ Crear</a>
                                         </label>
@@ -713,44 +1113,33 @@ await prendasService.asignarServicio(activePrenda.id, {
                                           {zonas.map((m: any) => <option key={m.id} value={m.id}>{m.descripcion}</option>)}
                                         </select>
                                       </div>
-                                    </div>
-                                    <div style={{ display: 'flex', gap: 'var(--space-4)', flexDirection: inline ? 'column' : 'row', alignItems: inline ? 'stretch' : 'center' }}>
-                                      <div style={{ flex: 1 }}>
+                                      <div>
                                         <label style={{ fontSize: '11px', color: 'var(--color-text-muted)', display: 'block', marginBottom: '4px' }}>
                                           Longitud (cm) — opcional
                                         </label>
                                         <input
                                           type="number" min="0"
                                           className="form-input"
-                                          style={{ padding: '6px 10px', fontSize: '13px', maxWidth: '160px' }}
+                                          style={{ padding: '6px 10px', fontSize: '13px', width: '100%' }}
                                           value={medidaEntregada}
                                           onChange={e => setMedidaEntregada(e.target.value ? Number(e.target.value) : '')}
                                           placeholder="Sin medida"
                                         />
                                       </div>
-                                      <div style={{ flex: 2 }}>
-                                        <label style={{ fontSize: '11px', color: 'var(--color-text-muted)', display: 'block', marginBottom: '4px' }}>
-                                          Observaciones
-                                        </label>
-                                        <textarea
-                                          className="form-input"
-                                          style={{ padding: '6px 10px', fontSize: '13px', width: '100%', resize: 'vertical' }}
-                                          rows={2}
-                                          value={observacionesServicio}
-                                          onChange={e => setObservacionesServicio(e.target.value)}
-                                          placeholder="Escribe observaciones para el servicio..."
-                                        />
-                                      </div>
-                                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center' }}>
-                                        <button
-                                          type="button"
-                                          className="btn btn-primary"
-                                          disabled={isCalculando}
-                                          onClick={handleAddServicio}
-                                        >
-                                          {isCalculando ? 'Agregando...' : <><Check size={15} /> Agregar</>}
-                                        </button>
-                                      </div>
+                                    </div>
+
+                                    {/* COLUMNA DERECHA: Observaciones */}
+                                    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                                      <label style={{ fontSize: '11px', color: 'var(--color-text-muted)', display: 'block', marginBottom: '4px' }}>
+                                        Observaciones
+                                      </label>
+                                      <textarea
+                                        className="form-input"
+                                        style={{ padding: '6px 10px', fontSize: '13px', width: '100%', resize: 'vertical', flex: 1, minHeight: '110px' }}
+                                        value={observacionesServicio}
+                                        onChange={e => setObservacionesServicio(e.target.value)}
+                                        placeholder="Escribe observaciones para el servicio..."
+                                      />
                                     </div>
                                   </div>
                                 )}
