@@ -45,7 +45,6 @@ export function PrendaModal({
   onTipoPrendaCreated,
   inline = false,
   initialTipoPrendaId,
-  onRequestTipoPrendaSelector,
 }: PrendaModalProps) {
   // Local copy of tiposPrenda so we can append newly created ones without refreshing parent
   const [tiposPrenda, setTiposPrenda] = useState<TipoPrenda[]>(tiposPrendaProp);
@@ -742,7 +741,7 @@ export function PrendaModal({
                   <label className="form-label">Observaciones <span style={{ fontSize: '12px', color: 'var(--color-text-muted)', fontWeight: 400 }}>(Opcional)</span></label>
                   <textarea 
                     className="form-input" 
-                    value={prendaForm.notes || prendaForm.notas} 
+                    value={prendaForm.notas} 
                     onChange={e => setPrendaForm(p => ({ ...p, notas: e.target.value }))} 
                     placeholder="Añade observaciones para la prenda..." 
                     disabled={!!activePrenda && !isEditingPrenda} 
