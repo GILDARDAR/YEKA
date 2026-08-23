@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { prendasService } from './prendas.service';
 import tipoPrendaService from '../../services/tipo-prenda.service';
 import { ServicioModal } from '../catalogo/ServicioModal';
+import { catalogoService } from '../catalogo/catalogo.service';
 
 import api from '../../shared/api';
 import type { Prenda, TipoPrenda, CatalogoServicio, PrendaServicio, EstadoPrenda } from '../../shared/types';
@@ -138,11 +139,15 @@ export function PrendaModal({
 
   const handleCrearNuevoMaterial = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!nuevoMaterialForm.descripcion.trim()) return;
     try {
       setSavingNuevoMaterial(true);
-      const res = await api.post('/material', { descripcion: nuevoMaterialForm.descripcion });
+      const res = await api.post('/material', { descripcion: nuevoMaterialForm.descripcion.trim(), activo: true });
       const created = res.data;
-      setMateriales(prev => [...prev, created]);
+      setMateriales(prev => {
+        const exists = prev.some(m => m.id === created.id);
+        return exists ? prev : [...prev, created];
+      });
       setPrendaForm(p => ({ ...p, materialId: created.id.toString() }));
       setShowNuevoMaterialModal(false);
       setNuevoMaterialForm({ descripcion: '' });
@@ -492,22 +497,9 @@ export function PrendaModal({
                       disabled={!!activePrenda && !isEditingPrenda}
                     >
                       <option value="">Material...</option>
-                      {(() => {
-                        const selectedTipoPrendaId = prendaForm.tipoPrendaId ? Number(prendaForm.tipoPrendaId) : null;
-                        const serviciosFiltrados = selectedTipoPrendaId
-                          ? catalogoServicios.filter(s => s.tipoPrendaId === selectedTipoPrendaId)
-                          : catalogoServicios;
-                        
-                        const materialIdsEnCatalogo = new Set(
-                          serviciosFiltrados.flatMap(s => s.materiales?.map(m => m.id) || [])
-                        );
-                        
-                        const materialesFiltrados = materiales.filter(m => materialIdsEnCatalogo.has(m.id));
-
-                        return materialesFiltrados.map(m => (
-                          <option key={m.id} value={m.id}>{m.descripcion}</option>
-                        ));
-                      })()}
+                      {materiales.filter(m => m.activo !== false).map(m => (
+                        <option key={m.id} value={m.id}>{m.descripcion}</option>
+                      ))}
                       {(!activePrenda || isEditingPrenda) ? (
                         <option value="__CREAR__" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>➕ Nuevo...</option>
                       ) : null}
@@ -1267,12 +1259,40 @@ export function PrendaModal({
       isOpen={showNuevoServicioModal}
       initialData={{ tipoPrendaId: prendaForm.tipoPrendaId ? Number(prendaForm.tipoPrendaId) : '', materialId: prendaForm.materialId ? Number(prendaForm.materialId) : '' }}
       onClose={() => setShowNuevoServicioModal(false)}
-      onSaved={(created) => {
-        setCatalogoServicios(prev => [...prev, created]);
+      onSaved={async (created) => {
+        // Re-fetch all catalog services to ensure full relations are loaded
+        try {
+          const allServices = await catalogoService.getAll();
+          setCatalogoServicios(allServices.filter(s => s.activo));
+        } catch {
+          // Fallback: add the created service locally if re-fetch fails
+          setCatalogoServicios(prev => {
+            const exists = prev.some(s => s.id === created.id);
+            return exists ? prev : [...prev, created];
+          });
+        }
+
+        // Pre-select the newly created service
         setServicioSeleccionado(created.id.toString());
         setBusquedaServicio('');
         setMedidaEntregada('');
         setObservacionesServicio('');
+
+        // Adjust tipo arreglo and zona filters to match the new service
+        // so it appears in the filtered list
+        const newTipoArregloId = created.tiposArreglo?.[0]?.id;
+        if (newTipoArregloId) {
+          setTipoArregloSeleccionado(newTipoArregloId.toString());
+        } else {
+          setTipoArregloSeleccionado('');
+        }
+
+        const newZonaId = (created as any).zonaId ?? (created as any).zona?.id;
+        if (newZonaId) {
+          setZonaSeleccionada(newZonaId.toString());
+        } else {
+          setZonaSeleccionada('');
+        }
       }}
     />
     </>

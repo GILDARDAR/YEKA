@@ -37,11 +37,10 @@ export function ServicioModal({ isOpen, servicioToEdit, initialData, onClose, on
 
   const [selectedMateriales, setSelectedMateriales] = useState<Material[]>([]);
   const [selectedTiposArreglo, setSelectedTiposArreglo] = useState<TipoArreglo[]>([]);
-  const [selectedZonas, setSelectedZonas] = useState<Zona[]>([]);
+  const [zonaSeleccionadaId, setZonaSeleccionadaId] = useState<number | ''>('');
 
   const [materialToAdd, setMaterialToAdd] = useState<number | ''>('');
   const [tipoArregloToAdd, setTipoArregloToAdd] = useState<number | ''>('');
-  const [zonaToAdd, setZonaToAdd] = useState<number | ''>('');
 
   const [showNewMaterial, setShowNewMaterial] = useState(false);
   const [newMaterialDesc, setNewMaterialDesc] = useState('');
@@ -93,13 +92,7 @@ export function ServicioModal({ isOpen, servicioToEdit, initialData, onClose, on
       });
       setSelectedMateriales(servicioToEdit.materiales?.map(m => ({ id: m.id, descripcion: m.descripcion, activo: true })) || []);
       setSelectedTiposArreglo(servicioToEdit.tiposArreglo?.map(t => ({ id: t.id, descripcion: t.descripcion, activo: true })) || []);
-      if ((servicioToEdit as any).zona) {
-        setSelectedZonas([{ id: (servicioToEdit as any).zona.id, descripcion: (servicioToEdit as any).zona.descripcion, activa: true }]);
-      } else if ((servicioToEdit as any).zonas?.length) {
-        setSelectedZonas(((servicioToEdit as any).zonas).map((z: any) => ({ id: z.id, descripcion: z.descripcion, activa: true })));
-      } else {
-        setSelectedZonas([]);
-      }
+      setZonaSeleccionadaId(servicioToEdit.zonaId || '');
     } else {
       setFormData({ 
         nombre: '', 
@@ -114,12 +107,11 @@ export function ServicioModal({ isOpen, servicioToEdit, initialData, onClose, on
       });
       if (!initialData?.materialId) setSelectedMateriales([]);
       setSelectedTiposArreglo([]);
-      setSelectedZonas([]);
+      setZonaSeleccionadaId('');
     }
     
     setMaterialToAdd('');
     setTipoArregloToAdd('');
-    setZonaToAdd('');
     setShowNewMaterial(false);
     setShowNewTipoArreglo(false);
     setNewMaterialDesc('');
@@ -127,15 +119,7 @@ export function ServicioModal({ isOpen, servicioToEdit, initialData, onClose, on
 
   }, [isOpen, servicioToEdit, initialData]);
 
-  // ── Zonas ──
-  const handleAddZona = () => {
-    if (zonaToAdd === '') return;
-    const z = allZonas.find(item => item.id === Number(zonaToAdd));
-    if (!z || selectedZonas.some(item => item.id === z.id)) { setZonaToAdd(''); return; }
-    setSelectedZonas(prev => [...prev, z]);
-    setZonaToAdd('');
-  };
-  const handleRemoveZona = (id: number) => setSelectedZonas(prev => prev.filter(z => z.id !== id));
+
 
   const handleBasicChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -212,8 +196,7 @@ export function ServicioModal({ isOpen, servicioToEdit, initialData, onClose, on
         categoriasFactoresIds: formData.categoriasFactoresIds,
         materialesIds: selectedMateriales.map(m => m.id),
         tiposArregloIds: selectedTiposArreglo.map(t => t.id),
-        zonasIds: undefined,
-        zonaId: selectedZonas.length > 0 ? selectedZonas[0].id : undefined,
+        zonaId: zonaSeleccionadaId === '' ? null : Number(zonaSeleccionadaId),
       };
       let savedServicio;
       if (servicioToEdit) {
@@ -366,32 +349,17 @@ export function ServicioModal({ isOpen, servicioToEdit, initialData, onClose, on
             </div>
 
             <div className="form-group" style={{ margin: 0 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-2)' }}>
-                <label className="form-label" style={{ margin: 0, fontWeight: 'var(--font-semibold)' }}>Zona</label>
-              </div>
-
-              {selectedZonas.length > 0 && (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: 'var(--space-2)' }}>
-                  {selectedZonas.map(z => (
-                    <span key={z.id} style={{ ...chipStyle, backgroundColor: '#fef3c7', color: '#92400e' }}>
-                      {z.descripcion}
-                      <button type="button" onClick={() => handleRemoveZona(z.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', color: 'inherit', opacity: 0.7 }} title="Quitar"><X size={12} /></button>
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-                <select value={zonaToAdd} onChange={e => setZonaToAdd(e.target.value === '' ? '' : Number(e.target.value))} className="form-input" style={{ flex: 1 }}>
-                  <option value="">Seleccionar zona...</option>
-                  {allZonas.filter(z => (z as any).activo !== false && (z as any).activa !== false && !selectedZonas.some(s => s.id === z.id)).map(z => (
-                    <option key={z.id} value={z.id}>{z.descripcion}</option>
-                  ))}
-                </select>
-                <button type="button" onClick={handleAddZona} className="btn btn-primary btn-sm" disabled={zonaToAdd === ''} style={{ whiteSpace: 'nowrap' }}>
-                  <Plus size={14} /> Añadir
-                </button>
-              </div>
+              <label className="form-label" style={{ fontWeight: 'var(--font-semibold)' }}>Zona</label>
+              <select
+                value={zonaSeleccionadaId}
+                onChange={e => setZonaSeleccionadaId(e.target.value === '' ? '' : Number(e.target.value))}
+                className="form-select"
+              >
+                <option value="">Seleccionar zona...</option>
+                {allZonas.filter(z => (z as any).activo !== false && (z as any).activa !== false).map(z => (
+                  <option key={z.id} value={z.id}>{z.descripcion}</option>
+                ))}
+              </select>
             </div>
           </div>
 
